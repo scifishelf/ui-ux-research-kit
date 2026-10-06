@@ -1,0 +1,93 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "UX-01",
+      "category": "ux",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Flows begin with a user job and observable success.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S03"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Compare the specification with the acceptance test.",
+      "passing": "The job, starting point, main action, result and recovery are testable.",
+      "action": "Use benchmark/tasks.yaml as a specification template.",
+      "effort": "S"
+    },
+    {
+      "id": "UX-02",
+      "category": "ux",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Cover empty, loading, error, overflow, responsive and supported theme states.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S37",
+          "S21"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Exercise states for each task, surface and theme.",
+      "passing": "No required state is missing; inapplicable cases have documented reasons.",
+      "action": "Complete reference/state-matrix.yaml.",
+      "effort": "M"
+    },
+    {
+      "id": "UX-03",
+      "category": "ux",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Status and focus remain understandable after actions.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S21",
+          "S24"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Perform keyboard/screen-reader walkthroughs and inspect status announcements.",
+      "passing": "Focus is visible, reachable and meaningful; status is not conveyed only visually or through motion.",
+      "action": "Use native dialog/form semantics and clear messages.",
+      "effort": "M"
+    },
+    {
+      "id": "UX-04",
+      "category": "ux",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Errors, offline behavior and retries preserve input.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S16",
+          "S37"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Induce errors and loss of connection in a multistep form.",
+      "passing": "Input survives; retry does not duplicate completion.",
+      "action": "Implement a recovery and retry contract.",
+      "effort": "M"
+    }
+  ]
+}

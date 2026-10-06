@@ -1,0 +1,94 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "ACC-01",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Automated accessibility scans are complemented by manual tests.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S26",
+          "S21"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Run axe across required states and perform keyboard/screen-reader tests.",
+      "passing": "No unresolved serious/critical or AA violations; incomplete results reviewed and manual tests recorded.",
+      "action": "Use reference/loop/browser.spec.ts and a manual test log.",
+      "effort": "M"
+    },
+    {
+      "id": "ACC-02",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Contrast, focus and status work in all supported themes.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S21",
+          "S24"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Measure contrast and test keyboard/screen-reader behavior.",
+      "passing": "WCAG AA requirements are met; color is not the only information channel.",
+      "action": "Use semantic tokens and native controls.",
+      "effort": "M"
+    },
+    {
+      "id": "ACC-03",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Reduced motion preserves all functionality.",
+      "research_evidence": {
+        "type": "WCAG 2.3.3 is AAA; additionally required by this project contract",
+        "sources": [
+          "S22",
+          "S30"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Change the OS preference and browser emulation before and after launch.",
+      "passing": "Unnecessary spatial transitions are removed; CSS/JS/Canvas checked; results immediately accessible.",
+      "action": "Use motion-patterns/motion.css and reduced-motion hooks.",
+      "effort": "S"
+    },
+    {
+      "id": "ACC-04",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Dragging and complex gestures have accessible alternatives.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S25",
+          "S21"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Complete the task without dragging and with keyboard/touch input.",
+      "passing": "All required actions work without a complex gesture.",
+      "action": "Add move, open and delete buttons where appropriate.",
+      "effort": "S"
+    }
+  ]
+}

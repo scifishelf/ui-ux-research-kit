@@ -1,0 +1,160 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "LOOP-01",
+      "category": "loop",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Define roles, the user flow and acceptance before generation.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S01",
+          "S03"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read the flow specification and named responsibilities.",
+      "passing": "A priority user job, success condition, states and human acceptance owner are named.",
+      "action": "Adapt reference/flow.md.",
+      "effort": "S"
+    },
+    {
+      "id": "LOOP-02",
+      "category": "loop",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Both surfaces test the same approved build.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S08",
+          "S16"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Compare build ID, commit, working-tree fingerprint and worker version across captures.",
+      "passing": "All identities match the expected build.",
+      "action": "Integrate reference/loop/README.md and parity_check.py.",
+      "effort": "M"
+    },
+    {
+      "id": "LOOP-03",
+      "category": "loop",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Each UI change has browser and installed-PWA screenshots.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S07",
+          "S11",
+          "S40"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Compare the change/state capture matrix with its artifact manifest.",
+      "passing": "Every required state has current images of both surfaces with provenance.",
+      "action": "Integrate the dual-surface loop in reference/loop/.",
+      "effort": "M"
+    },
+    {
+      "id": "LOOP-04",
+      "category": "loop",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Criticism uses fresh context and evidence rather than self-awarded quality.",
+      "research_evidence": {
+        "type": "Research findings on judge bias; transfer to UI evaluation remains provisional",
+        "sources": [
+          "S04",
+          "S05"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Inspect the critic prompt and input bundle.",
+      "passing": "Criticism names observations and uncertainty without generator or skill names.",
+      "action": "Use rubrics/critic.md.",
+      "effort": "S"
+    },
+    {
+      "id": "LOOP-05",
+      "category": "loop",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Missing required evidence and known blockers prevent approval.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S21",
+          "S08"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Exercise negative gates with a missing PWA capture and stale build.",
+      "passing": "The gate fails; a human decides after at most three unsuccessful corrections.",
+      "action": "Integrate reference/ci-gates.md.",
+      "effort": "M"
+    },
+    {
+      "id": "LOOP-06",
+      "category": "loop",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Evidence remains linked to build, state and reviewer.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S08",
+          "S04"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check manifests, hashes, run IDs and review logs.",
+      "passing": "Captures exist and have a hash, build, state and review time.",
+      "action": "Use reference/loop/capture.schema.json.",
+      "effort": "S"
+    },
+    {
+      "id": "LOOP-07",
+      "category": "loop",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Visual regression uses fixed data, fonts and separate platform baselines.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S08"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check fixture seeds, viewports, DPR, locale, clock and baselines.",
+      "passing": "Repeated captures are stable; desktop and PWA are not compared for pixel identity.",
+      "action": "Create deterministic fixtures and separate baselines.",
+      "effort": "M"
+    }
+  ]
+}

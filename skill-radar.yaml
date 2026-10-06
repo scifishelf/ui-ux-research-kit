@@ -1,0 +1,501 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "meaning": "adopt: recommended capability, not an effectiveness ranking; trial: controlled pilot; hold: defer until justified; avoid: explicitly excluded configuration.",
+  "tools": [
+    {
+      "id": "RAD-01",
+      "name": "Playwright MCP + separate Playwright test runner",
+      "repository": "microsoft/playwright-mcp",
+      "assessment": "adopt",
+      "version": "0.0.83",
+      "commit": "f183dad4a52965583e3cc1d59b88cdc279e2e57d",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "Reproducible browser interactions combining DOM, accessibility and screenshots.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "WebKit emulation is not an installed iOS PWA; keep separate OS baselines.",
+      "license": "Apache-2.0",
+      "sources": [
+        "S07",
+        "S08",
+        "S09"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-02",
+      "name": "Safari MCP",
+      "repository": null,
+      "assessment": "trial",
+      "version": null,
+      "commit": null,
+      "version_status": "Vendor documentation; record the installed version before a trial.",
+      "mechanism": "Safari's local safaridriver --mcp with the native Mac browser engine.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Desktop Safari capability does not establish installed-iPhone-PWA control.",
+      "license": "Apple software terms; system component",
+      "sources": [
+        "S11",
+        "S12"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "Only when the supported mobile/Apple runtime requires it."
+    },
+    {
+      "id": "RAD-03",
+      "name": "Chrome DevTools MCP",
+      "repository": "ChromeDevTools/chrome-devtools-mcp",
+      "assessment": "trial",
+      "version": "1.10.1",
+      "commit": "b2f522c8ba0fd2e00a679159b4aa5243de5f1b78",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "Performance traces, console, network and screenshots.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Inspect browser data and telemetry; review --no-usage-statistics and --no-performance-crux in an isolated trial.",
+      "license": "Apache-2.0",
+      "sources": [
+        "S10"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-04",
+      "name": "Anthropic frontend-design",
+      "repository": "anthropics/skills",
+      "assessment": "trial",
+      "version": null,
+      "commit": "8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "Art direction, typography, layout and product-specific decisions.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Landing-page guidance may overdesign work interfaces; the product brand contract takes precedence.",
+      "license": "Apache-2.0; skill-specific LICENSE.txt inspected at the pin",
+      "sources": [
+        "S06"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-05",
+      "name": "Impeccable",
+      "repository": "pbakaus/impeccable",
+      "assessment": "trial",
+      "version": "4.1.0",
+      "commit": "e103efe779e2dd01274dabae83531fef00bf2563",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "Design knowledge, critique, polish, live iteration and deterministic detectors.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Generic-design heuristics may exclude useful patterns; overlaps with frontend-design. Private evaluations do not supply reproducible public effect sizes.",
+      "license": "Apache-2.0",
+      "sources": [
+        "S35",
+        "S49"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-06",
+      "name": "UI UX Pro Max",
+      "repository": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "assessment": "trial",
+      "version": null,
+      "commit": "477bcb28c9812b385cb51a4605ddf30d7b2266e2",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "Searchable design knowledge and design-system selection.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Style recipes, context size and generated tokens may displace the existing brand.",
+      "license": "MIT",
+      "sources": [
+        "S36"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-07",
+      "name": "Vercel React Best Practices / Web Design Guidelines",
+      "repository": "vercel-labs/agent-skills",
+      "assessment": "trial",
+      "version": null,
+      "commit": "063bee94c3f4df8453406c830b0a7df0f2860278",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "Code review of React, accessibility, performance and interaction details.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Remote rules can drift; pin each relevant file and license at the reviewed commit.",
+      "license": "Review per file; no repository-wide license clearance",
+      "sources": [
+        "S37"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-08",
+      "name": "Figma MCP + Code Connect",
+      "repository": null,
+      "assessment": "trial",
+      "version": null,
+      "commit": null,
+      "version_status": "Vendor documentation; record the installed version before a trial.",
+      "mechanism": "Components, variables and design context rather than image-only inference.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Account/plan constraints, external designs, content rights and write permissions; only useful with real design inputs.",
+      "license": "Figma terms and design-content rights",
+      "sources": [
+        "S39"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-09",
+      "name": "Design Extractor",
+      "repository": "imehr/design-extractor",
+      "assessment": "hold",
+      "version": null,
+      "commit": "bde084699c53b5a66e45024d011dc5366257c780",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "DOM/CSS extraction, tokens, patterns and replica validation.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Similarity does not establish usability or brand quality. Review asset rights; do not copy installation instructions using --break-system-packages.",
+      "license": "MIT",
+      "sources": [
+        "S38"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-10",
+      "name": "iOS Simulator MCP",
+      "repository": "joshuayoes/ios-simulator-mcp",
+      "assessment": "trial",
+      "version": "2.1.0",
+      "commit": "a32f7f836393424d83b9476928da5518e178daa9",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "idb/simctl screenshots, accessibility, tap, type and swipe.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Known command injection before 1.3.3; test IDB dependency, runtime and keyboard limitations. Reuse existing adapters where available.",
+      "license": "MIT",
+      "sources": [
+        "S40"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "Only when the supported mobile/Apple runtime requires it."
+    },
+    {
+      "id": "RAD-11",
+      "name": "MobileBuildMCP (formerly XcodeBuildMCP)",
+      "repository": "getsentry/MobileBuildMCP",
+      "assessment": "hold",
+      "version": "2.7.1",
+      "commit": "d13ff0c707b0681769cf31da0eb42c4f94ceafff",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "Native build, simulator and debug toolchain.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Name change and broad tool surface; adopt a native toolchain only for an actual need.",
+      "license": "MIT",
+      "sources": [
+        "S41"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "Only when the supported mobile/Apple runtime requires it."
+    },
+    {
+      "id": "RAD-12",
+      "name": "Claude Code + Chrome",
+      "repository": null,
+      "assessment": "trial",
+      "version": null,
+      "commit": null,
+      "version_status": "Vendor documentation; record the installed version before a trial.",
+      "mechanism": "Browser integration in the coding agent.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Record profile/permission boundaries and installed versions.",
+      "license": "Proprietary product terms",
+      "sources": [
+        "S42"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-13",
+      "name": "Codex Browser",
+      "repository": null,
+      "assessment": "trial",
+      "version": null,
+      "commit": null,
+      "version_status": "Vendor documentation; record the installed version before a trial.",
+      "mechanism": "Shared browser view, screenshots and direct interactions.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Installed client and browser integration determine capabilities; product name does not identify a model snapshot.",
+      "license": "Proprietary product terms",
+      "sources": [
+        "S43"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-14",
+      "name": "Cursor Browser",
+      "repository": null,
+      "assessment": "trial",
+      "version": null,
+      "commit": null,
+      "version_status": "Vendor documentation; record the installed version before a trial.",
+      "mechanism": "Integrated browser interactions and visual correction.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Record client, model and agent behavior separately.",
+      "license": "Proprietary product terms",
+      "sources": [
+        "S44"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-15",
+      "name": "Agent Browser CLI",
+      "repository": "vercel-labs/agent-browser",
+      "assessment": "trial",
+      "version": "0.38.2",
+      "commit": "526157cfd4ec64f45939f9ba0f10d5936aa7ac33",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "CLI with compact element references and screenshots.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "An alternative interface does not replace installed-PWA checks; relative MCP/CLI cost unmeasured.",
+      "license": "Apache-2.0",
+      "sources": [
+        "S47"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-16",
+      "name": "axe-core",
+      "repository": "dequelabs/axe-core",
+      "assessment": "adopt",
+      "version": "4.13.0",
+      "commit": "f59642eddf14c93ae3c9c31d69bcd611229bedb4",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "Deterministic rule scans of rendered states.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Incomplete coverage; review incomplete results and supplement with keyboard/screen-reader tests.",
+      "license": "MPL-2.0",
+      "sources": [
+        "S26"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-17",
+      "name": "Local MLX-VLM",
+      "repository": "Blaizzy/mlx-vlm",
+      "assessment": "hold",
+      "version": null,
+      "commit": "6ecadd767ca1c7c54763289c750dd180d7945037",
+      "version_status": "Historical repository pin; test-runner/package pins are recorded separately.",
+      "mechanism": "Optional local vision critic.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Shared memory pressure, model-weight rights and hallucinations; defect recall and load unmeasured.",
+      "license": "MIT",
+      "sources": [
+        "S45"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    },
+    {
+      "id": "RAD-18",
+      "name": "Simulator packages before 1.3.3 / unpinned executable skill bundles",
+      "repository": null,
+      "assessment": "avoid",
+      "version": null,
+      "commit": null,
+      "version_status": "Vendor documentation; record the installed version before a trial.",
+      "mechanism": "No recommended adoption for these excluded configurations.",
+      "effect": {
+        "evidence": "Documented capability; product quality gain has not been measured in a controlled benchmark.",
+        "effect_size": null,
+        "benchmark_status": "not_conducted"
+      },
+      "risk": "Known vulnerable versions and executable dependencies without reviewable provenance.",
+      "license": "Unresolved",
+      "sources": [
+        "S40",
+        "S46"
+      ],
+      "criteria": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "EVAL-01"
+      ],
+      "application_scope": "As needed after inspecting existing capabilities."
+    }
+  ],
+  "generalization_updated": "2026-10-05",
+  "application_guide": "reference/universal-audit.md",
+  "product_recommendations": "reference/audit-tools.yaml"
+}

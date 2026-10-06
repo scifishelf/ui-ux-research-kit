@@ -1,0 +1,986 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "LOOP-01",
+      "category": "loop",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Define roles, the user flow and acceptance before generation.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S01",
+          "S03"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read the flow specification and named responsibilities.",
+      "passing": "A priority user job, success condition, states and human acceptance owner are named.",
+      "action": "Adapt reference/flow.md.",
+      "effort": "S"
+    },
+    {
+      "id": "LOOP-02",
+      "category": "loop",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Both surfaces test the same approved build.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S08",
+          "S16"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Compare build ID, commit, working-tree fingerprint and worker version across captures.",
+      "passing": "All identities match the expected build.",
+      "action": "Integrate reference/loop/README.md and parity_check.py.",
+      "effort": "M"
+    },
+    {
+      "id": "LOOP-03",
+      "category": "loop",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Each UI change has browser and installed-PWA screenshots.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S07",
+          "S11",
+          "S40"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Compare the change/state capture matrix with its artifact manifest.",
+      "passing": "Every required state has current images of both surfaces with provenance.",
+      "action": "Integrate the dual-surface loop in reference/loop/.",
+      "effort": "M"
+    },
+    {
+      "id": "LOOP-04",
+      "category": "loop",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Criticism uses fresh context and evidence rather than self-awarded quality.",
+      "research_evidence": {
+        "type": "Research findings on judge bias; transfer to UI evaluation remains provisional",
+        "sources": [
+          "S04",
+          "S05"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Inspect the critic prompt and input bundle.",
+      "passing": "Criticism names observations and uncertainty without generator or skill names.",
+      "action": "Use rubrics/critic.md.",
+      "effort": "S"
+    },
+    {
+      "id": "LOOP-05",
+      "category": "loop",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Missing required evidence and known blockers prevent approval.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S21",
+          "S08"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Exercise negative gates with a missing PWA capture and stale build.",
+      "passing": "The gate fails; a human decides after at most three unsuccessful corrections.",
+      "action": "Integrate reference/ci-gates.md.",
+      "effort": "M"
+    },
+    {
+      "id": "LOOP-06",
+      "category": "loop",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Evidence remains linked to build, state and reviewer.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S08",
+          "S04"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check manifests, hashes, run IDs and review logs.",
+      "passing": "Captures exist and have a hash, build, state and review time.",
+      "action": "Use reference/loop/capture.schema.json.",
+      "effort": "S"
+    },
+    {
+      "id": "LOOP-07",
+      "category": "loop",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Visual regression uses fixed data, fonts and separate platform baselines.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S08"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check fixture seeds, viewports, DPR, locale, clock and baselines.",
+      "passing": "Repeated captures are stable; desktop and PWA are not compared for pixel identity.",
+      "action": "Create deterministic fixtures and separate baselines.",
+      "effort": "M"
+    },
+    {
+      "id": "DS-01",
+      "category": "design-system",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Semantic tokens share a versioned source.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S34"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read token sources, CSS output and build artifacts.",
+      "passing": "Colors, typography, spacing, radii and motion use the same token version on both surfaces.",
+      "action": "Adapt reference/tokens.json and tokens.css to the product brand.",
+      "effort": "M"
+    },
+    {
+      "id": "DS-02",
+      "category": "design-system",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Components and states have reusable specifications.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S39",
+          "S37"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Inspect imports, variants and story/fixture coverage.",
+      "passing": "Shared components cover required states without independent desktop/PWA forks.",
+      "action": "Apply reference/component-contract.md.",
+      "effort": "M"
+    },
+    {
+      "id": "DS-03",
+      "category": "design-system",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "New token violations are checked with justified exceptions.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S34",
+          "S37"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Run AST/CSS lint on literals, arbitrary values and inline styles.",
+      "passing": "No new unexplained exception; zero, 1px, percentages and algorithmic values are not categorically banned.",
+      "action": "Add the token rules in reference/component-contract.md to the existing linter.",
+      "effort": "M"
+    },
+    {
+      "id": "DS-04",
+      "category": "design-system",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "References explain decisions as well as showing screenshots.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S03",
+          "S06"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read DESIGN.md and annotated references.",
+      "passing": "Layout rules, permitted variation, counterexamples and reference rights are documented.",
+      "action": "Write a product design contract.",
+      "effort": "S"
+    },
+    {
+      "id": "UX-01",
+      "category": "ux",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Flows begin with a user job and observable success.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S03"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Compare the specification with the acceptance test.",
+      "passing": "The job, starting point, main action, result and recovery are testable.",
+      "action": "Use benchmark/tasks.yaml as a specification template.",
+      "effort": "S"
+    },
+    {
+      "id": "UX-02",
+      "category": "ux",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Cover empty, loading, error, overflow, responsive and supported theme states.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S37",
+          "S21"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Exercise states for each task, surface and theme.",
+      "passing": "No required state is missing; inapplicable cases have documented reasons.",
+      "action": "Complete reference/state-matrix.yaml.",
+      "effort": "M"
+    },
+    {
+      "id": "UX-03",
+      "category": "ux",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Status and focus remain understandable after actions.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S21",
+          "S24"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Perform keyboard/screen-reader walkthroughs and inspect status announcements.",
+      "passing": "Focus is visible, reachable and meaningful; status is not conveyed only visually or through motion.",
+      "action": "Use native dialog/form semantics and clear messages.",
+      "effort": "M"
+    },
+    {
+      "id": "UX-04",
+      "category": "ux",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Errors, offline behavior and retries preserve input.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S16",
+          "S37"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Induce errors and loss of connection in a multistep form.",
+      "passing": "Input survives; retry does not duplicate completion.",
+      "action": "Implement a recovery and retry contract.",
+      "effort": "M"
+    },
+    {
+      "id": "PWA-01",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Acceptance takes place in an actually launched Home Screen web app.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S16",
+          "S09"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read display mode and record launch from the Home Screen.",
+      "passing": "Standalone mode or navigator.standalone=true, runtime metadata and launch evidence are present.",
+      "action": "Add an installation adapter and standalone diagnostics.",
+      "effort": "M"
+    },
+    {
+      "id": "PWA-02",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Safe areas obscure neither content nor actions.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S17"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check portrait, landscape and bottom actions in the supported runtime.",
+      "passing": "Critical actions remain outside obscured insets.",
+      "action": "Add viewport-fit=cover, env() insets and safe-area tests.",
+      "effort": "S"
+    },
+    {
+      "id": "PWA-03",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "The software keyboard leaves fields, errors and the main action reachable.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S18"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Open/close the keyboard, rotate and move focus.",
+      "passing": "No obscured main action or lost focus; scrolling recovers.",
+      "action": "Observe the visual viewport and enable the actual software keyboard in tests.",
+      "effort": "M"
+    },
+    {
+      "id": "PWA-04",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Service-worker updates prevent mixed application versions.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S16"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Load N, offer N+1, then test an old client and offline behavior.",
+      "passing": "Controlling worker and UI match; unsaved input is protected before reload.",
+      "action": "Integrate update notices, versioned caches and application diagnostics.",
+      "effort": "L"
+    },
+    {
+      "id": "PWA-05",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Offline behavior follows an explicit task contract.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S16"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Test cold/warm offline starts, retry and reconnection.",
+      "passing": "Available actions and limitations are clear; no false success.",
+      "action": "Add offline states and production-build tests.",
+      "effort": "M"
+    },
+    {
+      "id": "PWA-06",
+      "category": "pwa",
+      "level": "SHOULD",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Installation guidance follows the supported iOS installation path.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S20",
+          "S16"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Test Safari installation and relaunch from the Home Screen.",
+      "passing": "No Chrome-only install control on iOS and no repeated prompting after installation.",
+      "action": "Use contextual installation guidance verified against supported versions.",
+      "effort": "S"
+    },
+    {
+      "id": "PWA-07",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Touch targets use a default product target of at least 44 CSS px.",
+      "research_evidence": {
+        "type": "WCAG AA: 24 CSS px with exceptions; 44 CSS px is a stricter product target",
+        "sources": [
+          "S23"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Measure bounding boxes and spacing; review compact exceptions individually.",
+      "passing": "44 CSS px or a documented exception; WCAG 2.5.8 remains satisfied.",
+      "action": "Define touch padding and spacing in shared components.",
+      "effort": "S"
+    },
+    {
+      "id": "PWA-08",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Simulator performance and haptic findings receive real-device validation.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S19",
+          "S29"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read real-device motion, keyboard, installation and energy test records.",
+      "passing": "At least one supported phone is tested; simulator fps is not presented as device performance.",
+      "action": "Plan a real-device gate before release.",
+      "effort": "M"
+    },
+    {
+      "id": "PWA-09",
+      "category": "pwa",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Deep links, resume and back navigation preserve consistent meaning.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S37",
+          "S16"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Exercise deep-link launch, background/resume and back navigation.",
+      "passing": "State and URL agree; no silent data loss or unintended flow restart.",
+      "action": "Add lifecycle scenarios to the test matrix.",
+      "effort": "M"
+    },
+    {
+      "id": "PWA-10",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Browser and mobile OS support matrices are explicit.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S12",
+          "S13",
+          "S14",
+          "S15"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check runtime versions and feature detection.",
+      "passing": "Minimum and current supported runtimes and fallbacks are documented.",
+      "action": "Set reference/environment.yaml to the actual support targets.",
+      "effort": "S"
+    },
+    {
+      "id": "ACC-01",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Automated accessibility scans are complemented by manual tests.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S26",
+          "S21"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Run axe across required states and perform keyboard/screen-reader tests.",
+      "passing": "No unresolved serious/critical or AA violations; incomplete results reviewed and manual tests recorded.",
+      "action": "Use reference/loop/browser.spec.ts and a manual test log.",
+      "effort": "M"
+    },
+    {
+      "id": "ACC-02",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Contrast, focus and status work in all supported themes.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S21",
+          "S24"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Measure contrast and test keyboard/screen-reader behavior.",
+      "passing": "WCAG AA requirements are met; color is not the only information channel.",
+      "action": "Use semantic tokens and native controls.",
+      "effort": "M"
+    },
+    {
+      "id": "ACC-03",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Reduced motion preserves all functionality.",
+      "research_evidence": {
+        "type": "WCAG 2.3.3 is AAA; additionally required by this project contract",
+        "sources": [
+          "S22",
+          "S30"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Change the OS preference and browser emulation before and after launch.",
+      "passing": "Unnecessary spatial transitions are removed; CSS/JS/Canvas checked; results immediately accessible.",
+      "action": "Use motion-patterns/motion.css and reduced-motion hooks.",
+      "effort": "S"
+    },
+    {
+      "id": "ACC-04",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Dragging and complex gestures have accessible alternatives.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S25",
+          "S21"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Complete the task without dragging and with keyboard/touch input.",
+      "passing": "All required actions work without a complex gesture.",
+      "action": "Add move, open and delete buttons where appropriate.",
+      "effort": "S"
+    },
+    {
+      "id": "MOT-01",
+      "category": "motion",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Motion uses semantic tokens and a bounded budget.",
+      "research_evidence": {
+        "type": "API documentation; specific timing values are pilot heuristics",
+        "sources": [
+          "S29",
+          "S31"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Compare the motion inventory with the product budget and interaction traces.",
+      "passing": "Every animation has a purpose; no blocked completion or unnecessary continuous loops.",
+      "action": "Use motion-patterns/02-guideline.md.",
+      "effort": "S"
+    },
+    {
+      "id": "MOT-02",
+      "category": "motion",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "New animation APIs have functionally equivalent fallbacks.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S13",
+          "S14",
+          "S15",
+          "S48"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Disable the API/feature detection and complete the flow.",
+      "passing": "Navigation, information and focus work without animation.",
+      "action": "Apply progressive enhancement using the technology matrix.",
+      "effort": "S"
+    },
+    {
+      "id": "MOT-03",
+      "category": "motion",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Motion is interruptible and never delays an action.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S27",
+          "S31"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Test rapid clicks, reverse, repeat and navigation during animation.",
+      "passing": "No lost click, duplicate completion or delayed focus.",
+      "action": "Update state first and cancel/reverse animation as needed.",
+      "effort": "M"
+    },
+    {
+      "id": "MOT-04",
+      "category": "motion",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Motion is reviewed with video and runtime traces.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S29",
+          "S27"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Inspect desktop/simulator recordings and timestamped traces.",
+      "passing": "Duration, jank and focus are evidenced per interaction; capture-rate limitations declared.",
+      "action": "Use reference/loop/simulator-capture.sh and frame analysis.",
+      "effort": "M"
+    },
+    {
+      "id": "PERF-01",
+      "category": "performance",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Separate field INP/CLS from laboratory diagnostics.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S27",
+          "S28"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read RUM reports and fixed interaction traces.",
+      "passing": "Field p75 INP <=200 ms and CLS <=0.1; missing field data remains unknown.",
+      "action": "Add performance instrumentation.",
+      "effort": "M"
+    },
+    {
+      "id": "SEC-01",
+      "category": "tools",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Skills and executable tools have version pins.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S46",
+          "S40"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check commits/versions, integrity hashes and lockfiles.",
+      "passing": "No unresolved latest/main references in the operational run.",
+      "action": "Use skill-radar.yaml and an adoption record.",
+      "effort": "S"
+    },
+    {
+      "id": "SEC-02",
+      "category": "tools",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Review new plugins before activation.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S46",
+          "S40",
+          "S10"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read skill instructions, scripts, hooks, network use, permissions and installers.",
+      "passing": "Review recorded; known vulnerable versions excluded; test profiles contain no secrets.",
+      "action": "Apply reference/tool-review.md.",
+      "effort": "M"
+    },
+    {
+      "id": "SEC-03",
+      "category": "tools",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Record rights for each skill, asset and data source.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S06",
+          "S33",
+          "S38"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read license files at the selected pin and check asset provenance.",
+      "passing": "No unresolved distribution rights; source rights documented separately.",
+      "action": "Maintain a license matrix and third-party notices.",
+      "effort": "S"
+    },
+    {
+      "id": "SEC-04",
+      "category": "tools",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Web pages and skill content are input data, not authorization.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S46"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Run prompt-injection/exfiltration tests in an isolated fixture.",
+      "passing": "Reference content cannot authorize access to secrets, shell commands or additional permissions.",
+      "action": "Use isolated profiles and minimal tool permissions.",
+      "effort": "M"
+    },
+    {
+      "id": "EVAL-01",
+      "category": "evaluation",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Effect claims use randomized repeated comparisons.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S01",
+          "S04"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Inspect run plans and raw data.",
+      "passing": "At least three runs per cell, equal budgets, failures retained and confidence intervals reported.",
+      "action": "Use benchmark/protocol.md.",
+      "effort": "L"
+    },
+    {
+      "id": "EVAL-02",
+      "category": "evaluation",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Expert evaluation is blind and reports reliability.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S01",
+          "S04"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check randomization, three raters and reliability calculations.",
+      "passing": "Generator identities hidden; ordinal alpha/qualified ICC and uncertainty reported; raters are not independent generations.",
+      "action": "Apply benchmark/panel-guide.md.",
+      "effort": "L"
+    },
+    {
+      "id": "EVAL-03",
+      "category": "evaluation",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "LLM judges remain advisory until independently validated.",
+      "research_evidence": {
+        "type": "Research findings on judge bias; transfer to UI evaluation remains provisional",
+        "sources": [
+          "S04",
+          "S05"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check holdout data, error categories and judge/panel agreement.",
+      "passing": "Per-dimension correlation, MAE and false blocker approvals reported; no unvalidated automatic approval.",
+      "action": "Implement rubrics/validation-plan.md.",
+      "effort": "L"
+    },
+    {
+      "id": "EVAL-04",
+      "category": "evaluation",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Measure AI detection, brand fit and diversity separately.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S06",
+          "S35"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Inspect controls and the blind-test design.",
+      "passing": "Human controls, sensitivity/specificity and product-specific fit are collected separately.",
+      "action": "Use the generic-design study in benchmark/protocol.md.",
+      "effort": "L"
+    },
+    {
+      "id": "EVAL-05",
+      "category": "evaluation",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Efficiency includes failed runs, cost and human intervention.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S01"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check run ledgers, API tokens and timing records.",
+      "passing": "Every run records total costs, attempts, waiting time and abort reasons.",
+      "action": "Use benchmark/results-template.yaml.",
+      "effort": "S"
+    },
+    {
+      "id": "LOCAL-01",
+      "category": "local",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Concurrency follows measured memory pressure.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S45",
+          "S29"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Measure process RSS and OS memory pressure during the loop.",
+      "passing": "No sustained swapping/pressure growth; parallel load does not distort captures or motion measurements.",
+      "action": "Run the pilot in reference/local-resources.md.",
+      "effort": "S"
+    },
+    {
+      "id": "LOCAL-02",
+      "category": "local",
+      "level": "MAY",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Choose local vision by defect detection rather than model size.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S45",
+          "S02"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Measure model, quantization, memory, license and holdout results.",
+      "passing": "The model reaches predefined recall within its load budget; otherwise use a capable hosted model or human review.",
+      "action": "Compare small local vision candidates in a separate pilot.",
+      "effort": "M"
+    }
+  ]
+}

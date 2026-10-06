@@ -1,0 +1,50 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "LOCAL-01",
+      "category": "local",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Concurrency follows measured memory pressure.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S45",
+          "S29"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Measure process RSS and OS memory pressure during the loop.",
+      "passing": "No sustained swapping/pressure growth; parallel load does not distort captures or motion measurements.",
+      "action": "Run the pilot in reference/local-resources.md.",
+      "effort": "S"
+    },
+    {
+      "id": "LOCAL-02",
+      "category": "local",
+      "level": "MAY",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Choose local vision by defect detection rather than model size.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S45",
+          "S02"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Measure model, quantization, memory, license and holdout results.",
+      "passing": "The model reaches predefined recall within its load budget; otherwise use a capable hosted model or human review.",
+      "action": "Compare small local vision candidates in a separate pilot.",
+      "effort": "M"
+    }
+  ]
+}

@@ -1,0 +1,426 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/ux-kit/observations.schema.json",
+  "title": "Bound product-audit observations",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "target",
+    "source_inventory_hash",
+    "scope_hash",
+    "findings"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_inventory_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "scope_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "findings": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "GOAL-01",
+          "WEB-01",
+          "WEB-02",
+          "WEB-03",
+          "WEB-04",
+          "VIS-01",
+          "VIS-02",
+          "VIS-03",
+          "VIS-04",
+          "FLOW-01",
+          "FLOW-02",
+          "FLOW-03",
+          "FLOW-04",
+          "FLOW-05",
+          "RESP-01",
+          "RESP-02",
+          "RESP-03",
+          "A11Y-01",
+          "A11Y-02",
+          "A11Y-03",
+          "A11Y-04",
+          "MOTION-01",
+          "MOTION-02",
+          "SPEED-01",
+          "SPEED-02",
+          "SYS-01",
+          "SYS-02",
+          "PWA-X01",
+          "PWA-X02",
+          "PWA-X03",
+          "PWA-X04"
+        ]
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "status",
+          "scope",
+          "reason"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "unknown",
+              "not_applicable"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "sha256",
+                "kind"
+              ],
+              "properties": {
+                "root": {
+                  "enum": [
+                    "target",
+                    "evidence"
+                  ]
+                },
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "kind": {
+                  "enum": [
+                    "source",
+                    "screenshot",
+                    "video",
+                    "trace",
+                    "test-log",
+                    "accessibility-report",
+                    "user-test"
+                  ]
+                },
+                "locator": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "runtime": {
+            "type": "object",
+            "required": [
+              "url",
+              "route",
+              "state",
+              "browser",
+              "browser_version",
+              "build_id",
+              "viewport",
+              "capture_kind"
+            ],
+            "properties": {
+              "url": {
+                "type": "string",
+                "minLength": 1
+              },
+              "route": {
+                "type": "string",
+                "minLength": 1
+              },
+              "state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "browser": {
+                "type": "string",
+                "minLength": 1
+              },
+              "browser_version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "build_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "capture_kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "display_mode": {
+                "type": "string",
+                "minLength": 1
+              },
+              "os_version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "device": {
+                "type": "string",
+                "minLength": 1
+              },
+              "theme": {
+                "type": "string",
+                "minLength": 1
+              },
+              "viewport": {
+                "type": "object",
+                "required": [
+                  "width",
+                  "height"
+                ],
+                "properties": {
+                  "width": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "height": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "coverage": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "journey_id",
+                "state",
+                "viewport"
+              ],
+              "properties": {
+                "journey_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "state": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "viewport": {
+                  "type": "object",
+                  "required": [
+                    "width",
+                    "height"
+                  ],
+                  "properties": {
+                    "width": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "height": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "remediation": {
+            "type": "object",
+            "required": [
+              "title",
+              "steps",
+              "acceptance"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "acceptance": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "affected_files": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "dependencies": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "effort": {
+                "enum": [
+                  "S",
+                  "M",
+                  "L"
+                ]
+              },
+              "owner_role": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "field_metrics": {
+            "type": "object",
+            "required": [
+              "source",
+              "window",
+              "percentile",
+              "mobile",
+              "desktop"
+            ],
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "window": {
+                "type": "string",
+                "minLength": 1
+              },
+              "percentile": {
+                "const": 75
+              },
+              "mobile": {
+                "type": "object",
+                "required": [
+                  "lcp_ms",
+                  "inp_ms",
+                  "cls"
+                ],
+                "properties": {
+                  "lcp_ms": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "inp_ms": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cls": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "additionalProperties": false
+              },
+              "desktop": {
+                "type": "object",
+                "required": [
+                  "lcp_ms",
+                  "inp_ms",
+                  "cls"
+                ],
+                "properties": {
+                  "lcp_ms": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "inp_ms": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cls": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "pass",
+                    "fail"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "observed_at",
+                "evidence"
+              ],
+              "properties": {
+                "evidence": {
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "fail"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "remediation"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

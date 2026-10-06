@@ -1,0 +1,93 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "DS-01",
+      "category": "design-system",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Semantic tokens share a versioned source.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S34"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read token sources, CSS output and build artifacts.",
+      "passing": "Colors, typography, spacing, radii and motion use the same token version on both surfaces.",
+      "action": "Adapt reference/tokens.json and tokens.css to the product brand.",
+      "effort": "M"
+    },
+    {
+      "id": "DS-02",
+      "category": "design-system",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Components and states have reusable specifications.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S39",
+          "S37"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Inspect imports, variants and story/fixture coverage.",
+      "passing": "Shared components cover required states without independent desktop/PWA forks.",
+      "action": "Apply reference/component-contract.md.",
+      "effort": "M"
+    },
+    {
+      "id": "DS-03",
+      "category": "design-system",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "New token violations are checked with justified exceptions.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S34",
+          "S37"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Run AST/CSS lint on literals, arbitrary values and inline styles.",
+      "passing": "No new unexplained exception; zero, 1px, percentages and algorithmic values are not categorically banned.",
+      "action": "Add the token rules in reference/component-contract.md to the existing linter.",
+      "effort": "M"
+    },
+    {
+      "id": "DS-04",
+      "category": "design-system",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "References explain decisions as well as showing screenshots.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S03",
+          "S06"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read DESIGN.md and annotated references.",
+      "passing": "Layout rules, permitted variation, counterexamples and reference rights are documented.",
+      "action": "Write a product design contract.",
+      "effort": "S"
+    }
+  ]
+}

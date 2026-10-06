@@ -1,0 +1,52 @@
+{
+  "schema_version": "1",
+  "status": "template_no_measurements",
+  "generation": {
+    "run_id": null,
+    "task": null,
+    "configuration": null,
+    "client": null,
+    "model_snapshot": null,
+    "base_commit": null,
+    "build_id": null,
+    "fixture_seed": null,
+    "prompt_sha256": null,
+    "skill_pins": [],
+    "duration_seconds": null,
+    "input_tokens": null,
+    "output_tokens": null,
+    "cost_currency": null,
+    "cost_amount": null,
+    "attempts": null,
+    "human_interventions": null,
+    "failure_reason": null
+  },
+  "surfaces": [
+    {
+      "surface": "desktop",
+      "capture_manifest": null,
+      "ratings": [],
+      "task_success": null,
+      "state_coverage": null,
+      "axe_violations": null,
+      "manual_accessibility": null,
+      "field_inp_p75_ms": null,
+      "field_cls_p75": null,
+      "lab_frame_intervals_ms": []
+    },
+    {
+      "surface": "pwa",
+      "capture_manifest": null,
+      "ratings": [],
+      "task_success": null,
+      "state_coverage": null,
+      "standalone_verified": null,
+      "keyboard_verified": null,
+      "safe_areas_verified": null,
+      "offline_verified": null,
+      "update_verified": null,
+      "real_device_verified": null
+    }
+  ],
+  "ranking": null
+}

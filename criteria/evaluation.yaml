@@ -1,0 +1,115 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "EVAL-01",
+      "category": "evaluation",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Effect claims use randomized repeated comparisons.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S01",
+          "S04"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Inspect run plans and raw data.",
+      "passing": "At least three runs per cell, equal budgets, failures retained and confidence intervals reported.",
+      "action": "Use benchmark/protocol.md.",
+      "effort": "L"
+    },
+    {
+      "id": "EVAL-02",
+      "category": "evaluation",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Expert evaluation is blind and reports reliability.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S01",
+          "S04"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check randomization, three raters and reliability calculations.",
+      "passing": "Generator identities hidden; ordinal alpha/qualified ICC and uncertainty reported; raters are not independent generations.",
+      "action": "Apply benchmark/panel-guide.md.",
+      "effort": "L"
+    },
+    {
+      "id": "EVAL-03",
+      "category": "evaluation",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "LLM judges remain advisory until independently validated.",
+      "research_evidence": {
+        "type": "Research findings on judge bias; transfer to UI evaluation remains provisional",
+        "sources": [
+          "S04",
+          "S05"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check holdout data, error categories and judge/panel agreement.",
+      "passing": "Per-dimension correlation, MAE and false blocker approvals reported; no unvalidated automatic approval.",
+      "action": "Implement rubrics/validation-plan.md.",
+      "effort": "L"
+    },
+    {
+      "id": "EVAL-04",
+      "category": "evaluation",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Measure AI detection, brand fit and diversity separately.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S06",
+          "S35"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Inspect controls and the blind-test design.",
+      "passing": "Human controls, sensitivity/specificity and product-specific fit are collected separately.",
+      "action": "Use the generic-design study in benchmark/protocol.md.",
+      "effort": "L"
+    },
+    {
+      "id": "EVAL-05",
+      "category": "evaluation",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Efficiency includes failed runs, cost and human intervention.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S01"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check run ledgers, API tokens and timing records.",
+      "passing": "Every run records total costs, attempts, waiting time and abort reasons.",
+      "action": "Use benchmark/results-template.yaml.",
+      "effort": "S"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "version": "0.3.0",
+  "configurations": [
+    {
+      "id": "K1",
+      "name": "Baseline",
+      "components": [
+        "Same model/client snapshot",
+        "Shared task prompt"
+      ],
+      "vision": "No rendered feedback to generator. Evaluator later renders blindly on both surfaces; disable/log integrated browser output.",
+      "budget": "Equal maximum budgets; record actual costs separately."
+    },
+    {
+      "id": "K2",
+      "name": "Design contract",
+      "components": [
+        "K1",
+        "Tokens",
+        "Component contracts",
+        "Project instructions"
+      ],
+      "vision": "No visual feedback to generator."
+    },
+    {
+      "id": "K3",
+      "name": "Single skill",
+      "components": [
+        "K2",
+        "frontend-design at the reviewed radar pin"
+      ],
+      "vision": "No visual feedback; skill instructions do not authorize extra tools."
+    },
+    {
+      "id": "K4",
+      "name": "Visual loop",
+      "components": [
+        "K3",
+        "Desktop and installed-PWA captures",
+        "Self-critique and up to three revisions"
+      ],
+      "vision": "Identical images/states; include rendering costs."
+    },
+    {
+      "id": "K5",
+      "name": "Complete flow",
+      "components": [
+        "K4",
+        "Fresh critic context",
+        "Quality gates",
+        "Documented human acceptance"
+      ],
+      "vision": "Anonymized critic artifacts; equivalent acceptance rules across evaluation arms."
+    }
+  ],
+  "additional_ablations": [
+    {
+      "id": "K3I",
+      "base": "K2",
+      "change": "Impeccable instead of frontend-design"
+    },
+    {
+      "id": "K3U",
+      "base": "K2",
+      "change": "UI UX Pro Max instead of frontend-design"
+    },
+    {
+      "id": "K5S",
+      "base": "K5",
+      "change": "Self-critique instead of fresh critic; equal images/gates/budgets"
+    },
+    {
+      "id": "K5G",
+      "base": "K5",
+      "change": "Equal critic budget; no gate feedback to generator; evaluator still checks all gates"
+    }
+  ],
+  "agent_clients": [
+    "Claude Code",
+    "Codex",
+    "Cursor"
+  ],
+  "model_snapshot": "Record before experiment; no unnamed automatic model mode",
+  "budget_plan": {
+    "per_run_minutes": 30,
+    "max_revision_loops": 3,
+    "status": "Planning assumption; calibrate and set common token/cost ceilings"
+  }
+}

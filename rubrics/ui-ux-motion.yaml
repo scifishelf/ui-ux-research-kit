@@ -1,0 +1,122 @@
+{
+  "version": "0.3.0",
+  "validation_status": "unvalidated",
+  "updated": "2026-10-06",
+  "scale": {
+    "0": "Required information/function unusable or absent",
+    "1": "Multiple severe defects; substantial assistance needed",
+    "2": "Task possible with noticeable friction/inconsistency",
+    "3": "Consistent, understandable and without material friction",
+    "4": "Convincingly product-specific; edge cases clear and robust"
+  },
+  "scoring": "Score 0–4 per dimension/surface, or null when unobservable. Record blockers separately; no acceptance by average. Freeze weights before a controlled study.",
+  "dimensions": [
+    {
+      "id": "UI-01",
+      "name": "Hierarchy and scanability",
+      "criteria": [
+        "DS-01",
+        "UX-01"
+      ],
+      "anchors": {
+        "0": "Main action/information cannot be found",
+        "2": "Hierarchy exists but accents compete",
+        "4": "Order supports the job even on dense/small screens"
+      }
+    },
+    {
+      "id": "UI-02",
+      "name": "Layout, typography and token consistency",
+      "criteria": [
+        "DS-01",
+        "DS-03"
+      ],
+      "anchors": {
+        "0": "Clipping/overflow blocks the task",
+        "2": "Some unclear spacing, contrast or type levels",
+        "4": "Consistent grid, line lengths and semantics across states"
+      }
+    },
+    {
+      "id": "UI-03",
+      "name": "Brand fit and distinction",
+      "criteria": [
+        "DS-04",
+        "EVAL-04"
+      ],
+      "anchors": {
+        "0": "Violates the approved brand contract",
+        "2": "Brand met but partly generic",
+        "4": "Actual content and deliberate brand decisions distinguish the product"
+      }
+    },
+    {
+      "id": "UX-01",
+      "name": "Task success and recovery",
+      "criteria": [
+        "UX-01",
+        "UX-04"
+      ],
+      "anchors": {
+        "0": "Completion impossible or data lost",
+        "2": "Completion requires detours/unclear recovery",
+        "4": "Success and resume understandable without help"
+      }
+    },
+    {
+      "id": "UX-02",
+      "name": "States and platform parity",
+      "criteria": [
+        "UX-02",
+        "LOOP-02",
+        "PWA-01"
+      ],
+      "anchors": {
+        "0": "Required state absent or versions contradict",
+        "2": "Core states exist but edge/platform details unclear",
+        "4": "Complete states and intentional variants preserve outcomes"
+      }
+    },
+    {
+      "id": "UX-03",
+      "name": "Accessibility and input clarity",
+      "criteria": [
+        "ACC-01",
+        "ACC-02",
+        "ACC-04"
+      ],
+      "anchors": {
+        "0": "Keyboard/touch/screen-reader operation blocked",
+        "2": "Usable with some focus/label problems",
+        "4": "All supported inputs and statuses unambiguous"
+      }
+    },
+    {
+      "id": "MOT-01",
+      "name": "Purpose and timing",
+      "criteria": [
+        "MOT-01",
+        "MOT-03"
+      ],
+      "anchors": {
+        "0": "Motion prevents the task or conveys false status",
+        "2": "Understandable but some waiting/overproduction",
+        "4": "Brief immediate feedback, orientation and interruptibility"
+      }
+    },
+    {
+      "id": "MOT-02",
+      "name": "Reduced motion and runtime quality",
+      "criteria": [
+        "ACC-03",
+        "MOT-04",
+        "PWA-08"
+      ],
+      "anchors": {
+        "0": "Strong unavoidable motion or substantial jank",
+        "2": "Fallback exists; edge/performance evidence incomplete",
+        "4": "Equivalent fallback, stable traces and real-device evidence"
+      }
+    }
+  ]
+}

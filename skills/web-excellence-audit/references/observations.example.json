@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "target": "/tmp/synthetic-task-app",
+  "source_inventory_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "scope_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "findings": {
+    "FLOW-03": {
+      "status": "fail",
+      "scope": "Synthetic example: J01 /tasks, error, 390x844; not a real test.",
+      "reason": "The example title field has no associated error message.",
+      "observed_at": "2026-10-05T10:00:00+02:00",
+      "evidence": [
+        {
+          "root": "evidence",
+          "path": "J01-error-mobile.png",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "kind": "screenshot",
+          "locator": "Title field and error area"
+        },
+        {
+          "root": "target",
+          "path": "src/components/task-form.tsx",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "kind": "source",
+          "locator": "Line 42: title input"
+        }
+      ],
+      "runtime": {
+        "url": "http://localhost:3000/tasks",
+        "route": "/tasks",
+        "state": "error",
+        "browser": "Chromium",
+        "browser_version": "fixture",
+        "build_id": "synthetic-build",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "capture_kind": "desktop-browser"
+      },
+      "remediation": {
+        "title": "Associate the title error in the task form",
+        "steps": [
+          "Render error text with a stable ID in src/components/task-form.tsx and associate it with the title field using aria-describedby.",
+          "Expose invalid state and place focus meaningfully after failed submission.",
+          "Retest empty and corrected input on desktop and mobile."
+        ],
+        "affected_files": [
+          "src/components/task-form.tsx"
+        ],
+        "acceptance": [
+          "An empty title announces the specific error in a screen reader.",
+          "After correction J01 completes; focus and input are preserved."
+        ],
+        "effort": "S",
+        "owner_role": "Frontend / accessibility",
+        "dependencies": []
+      }
+    }
+  }
+}

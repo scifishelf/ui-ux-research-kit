@@ -1,0 +1,983 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "GOAL-01",
+      "category": "context",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "static",
+      "priority": "P1",
+      "requirement": "Name the audience, user job and measurable success in the audit scope.",
+      "test": "Compare the product brief and priority journeys with actual routes.",
+      "passing": "At least one user job has a route, success condition and states.",
+      "action": "Document the audience and key journeys from the product and project rules.",
+      "effort": "S",
+      "capabilities": [
+        "usability-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S51"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "WEB-01",
+      "category": "information",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Purpose, key information and the main action are quickly recognizable.",
+      "test": "Inspect each journey entry on desktop and mobile.",
+      "passing": "Actual content makes purpose, hierarchy and next steps understandable.",
+      "action": "Align the entry section and main action with the priority user job.",
+      "effort": "S",
+      "capabilities": [
+        "visual-design",
+        "usability-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S51"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "WEB-02",
+      "category": "information",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Navigation, links and back behavior are clear and consistent.",
+      "test": "Exercise navigation, direct URLs, active location and browser back per journey.",
+      "passing": "Destinations are reachable and navigation preserves expected context.",
+      "action": "Unify navigation and URL state and restore lost context.",
+      "effort": "S",
+      "capabilities": [
+        "browser-control",
+        "usability-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S51"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "WEB-03",
+      "category": "information",
+      "level": "SHOULD",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P2",
+      "requirement": "Copy and labels explain the offer and actions in the audience's language.",
+      "test": "Read headings, buttons, errors and empty states in the rendered flow.",
+      "passing": "Labels are specific, consistent and explain the result or next step.",
+      "action": "Revise unclear labels and unnecessary content at the observed locations.",
+      "effort": "S",
+      "capabilities": [
+        "usability-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S51"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "WEB-04",
+      "category": "information",
+      "level": "SHOULD",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": "public_content",
+      "evidence_required": "static",
+      "priority": "P2",
+      "requirement": "Public content has suitable titles, descriptions and indexable structure.",
+      "test": "Inspect rendered HTML, titles, robots, canonicals and headings on public routes.",
+      "passing": "Indexability matches product goals; metadata describes each page.",
+      "action": "Add appropriate metadata and document structure to affected public routes.",
+      "effort": "S",
+      "capabilities": [
+        "interface-code-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S52"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "VIS-01",
+      "category": "visual",
+      "level": "SHOULD",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P3",
+      "requirement": "The visual direction is distinctive and appropriate for the audience.",
+      "test": "Compare rendered key pages with the brand contract and annotated references.",
+      "passing": "Reasoned color, typography, layout and image choices create a recognizable direction.",
+      "action": "Define art direction using real content and refine one key screen first.",
+      "effort": "M",
+      "capabilities": [
+        "visual-design"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S06",
+          "S53"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "VIS-02",
+      "category": "visual",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Typography, spacing and hierarchy stay readable with real content.",
+      "test": "Test long headings, dense data, text zoom and multiple viewports.",
+      "passing": "No blocking overflow; text and actions remain readable and distinguishable.",
+      "action": "Fix observed overflow and organize typography/spacing by semantic role.",
+      "effort": "M",
+      "capabilities": [
+        "visual-design",
+        "interface-code-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S21",
+          "S51"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "VIS-03",
+      "category": "visual",
+      "level": "SHOULD",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P3",
+      "requirement": "Repeated components and icons are consistent across routes and states.",
+      "test": "Compare the same components across journeys and states.",
+      "passing": "Variants follow clear color, shape, density and interaction rules.",
+      "action": "Consolidate inconsistent components into shared variants and tokens.",
+      "effort": "M",
+      "capabilities": [
+        "visual-design"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S34"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "VIS-04",
+      "category": "visual",
+      "level": "SHOULD",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": "media",
+      "evidence_required": "runtime",
+      "priority": "P3",
+      "requirement": "Images and illustrations support content and render cleanly.",
+      "test": "Inspect crops, resolution, aspect ratios and layout while loading.",
+      "passing": "Media conveys relevant information with stable dimensions and suitable crops.",
+      "action": "Replace unsuitable media and define responsive sizes and aspect ratios.",
+      "effort": "M",
+      "capabilities": [
+        "visual-design"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S53"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "FLOW-01",
+      "category": "flows",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Priority tasks can be completed with understandable outcomes.",
+      "test": "Complete every configured journey with fixed test data.",
+      "passing": "The defined success condition is reached without blocking errors.",
+      "action": "Repair the evidenced interruption or detour in the actual user flow.",
+      "effort": "M",
+      "capabilities": [
+        "browser-control",
+        "usability-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S51"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "FLOW-02",
+      "category": "flows",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": "async_states",
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Loading, empty, success and error states are complete and clear.",
+      "test": "Render relevant states with fixtures or controlled fault injection.",
+      "passing": "Every supported state explains status and the next available action.",
+      "action": "Add missing states to affected views and cover them with fixtures.",
+      "effort": "M",
+      "capabilities": [
+        "browser-control",
+        "interface-code-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S51"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "FLOW-03",
+      "category": "flows",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": "forms",
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Forms have clear labels, suitable inputs and helpful validation.",
+      "test": "Test empty, valid and invalid input including keyboard and autofill.",
+      "passing": "Errors are associated with fields; correction and completion are understandable.",
+      "action": "Label affected fields, fix input types and provide validation/recovery.",
+      "effort": "M",
+      "capabilities": [
+        "accessibility-scan",
+        "interface-code-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S21",
+          "S51"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "FLOW-04",
+      "category": "flows",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": "editable_data",
+      "evidence_required": "runtime",
+      "priority": "P0",
+      "requirement": "Errors and retries preserve input and prevent unintended data loss.",
+      "test": "Exercise errors, retry, navigation and resume during editing.",
+      "passing": "Input survives, save status is truthful and retry does not create duplicates.",
+      "action": "Fix the observed data loss or incorrect save status and test recovery.",
+      "effort": "M",
+      "capabilities": [
+        "browser-control"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S51"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "FLOW-05",
+      "category": "flows",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": "destructive_actions",
+      "evidence_required": "runtime",
+      "priority": "P0",
+      "requirement": "Consequences of critical actions are clear and appropriately controllable.",
+      "test": "Test deletion, submission and other critical actions with isolated data.",
+      "passing": "Consequences are clear; suitable confirmation, cancellation or undo works.",
+      "action": "Add suitable safeguards and recovery to the affected action.",
+      "effort": "M",
+      "capabilities": [
+        "browser-control",
+        "usability-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S51"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "RESP-01",
+      "category": "responsive",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Content and actions remain reachable on small screens and at zoom.",
+      "test": "Test configured viewports, 200% text zoom and reflow at 320 CSS px.",
+      "passing": "No blocking overflow; core tasks work at zoom and narrow widths.",
+      "action": "Make affected layouts flexible and adapt order/navigation to small screens.",
+      "effort": "S",
+      "capabilities": [
+        "browser-control",
+        "interface-code-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S21"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "RESP-02",
+      "category": "responsive",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Touch and pointer targets are large enough to operate.",
+      "test": "Measure bounding boxes/spacing and test hover-dependent features with touch.",
+      "passing": "WCAG 2.2 AA targets meet 24x24 CSS px or a documented exception; product targets recorded separately.",
+      "action": "Enlarge affected controls, correct spacing and expose hover actions to touch.",
+      "effort": "S",
+      "capabilities": [
+        "browser-control",
+        "interface-code-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S23"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "RESP-03",
+      "category": "responsive",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": "forms",
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "The software keyboard leaves fields, errors and the main action reachable.",
+      "test": "Test forms with a visible software keyboard on a supported mobile runtime.",
+      "passing": "Focus, scrolling and actions stay reachable; viewport emulation alone is not a keyboard test.",
+      "action": "Correct sticky elements, scrolling and viewport handling in the affected form.",
+      "effort": "S",
+      "capabilities": [
+        "mobile-runtime"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S18"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "A11Y-01",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P0",
+      "requirement": "Core tasks work by keyboard with understandable focus.",
+      "test": "Manually exercise Tab, Shift-Tab, Enter, Escape and focus after navigation/dialogs.",
+      "passing": "No focus trap; focus is visible, meaningfully directed and not fully obscured.",
+      "action": "Correct the observed focus order and dialog behavior.",
+      "effort": "S",
+      "capabilities": [
+        "accessibility-scan",
+        "browser-control"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S21",
+          "S24"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "A11Y-02",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Text, controls and status have sufficient contrast.",
+      "test": "Measure contrast in all supported themes and relevant states.",
+      "passing": "WCAG 2.2 AA contrast is met; status uses more than one information channel.",
+      "action": "Make affected color tokens and status representations accessible.",
+      "effort": "S",
+      "capabilities": [
+        "accessibility-scan"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S21"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "A11Y-03",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Semantics, accessible names and status announcements support assistive technology.",
+      "test": "Combine DOM/accessibility-tree checks, screen-reader walkthroughs and automated scans.",
+      "passing": "Names, roles and values match their function; important status changes are perceivable.",
+      "action": "Correct HTML semantics, labels and announcements at evidenced locations.",
+      "effort": "S",
+      "capabilities": [
+        "accessibility-scan",
+        "interface-code-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S21",
+          "S26"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "A11Y-04",
+      "category": "accessibility",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": "gestures",
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Dragging and complex gestures have accessible alternatives.",
+      "test": "Complete gesture-dependent tasks with keyboard and simple touch controls.",
+      "passing": "Required actions work without dragging or complex gestures.",
+      "action": "Add equivalent buttons and keyboard operations to the affected component.",
+      "effort": "S",
+      "capabilities": [
+        "interface-code-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S25"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "MOTION-01",
+      "category": "motion",
+      "level": "SHOULD",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": "motion",
+      "evidence_required": "runtime",
+      "priority": "P3",
+      "requirement": "Motion explains states, stays brief and interruptible and supports the task.",
+      "test": "Exercise repeat, reverse and navigation during motion and inspect video.",
+      "passing": "Motion never delays an action and communicates the actual state.",
+      "action": "Shorten/remove disruptive motion and unify useful feedback.",
+      "effort": "S",
+      "capabilities": [
+        "visual-design",
+        "browser-control"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S29",
+          "S31"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "MOTION-02",
+      "category": "motion",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": "motion",
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Reduced motion preserves functionality and clear feedback.",
+      "test": "Test prefers-reduced-motion before and during use, including CSS and Canvas.",
+      "passing": "Strong translation/zoom/parallax are reduced; end states and actions remain reachable.",
+      "action": "Add reduced-motion fallbacks to every animation mechanism in use.",
+      "effort": "S",
+      "capabilities": [
+        "interface-code-review",
+        "browser-control"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S22",
+          "S30"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "SPEED-01",
+      "category": "performance",
+      "level": "SHOULD",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P2",
+      "requirement": "Loading, responsiveness and layout stability are measured transparently.",
+      "test": "Collect field p75 LCP, INP and CLS separately from laboratory diagnostics.",
+      "passing": "Field targets LCP <=2.5s, INP <=200ms and CLS <=0.1 are evidenced; missing field data remains unknown.",
+      "action": "Measure local bottlenecks and establish field monitoring for affected routes after deployment.",
+      "effort": "S",
+      "capabilities": [
+        "performance-trace"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S54"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "SPEED-02",
+      "category": "performance",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Loading and interactions work without blocking runtime errors.",
+      "test": "Inspect console/network and repeat core actions under defined device/network conditions.",
+      "passing": "No task-blocking errors or long stalls; images reserve stable space.",
+      "action": "Fix measured errors, waterfalls or main-thread blocking at their source.",
+      "effort": "S",
+      "capabilities": [
+        "performance-trace",
+        "browser-control"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S27",
+          "S28",
+          "S29"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "SYS-01",
+      "category": "maintainability",
+      "level": "SHOULD",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "static",
+      "priority": "P2",
+      "requirement": "Design decisions and components have an appropriate shared source.",
+      "test": "Read styles, components and project rules in the actual stack.",
+      "passing": "Repeated decisions are maintained consistently at an effort appropriate to the product.",
+      "action": "Consolidate existing styles/components and document the design contract.",
+      "effort": "M",
+      "capabilities": [
+        "interface-code-review"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S34"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "SYS-02",
+      "category": "maintainability",
+      "level": "SHOULD",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "website",
+        "webapp",
+        "pwa"
+      ],
+      "feature": null,
+      "evidence_required": "static",
+      "priority": "P4",
+      "requirement": "Key flows and visual states have reproducible regression tests.",
+      "test": "Compare tests, fixtures and CI configuration with audited journeys.",
+      "passing": "Repeatable tests protect core flows and important visual states with fixed data.",
+      "action": "Add regression tests for repaired flows and separate viewport baselines.",
+      "effort": "M",
+      "capabilities": [
+        "browser-control"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S08"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "PWA-X01",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "pwa"
+      ],
+      "feature": "pwa",
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "The PWA works in its actual installed target mode.",
+      "test": "Test installation, standalone launch, resume and deep links on a supported device.",
+      "passing": "Runtime provenance proves installed mode; core journeys work.",
+      "action": "Correct and document installation/standalone launch on the target platform.",
+      "effort": "M",
+      "capabilities": [
+        "pwa-runtime"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S16"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "PWA-X02",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "pwa"
+      ],
+      "feature": "pwa",
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Safe areas and mobile navigation keep content and actions reachable.",
+      "test": "Check portrait/landscape, bottom actions and navigation in installed mode.",
+      "passing": "Safe areas obscure nothing; navigation and return behavior are understandable.",
+      "action": "Fix safe-area spacing and navigation in affected PWA views.",
+      "effort": "M",
+      "capabilities": [
+        "pwa-runtime"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S17"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "PWA-X03",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "pwa"
+      ],
+      "feature": "service_worker",
+      "evidence_required": "runtime",
+      "priority": "P0",
+      "requirement": "Updates avoid contradictory application and service-worker versions.",
+      "test": "Exercise N to N+1 with an open client, retry and reconnection.",
+      "passing": "Client and worker match the expected build; updates preserve user context.",
+      "action": "Correct the update/cache strategy for the observed version mixing.",
+      "effort": "M",
+      "capabilities": [
+        "pwa-runtime"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S16"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    },
+    {
+      "id": "PWA-X04",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "web"
+      ],
+      "profiles": [
+        "pwa"
+      ],
+      "feature": "offline",
+      "evidence_required": "runtime",
+      "priority": "P1",
+      "requirement": "Offline scope, connection failures and resume are understandable.",
+      "test": "Exercise defined offline journeys and reconnection with cold/warm starts.",
+      "passing": "The offline contract is met; unavailable features and retry are clear.",
+      "action": "Add offline states and resume behavior for intended user jobs.",
+      "effort": "M",
+      "capabilities": [
+        "pwa-runtime"
+      ],
+      "research_evidence": {
+        "type": "Product quality requirement; verify in the target product",
+        "sources": [
+          "S16",
+          "S51"
+        ],
+        "product_effect": "To be verified in the target product"
+      }
+    }
+  ]
+}

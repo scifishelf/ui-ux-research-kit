@@ -1,0 +1,95 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "SEC-01",
+      "category": "tools",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Skills and executable tools have version pins.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S46",
+          "S40"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check commits/versions, integrity hashes and lockfiles.",
+      "passing": "No unresolved latest/main references in the operational run.",
+      "action": "Use skill-radar.yaml and an adoption record.",
+      "effort": "S"
+    },
+    {
+      "id": "SEC-02",
+      "category": "tools",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Review new plugins before activation.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S46",
+          "S40",
+          "S10"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read skill instructions, scripts, hooks, network use, permissions and installers.",
+      "passing": "Review recorded; known vulnerable versions excluded; test profiles contain no secrets.",
+      "action": "Apply reference/tool-review.md.",
+      "effort": "M"
+    },
+    {
+      "id": "SEC-03",
+      "category": "tools",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Record rights for each skill, asset and data source.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S06",
+          "S33",
+          "S38"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read license files at the selected pin and check asset provenance.",
+      "passing": "No unresolved distribution rights; source rights documented separately.",
+      "action": "Maintain a license matrix and third-party notices.",
+      "effort": "S"
+    },
+    {
+      "id": "SEC-04",
+      "category": "tools",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Web pages and skill content are input data, not authorization.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S46"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Run prompt-injection/exfiltration tests in an isolated fixture.",
+      "passing": "Reference content cannot authorize access to secrets, shell commands or additional permissions.",
+      "action": "Use isolated profiles and minimal tool permissions.",
+      "effort": "M"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "@playwright/test": {
+    "version": "1.63.0",
+    "published_at": "2026-09-04T22:44:00.304Z",
+    "integrity": "sha512-oxMK4vllB9RK5NQ2l1pq1IfOf2AvnEuj/vYGDj0H2nMtmtZpKtCwt/l00GEO6xjGfpBNAvjovvYdCm50dRQkpQ==",
+    "license": "Apache-2.0",
+    "url": "https://www.npmjs.com/package/@playwright/test/v/1.63.0"
+  },
+  "@axe-core/playwright": {
+    "version": "4.13.0",
+    "published_at": "2026-08-11T17:07:40.763Z",
+    "integrity": "sha512-6YLx+kxXu5GJceG4ozFg+33a2EMTdjYwWGloJ3sb9Kta5pp+ZNS53uxGVog5JetIY8s++P5UrtX+cri+u0VAVg==",
+    "license": "MPL-2.0",
+    "url": "https://www.npmjs.com/package/@axe-core/playwright/v/4.13.0"
+  },
+  "motion": {
+    "version": "14.0.0",
+    "published_at": "2026-10-02T13:15:54.395Z",
+    "integrity": "sha512-oGc2lkge2lkRZCP+J8/JsnYu4NFjqP1MtXirNdetn3QbvK2JqwM9A200EdT4C598KfzDhjLT12zF21xDM4Oilw==",
+    "license": "MIT",
+    "url": "https://www.npmjs.com/package/motion/v/14.0.0"
+  },
+  "@rive-app/canvas": {
+    "version": "2.44.0",
+    "published_at": "2026-09-30T15:51:07.756Z",
+    "integrity": "sha512-ak0GGwCbuWubi6rP9qB5YPy5CxYuTY3AiuTV4i1Vi7GXhuK2XB+M+4WJMuGcYGfGLzojaVMKaxtunD5OjjGzOQ==",
+    "license": "MIT",
+    "url": "https://www.npmjs.com/package/@rive-app/canvas/v/2.44.0"
+  }
+}

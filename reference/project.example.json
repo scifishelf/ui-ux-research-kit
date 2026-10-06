@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "profile": "webapp",
+  "frontend": ".",
+  "audience": "People managing their tasks locally",
+  "features": {
+    "public_content": false,
+    "media": false,
+    "async_states": true,
+    "forms": true,
+    "editable_data": true,
+    "destructive_actions": true,
+    "gestures": false,
+    "motion": true,
+    "pwa": false,
+    "service_worker": false,
+    "offline": false
+  },
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "journeys": [
+    {
+      "id": "J01",
+      "route": "/tasks",
+      "task": "Create a task and find it again",
+      "success": "The new task appears in the list after successful saving.",
+      "states": [
+        "default",
+        "empty",
+        "loading",
+        "error",
+        "success"
+      ]
+    }
+  ],
+  "available_capabilities": [],
+  "report_language": "English"
+}

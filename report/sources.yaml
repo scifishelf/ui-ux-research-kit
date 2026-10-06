@@ -1,0 +1,502 @@
+{
+  "updated": "2026-10-05",
+  "note": "Source snapshots retain their original retrieval dates. Standards, capabilities, research and trend observations have different evidential scope; 2027 outlooks are hypotheses.",
+  "sources": [
+    {
+      "id": "S01",
+      "title": "Design2Code",
+      "url": "https://arxiv.org/abs/2403.03163",
+      "type": "Research",
+      "version": "NAACL 2025 / arXiv v3",
+      "scope": "484 web pages; screenshot-to-code with automated and human evaluation. Not a product-PWA study.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S02",
+      "title": "VisualWebArena",
+      "url": "https://arxiv.org/abs/2401.13649",
+      "type": "Research",
+      "version": "ACL 2024 / v2",
+      "scope": "Visually grounded web tasks and observed agent failures. Not a UI design skill evaluation.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S03",
+      "title": "Sketch2Code",
+      "url": "https://arxiv.org/abs/2410.16232",
+      "type": "Research",
+      "version": "Preprint 2024",
+      "scope": "Interactive prototyping; clarification does not reliably produce continuous improvement.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S04",
+      "title": "MT-Bench / LLM-as-Judge",
+      "url": "https://arxiv.org/abs/2306.05685",
+      "type": "Research",
+      "version": "2023 / v4",
+      "scope": "Position, verbosity and self-preference bias. Agreement on text conversations does not validate UI judgments.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S05",
+      "title": "Rubric Artifacts",
+      "url": "https://arxiv.org/abs/2609.02942",
+      "type": "Research",
+      "version": "2026 / v1; EMNLP acceptance reported by authors",
+      "scope": "Rubric wording can affect text judgments. Transfer to UI judges is a hypothesis to test.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S06",
+      "title": "Anthropic frontend-design",
+      "url": "https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md",
+      "type": "Vendor source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "Aesthetic direction and product-specific design; effect size in the target product is unknown.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S07",
+      "title": "Playwright MCP",
+      "url": "https://github.com/microsoft/playwright-mcp",
+      "type": "Vendor source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "Accessibility snapshots, browser control and screenshots. A tree alone does not show aesthetics.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S08",
+      "title": "Playwright Visual comparisons",
+      "url": "https://playwright.dev/docs/test-snapshots",
+      "type": "Vendor documentation",
+      "version": "Living documentation",
+      "scope": "Browser/OS-specific baselines and screenshots captured under fixed conditions.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S09",
+      "title": "Playwright Emulation",
+      "url": "https://playwright.dev/docs/emulation",
+      "type": "Vendor documentation",
+      "version": "Living documentation",
+      "scope": "Device profiles emulate viewport, input and user agent; they do not replace an installed PWA.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S10",
+      "title": "Chrome DevTools MCP",
+      "url": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+      "type": "Vendor source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "Traces, screenshots, network and console. Review telemetry and optional CrUX queries separately.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S11",
+      "title": "Safari MCP",
+      "url": "https://webkit.org/blog/18136/introducing-the-safari-mcp-server-for-web-developers/",
+      "type": "Vendor documentation",
+      "version": "2026; Safari 27",
+      "scope": "Local safaridriver --mcp with Safari DOM, screenshots, network and interactions. No documented standalone-iOS automation.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S12",
+      "title": "Safari 27.0",
+      "url": "https://webkit.org/blog/18325/webkit-features-for-safari-27-0/",
+      "type": "Vendor documentation",
+      "version": "17.09.2026",
+      "scope": "Release article covering Safari MCP and animation improvements. Verify support in the actual runtime.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S13",
+      "title": "Safari 26.0",
+      "url": "https://webkit.org/blog/17333/webkit-features-in-safari-26-0/",
+      "type": "Vendor documentation",
+      "version": "2025",
+      "scope": "Scroll-driven animations; no guarantee of equal performance on all phones.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S14",
+      "title": "Safari 18.0",
+      "url": "https://webkit.org/blog/15865/webkit-features-in-safari-18-0/",
+      "type": "Vendor documentation",
+      "version": "2024",
+      "scope": "Same-document View Transitions; system haptic feedback for native checkbox-switch controls.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S15",
+      "title": "Safari 18.2",
+      "url": "https://webkit.org/blog/16301/webkit-features-in-safari-18-2/",
+      "type": "Vendor documentation",
+      "version": "2024",
+      "scope": "Cross-document View Transitions; SPA routing requires separate integration.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S16",
+      "title": "iOS Home Screen Web Apps",
+      "url": "https://webkit.org/blog/13878/web-push-for-web-apps-on-ios-and-ipados/",
+      "type": "Vendor documentation",
+      "version": "2023 / iOS 16.4",
+      "scope": "Manifest, Home Screen web apps and user-initiated push permissions. Not a complete current support test.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S17",
+      "title": "Safe Areas",
+      "url": "https://webkit.org/blog/7929/designing-websites-for-iphone-x/",
+      "type": "Vendor documentation",
+      "version": "2017; technical foundation",
+      "scope": "Safe-area insets and viewport-fit; test current devices and installed mode separately.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S18",
+      "title": "Viewport and keyboard",
+      "url": "https://developer.chrome.com/blog/viewport-resize-behavior/",
+      "type": "Vendor documentation",
+      "version": "2022; viewport model",
+      "scope": "Software keyboards and visual/layout viewport behavior; actual runtime testing remains necessary.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S19",
+      "title": "Vibration API",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Vibration_API",
+      "type": "API reference",
+      "version": "Living documentation",
+      "scope": "Vibration API availability is limited; it is not a reliable basis for general iOS-PWA haptics.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S20",
+      "title": "beforeinstallprompt",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeinstallprompt_event",
+      "type": "API reference",
+      "version": "Living documentation",
+      "scope": "Installation events are not universal; iOS guidance needs its own verified path.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S21",
+      "title": "WCAG 2.2",
+      "url": "https://www.w3.org/TR/WCAG22/",
+      "type": "Standard",
+      "version": "Recommendation 12.12.2024",
+      "scope": "Normative contrast, focus and status requirements, among others; AA is the kit target.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S22",
+      "title": "Animation from Interactions",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html",
+      "type": "Standard guidance",
+      "version": "SC 2.3.3 / AAA",
+      "scope": "Nonessential interaction motion can be disabled; additionally required by the kit's project contract.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S23",
+      "title": "Target Size Minimum",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+      "type": "Standard guidance",
+      "version": "SC 2.5.8 / AA",
+      "scope": "24 CSS px with spacing rules/exceptions; the kit's 44 CSS px product target is stricter.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S24",
+      "title": "Modal Dialog APG",
+      "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+      "type": "Implementation guidance",
+      "version": "APG; not normative WCAG conformance evidence",
+      "scope": "Initial focus, tab cycle, Escape and focus return; choose initial focus carefully for long content.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S25",
+      "title": "Dragging Movements",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html",
+      "type": "Standard guidance",
+      "version": "SC 2.5.7 / AA",
+      "scope": "Dragging needs an operable alternative unless a defined exception applies.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S26",
+      "title": "axe-core",
+      "url": "https://github.com/dequelabs/axe-core",
+      "type": "Vendor source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "Automated accessibility testing is incomplete; review incomplete results manually.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S27",
+      "title": "INP",
+      "url": "https://web.dev/articles/inp",
+      "type": "Vendor documentation",
+      "version": "Living documentation",
+      "scope": "Good INP is at most 200 ms at field p75; distinguish field metrics from laboratory diagnostics.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S28",
+      "title": "CLS",
+      "url": "https://web.dev/articles/cls",
+      "type": "Vendor documentation",
+      "version": "Living documentation",
+      "scope": "Good CLS is at most 0.1; reserve space for media and loading states.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S29",
+      "title": "Performante CSS-Animation",
+      "url": "https://web.dev/articles/animations-guide",
+      "type": "Vendor documentation",
+      "version": "Living documentation",
+      "scope": "CSS/WAAPI animation mechanisms; documentation does not establish optimal product timing.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S30",
+      "title": "Motion Accessibility",
+      "url": "https://motion.dev/docs/react-accessibility",
+      "type": "Vendor documentation",
+      "version": "Living documentation",
+      "scope": "Reduced motion in React; CSS, Canvas and direct gestures require separate handling.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S31",
+      "title": "Motion Transitions",
+      "url": "https://motion.dev/docs/react-transitions",
+      "type": "Vendor documentation",
+      "version": "Living documentation",
+      "scope": "Springs, duration and physics parameters; distance/velocity affect actual timing.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S32",
+      "title": "Rive Web",
+      "url": "https://rive.app/docs/runtimes/web/web-js",
+      "type": "Vendor documentation",
+      "version": "Living documentation",
+      "scope": "WASM/Canvas runtime for authored assets and state machines; application lifecycle integration required.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S33",
+      "title": "Lottie Web",
+      "url": "https://github.com/airbnb/lottie-web",
+      "type": "Vendor source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "Exported motion assets; treat runtime and asset licenses separately.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S34",
+      "title": "Design Tokens 2025.10",
+      "url": "https://www.designtokens.org/tr/2025.10/format/",
+      "type": "Specification",
+      "version": "Final Community Group Report 28.10.2025",
+      "scope": "Interchange format, not a W3C standard. Tokens alone define neither layout nor UX.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S35",
+      "title": "Impeccable",
+      "url": "https://github.com/pbakaus/impeccable",
+      "type": "Provider source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "Design instructions, criticism, browser iteration and deterministic detectors; external product effect unmeasured.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S36",
+      "title": "UI UX Pro Max",
+      "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "type": "Provider source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "Design knowledge and system selection/generation; formulaic style selection is a risk.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S37",
+      "title": "Vercel Agent Skills",
+      "url": "https://github.com/vercel-labs/agent-skills",
+      "type": "Vendor source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "React Best Practices and Web Design Guidelines; code review does not replace visual inspection.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S38",
+      "title": "Design Extractor",
+      "url": "https://github.com/imehr/design-extractor",
+      "type": "Provider source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "DOM/token extraction and replica iteration; similarity is not independent usability evidence.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S39",
+      "title": "Figma MCP",
+      "url": "https://developers.figma.com/docs/figma-mcp-server/",
+      "type": "Vendor documentation",
+      "version": "Living documentation",
+      "scope": "Design context, variables, components and Code Connect; add permissions and product states.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S40",
+      "title": "iOS Simulator MCP",
+      "url": "https://github.com/joshuayoes/ios-simulator-mcp",
+      "type": "Provider source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "idb/simctl and UI control. The README describes command injection fixed before version 1.3.3.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S41",
+      "title": "MobileBuildMCP / XcodeBuildMCP",
+      "url": "https://github.com/getsentry/MobileBuildMCP",
+      "type": "Provider source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "Successor to XcodeBuildMCP; build/simulator tools may exceed a web-only PWA's needs.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S42",
+      "title": "Claude Code Chrome",
+      "url": "https://code.claude.com/docs/en/chrome",
+      "type": "Vendor documentation",
+      "version": "Living documentation",
+      "scope": "Browser inspection integration; record actual client/tool versions and capabilities.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S43",
+      "title": "Codex Browser",
+      "url": "https://developers.openai.com/codex/app/browser",
+      "type": "Vendor documentation",
+      "version": "Redirect to official browser documentation",
+      "scope": "Shared browser view and visual interactions; use controlled test access.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S44",
+      "title": "Cursor Browser",
+      "url": "https://cursor.com/docs/agent/browser",
+      "type": "Vendor documentation",
+      "version": "Living documentation",
+      "scope": "Screenshots, interactions and UI correction; no established direct quality ranking.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S45",
+      "title": "MLX-VLM",
+      "url": "https://github.com/Blaizzy/mlx-vlm",
+      "type": "Provider source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "Local vision inference on Apple Silicon. Validate model-weight license and task suitability separately.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S46",
+      "title": "MCP Security Best Practices",
+      "url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/security_best_practices",
+      "type": "Protocol documentation",
+      "version": "2025-11-25",
+      "scope": "Authorization, token handling and trust boundaries; no security certification of a server.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S47",
+      "title": "Agent Browser",
+      "url": "https://github.com/vercel-labs/agent-browser",
+      "type": "Vendor source code",
+      "version": "Commit recorded in repository-pins.json",
+      "scope": "CLI browser control with element references; trial as an alternative to MCP.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S48",
+      "title": "View Transition API",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API",
+      "type": "API reference",
+      "version": "Living documentation",
+      "scope": "Transitions do not define routing/focus semantics; use feature detection.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S49",
+      "title": "Impeccable evaluation reference",
+      "url": "https://github.com/pbakaus/impeccable/blob/main/CLAUDE.md",
+      "type": "Provider source code",
+      "version": "Moving branch; read 2026-10-04",
+      "scope": "References a private evaluation repository; not publicly reproducible effect-size evidence.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S50",
+      "title": "FronTalk",
+      "url": "https://arxiv.org/abs/2601.04203v3",
+      "type": "Research",
+      "version": "CoLM 2026; v3 2026-08-09",
+      "scope": "Multiturn frontend instructions, forgetting and web-agent criticism; not evidence for design skills or iOS PWAs.",
+      "retrieved": "2026-10-04"
+    },
+    {
+      "id": "S51",
+      "title": "10 Usability Heuristics",
+      "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+      "type": "Primary usability guidance",
+      "version": "Snapshot 2026-10-05",
+      "scope": "General usability heuristics; verify actual usability in the target product.",
+      "retrieved": "2026-10-05"
+    },
+    {
+      "id": "S52",
+      "title": "Google SEO Starter Guide",
+      "url": "https://developers.google.com/search/docs/fundamentals/seo-starter-guide",
+      "type": "Vendor documentation",
+      "version": "Snapshot 2026-10-05",
+      "scope": "Public indexable web pages; not required for internal web applications.",
+      "retrieved": "2026-10-05"
+    },
+    {
+      "id": "S53",
+      "title": "Webflow Design Trends 2026",
+      "url": "https://webflow.com/blog/web-design-trends-2026",
+      "type": "Vendor trend observations",
+      "version": "Snapshot 2026-10-05",
+      "scope": "Visual examples and art direction; neither a representative market standard nor causal usability evidence.",
+      "retrieved": "2026-10-05"
+    },
+    {
+      "id": "S54",
+      "title": "Web Vitals",
+      "url": "https://web.dev/articles/vitals",
+      "type": "Vendor documentation",
+      "version": "Snapshot 2026-10-05",
+      "scope": "Field p75 LCP <=2.5s, INP <=200ms and CLS <=0.1; separate field measurements from laboratory tests.",
+      "retrieved": "2026-10-05"
+    },
+    {
+      "id": "S55",
+      "title": "Skills CLI",
+      "url": "https://github.com/vercel-labs/skills",
+      "type": "Vendor documentation",
+      "version": "Snapshot 2026-10-05",
+      "scope": "CLI skill selection and project installation; no effectiveness evidence.",
+      "retrieved": "2026-10-05"
+    }
+  ],
+  "version": "0.3.0"
+}

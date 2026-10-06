@@ -1,0 +1,18 @@
+:root { --motion-quick:120ms; --motion-standard:220ms; --ease-enter:cubic-bezier(.2,0,0,1); }
+.press { transition: transform var(--motion-quick) var(--ease-enter); }
+.press:active { transform:scale(.98); }
+@media (hover:hover) and (pointer:fine) { .press:hover { border-color:currentColor; } }
+:focus-visible { outline:3px solid #155eef; outline-offset:3px; }
+.reveal { animation:reveal var(--motion-standard) var(--ease-enter) both; }
+@keyframes reveal { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+.skeleton { width:min(100%,22rem); height:4rem; background:#e5e7eb; border-radius:.5rem; }
+.spinner { display:inline-block; width:1em; height:1em; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:spin 900ms linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+dialog[open] { animation:reveal 240ms var(--ease-enter) both; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration:200ms; }
+button,summary { min-height:44px; } button { min-width:44px; }
+@media (prefers-reduced-motion:reduce) {
+  .press { transition:none; } .press:active { transform:none; }
+  .reveal, .spinner, dialog[open] { animation:none; transform:none; opacity:1; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation:none; }
+}

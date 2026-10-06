@@ -1,0 +1,342 @@
+{
+  "date": "2026-10-06T04:50:41.955Z",
+  "kind": "demonstration_not_product_benchmark",
+  "results": [
+    {
+      "pattern": "MP01",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp01-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.92,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP02",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp02-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 1,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.6,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP03",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp03-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.64,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP04",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp04-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.64,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP05",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp05-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.6,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP06",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp06-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.76,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP07",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp07-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.6,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP08",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp08-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.6,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP09",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp09-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.64,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP10",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp10-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.6,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP11",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp11-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.64,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP12",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp12-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.64,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP13",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp13-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.64,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    },
+    {
+      "pattern": "MP14",
+      "browser": "Chromium",
+      "browserVersion": "148.0.7778.96",
+      "viewport": [
+        1100,
+        680
+      ],
+      "capture": "Playwright video; normal interaction then reduced-motion emulation",
+      "path": "motion-patterns/videos/mp14-desktop.mp4",
+      "errors": [],
+      "duplicateIds": [],
+      "runningAnimationsNormal": 0,
+      "runningAnimationsReduced": 0,
+      "standalonePwa": false,
+      "encoded_video": {
+        "duration_seconds": 2.64,
+        "codec": "h264",
+        "size": [
+          1100,
+          680
+        ]
+      }
+    }
+  ]
+}

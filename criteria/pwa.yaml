@@ -1,0 +1,216 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "PWA-01",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Acceptance takes place in an actually launched Home Screen web app.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S16",
+          "S09"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read display mode and record launch from the Home Screen.",
+      "passing": "Standalone mode or navigator.standalone=true, runtime metadata and launch evidence are present.",
+      "action": "Add an installation adapter and standalone diagnostics.",
+      "effort": "M"
+    },
+    {
+      "id": "PWA-02",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Safe areas obscure neither content nor actions.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S17"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check portrait, landscape and bottom actions in the supported runtime.",
+      "passing": "Critical actions remain outside obscured insets.",
+      "action": "Add viewport-fit=cover, env() insets and safe-area tests.",
+      "effort": "S"
+    },
+    {
+      "id": "PWA-03",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "The software keyboard leaves fields, errors and the main action reachable.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S18"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Open/close the keyboard, rotate and move focus.",
+      "passing": "No obscured main action or lost focus; scrolling recovers.",
+      "action": "Observe the visual viewport and enable the actual software keyboard in tests.",
+      "effort": "M"
+    },
+    {
+      "id": "PWA-04",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Service-worker updates prevent mixed application versions.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S16"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Load N, offer N+1, then test an old client and offline behavior.",
+      "passing": "Controlling worker and UI match; unsaved input is protected before reload.",
+      "action": "Integrate update notices, versioned caches and application diagnostics.",
+      "effort": "L"
+    },
+    {
+      "id": "PWA-05",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Offline behavior follows an explicit task contract.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S16"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Test cold/warm offline starts, retry and reconnection.",
+      "passing": "Available actions and limitations are clear; no false success.",
+      "action": "Add offline states and production-build tests.",
+      "effort": "M"
+    },
+    {
+      "id": "PWA-06",
+      "category": "pwa",
+      "level": "SHOULD",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Installation guidance follows the supported iOS installation path.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S20",
+          "S16"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Test Safari installation and relaunch from the Home Screen.",
+      "passing": "No Chrome-only install control on iOS and no repeated prompting after installation.",
+      "action": "Use contextual installation guidance verified against supported versions.",
+      "effort": "S"
+    },
+    {
+      "id": "PWA-07",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Touch targets use a default product target of at least 44 CSS px.",
+      "research_evidence": {
+        "type": "WCAG AA: 24 CSS px with exceptions; 44 CSS px is a stricter product target",
+        "sources": [
+          "S23"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Measure bounding boxes and spacing; review compact exceptions individually.",
+      "passing": "44 CSS px or a documented exception; WCAG 2.5.8 remains satisfied.",
+      "action": "Define touch padding and spacing in shared components.",
+      "effort": "S"
+    },
+    {
+      "id": "PWA-08",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "pwa"
+      ],
+      "requirement": "Simulator performance and haptic findings receive real-device validation.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S19",
+          "S29"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read real-device motion, keyboard, installation and energy test records.",
+      "passing": "At least one supported phone is tested; simulator fps is not presented as device performance.",
+      "action": "Plan a real-device gate before release.",
+      "effort": "M"
+    },
+    {
+      "id": "PWA-09",
+      "category": "pwa",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Deep links, resume and back navigation preserve consistent meaning.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S37",
+          "S16"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Exercise deep-link launch, background/resume and back navigation.",
+      "passing": "State and URL agree; no silent data loss or unintended flow restart.",
+      "action": "Add lifecycle scenarios to the test matrix.",
+      "effort": "M"
+    },
+    {
+      "id": "PWA-10",
+      "category": "pwa",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Browser and mobile OS support matrices are explicit.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S12",
+          "S13",
+          "S14",
+          "S15"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Check runtime versions and feature detection.",
+      "passing": "Minimum and current supported runtimes and fallbacks are documented.",
+      "action": "Set reference/environment.yaml to the actual support targets.",
+      "effort": "S"
+    }
+  ]
+}

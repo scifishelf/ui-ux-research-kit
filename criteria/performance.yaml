@@ -1,0 +1,28 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "PERF-01",
+      "category": "performance",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Separate field INP/CLS from laboratory diagnostics.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S27",
+          "S28"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Read RUM reports and fixed interaction traces.",
+      "passing": "Field p75 INP <=200 ms and CLS <=0.1; missing field data remains unknown.",
+      "action": "Add performance instrumentation.",
+      "effort": "M"
+    }
+  ]
+}

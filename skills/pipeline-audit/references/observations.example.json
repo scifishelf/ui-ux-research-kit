@@ -1,0 +1,8 @@
+{
+  "LOOP-03": {
+    "status": "unknown",
+    "scope": "Illustrative example, not a product finding",
+    "reason": "A desktop capture exists; current installed-PWA evidence is missing.",
+    "evidence": []
+  }
+}

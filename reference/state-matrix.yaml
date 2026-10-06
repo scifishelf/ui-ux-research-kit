@@ -1,0 +1,35 @@
+{
+  "version": "0.3.0",
+  "status": "Template; specialize per actual route",
+  "states": [
+    "default",
+    "empty",
+    "loading",
+    "error",
+    "overflow",
+    "offline",
+    "success"
+  ],
+  "surfaces": [
+    "desktop",
+    "pwa"
+  ],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "motion": [
+    "no-preference",
+    "reduce"
+  ],
+  "mandatory_variants": [
+    "software-keyboard-open",
+    "landscape",
+    "long-text",
+    "large-text",
+    "resume",
+    "update-N-to-N+1"
+  ],
+  "parity": "Equivalent supported actions, content, outcomes and token semantics; document intentional surface-only routes.",
+  "completion": "Record pass/fail/unknown/not_applicable and evidence per required combination; unknown blocks required gates."
+}

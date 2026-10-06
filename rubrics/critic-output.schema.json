@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "build",
+    "surface",
+    "scores",
+    "findings",
+    "unknown",
+    "release_recommendation"
+  ],
+  "properties": {
+    "build": {
+      "type": "string",
+      "minLength": 1
+    },
+    "surface": {
+      "enum": [
+        "desktop",
+        "pwa",
+        "both"
+      ]
+    },
+    "scores": {
+      "type": "object",
+      "required": [
+        "UI-01",
+        "UI-02",
+        "UI-03",
+        "UX-01",
+        "UX-02",
+        "UX-03",
+        "MOT-01",
+        "MOT-02"
+      ],
+      "properties": {
+        "UI-01": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 4
+        },
+        "UI-02": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 4
+        },
+        "UI-03": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 4
+        },
+        "UX-01": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 4
+        },
+        "UX-02": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 4
+        },
+        "UX-03": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 4
+        },
+        "MOT-01": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 4
+        },
+        "MOT-02": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 4
+        }
+      },
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "criterion",
+          "severity",
+          "observation",
+          "evidence",
+          "reproduction",
+          "confidence",
+          "action",
+          "retest"
+        ],
+        "properties": {
+          "criterion": {
+            "type": "string",
+            "enum": [
+              "LOOP-01",
+              "LOOP-02",
+              "LOOP-03",
+              "LOOP-04",
+              "LOOP-05",
+              "LOOP-06",
+              "LOOP-07",
+              "DS-01",
+              "DS-02",
+              "DS-03",
+              "DS-04",
+              "UX-01",
+              "UX-02",
+              "UX-03",
+              "UX-04",
+              "PWA-01",
+              "PWA-02",
+              "PWA-03",
+              "PWA-04",
+              "PWA-05",
+              "PWA-06",
+              "PWA-07",
+              "PWA-08",
+              "PWA-09",
+              "PWA-10",
+              "ACC-01",
+              "ACC-02",
+              "ACC-03",
+              "ACC-04",
+              "MOT-01",
+              "MOT-02",
+              "MOT-03",
+              "MOT-04",
+              "PERF-01",
+              "SEC-01",
+              "SEC-02",
+              "SEC-03",
+              "SEC-04",
+              "EVAL-01",
+              "EVAL-02",
+              "EVAL-03",
+              "EVAL-04",
+              "EVAL-05",
+              "LOCAL-01",
+              "LOCAL-02"
+            ]
+          },
+          "severity": {
+            "enum": [
+              "blocker",
+              "major",
+              "minor"
+            ]
+          },
+          "observation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "reproduction": {
+            "type": "string",
+            "minLength": 1
+          },
+          "confidence": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "action": {
+            "type": "string",
+            "minLength": 1
+          },
+          "retest": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "unknown": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "release_recommendation": {
+      "const": "human_review_required"
+    }
+  }
+}

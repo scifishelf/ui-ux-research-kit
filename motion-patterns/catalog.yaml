@@ -1,0 +1,413 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "trend_evidence_status": "Not a representative 2026/2027 market scan. Established patterns and documented technologies; 2027 outlook is hypothetical.",
+  "patterns": [
+    {
+      "id": "MP01",
+      "name": "Button and press",
+      "duration": "80–140 ms",
+      "easing": "cubic-bezier(.2,0,0,1)",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "No scaling; border/text change immediately.",
+      "desktop": "Hover only for hover:hover/pointer:fine; focus remains independently visible.",
+      "pwa": "Use touch :active and the product's 44 CSS px target; hover is not required.",
+      "code": "mp01.md",
+      "video_evidence": {
+        "desktop": "videos/mp01-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S29"
+      ],
+      "purpose": "Press gives immediate feedback; busy state prevents duplicate completion.",
+      "acceptance": "The button can be activated without waiting for animation to finish."
+    },
+    {
+      "id": "MP02",
+      "name": "Busy and determinate progress",
+      "duration": "100–180 ms transition; immediate status",
+      "easing": "linear",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Static busy indicator; text/cancellation remain.",
+      "desktop": "Busy text, aria-busy and progress semantics; control repeated activation.",
+      "pwa": "Equivalent status and a reachable cancel action when cancellation is supported.",
+      "code": "mp02.md",
+      "video_evidence": {
+        "desktop": "videos/mp02-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S21",
+        "S29"
+      ],
+      "purpose": "Progress reflects actual task state; a spinner is not proof of progress.",
+      "acceptance": "Progress/status is accessible; cancellation works when supported."
+    },
+    {
+      "id": "MP03",
+      "name": "Skeleton and content reveal",
+      "duration": "150–220 ms reveal; no minimum wait",
+      "easing": "cubic-bezier(.2,0,0,1)",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Static placeholder; immediate content without shimmer.",
+      "desktop": "Reserve geometry to prevent layout shifts; avoid list cascades.",
+      "pwa": "Equivalent geometry and state semantics adapted to mobile layout.",
+      "code": "mp03.md",
+      "video_evidence": {
+        "desktop": "videos/mp03-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S28",
+        "S29"
+      ],
+      "purpose": "Reserve space; show skeletons only during actual loading.",
+      "acceptance": "Content appears when ready with no unnecessary minimum loading time."
+    },
+    {
+      "id": "MP04",
+      "name": "Form validation",
+      "duration": "0–160 ms; immediate message",
+      "easing": "cubic-bezier(.2,0,0,1)",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Immediate error text/icon; no shaking.",
+      "desktop": "Use aria-invalid and aria-describedby; place focus meaningfully.",
+      "pwa": "Keep errors near fields and reachable above the keyboard; appropriate next/done input behavior.",
+      "code": "mp04.md",
+      "video_evidence": {
+        "desktop": "videos/mp04-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S21",
+        "S24"
+      ],
+      "purpose": "Offer specific help after blur/submit; avoid startling shake effects.",
+      "acceptance": "Errors are associated with fields and correction retains input."
+    },
+    {
+      "id": "MP05",
+      "name": "Success and completion",
+      "duration": "160–240 ms optional emphasis",
+      "easing": "cubic-bezier(.2,0,0,1)",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Static checkmark and precise result text.",
+      "desktop": "Inline result or dialog according to the flow; focus follows the outcome.",
+      "pwa": "Equivalent result and touch-friendly next/share actions; no general vibration promise.",
+      "code": "mp05.md",
+      "video_evidence": {
+        "desktop": "videos/mp05-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S21",
+        "S19"
+      ],
+      "purpose": "Completion is conveyed by the outcome and next action.",
+      "acceptance": "Only confirmed results are announced as successful."
+    },
+    {
+      "id": "MP06",
+      "name": "Dialog and bottom sheet",
+      "duration": "180–280 ms enter; 120–180 ms exit",
+      "easing": "cubic-bezier(.2,0,0,1)",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Immediate dialog or brief fade <=100 ms; no large translation.",
+      "desktop": "Task-appropriate dialog/popover, Escape and focus return.",
+      "pwa": "Use sheets only for suitable tasks; check safe areas and keyboard.",
+      "code": "mp06.md",
+      "video_evidence": {
+        "desktop": "videos/mp06-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S24",
+        "S30"
+      ],
+      "purpose": "Focus and modal semantics are independent of animation.",
+      "acceptance": "Escape/close and focus return work with and without motion."
+    },
+    {
+      "id": "MP07",
+      "name": "Page and context transitions",
+      "duration": "160–240 ms",
+      "easing": "cubic-bezier(.2,0,0,1)",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Disable View Transitions; set destination/focus immediately.",
+      "desktop": "Same-document transition with a controlled synchronous DOM commit.",
+      "pwa": "Equivalent destination semantics; respect system back gestures and avoid large slide cascades.",
+      "code": "mp07.md",
+      "video_evidence": {
+        "desktop": "videos/mp07-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S14",
+        "S15",
+        "S48"
+      ],
+      "purpose": "Transitions clarify location; routing, back and focus work without them.",
+      "acceptance": "Navigation and meaningful focus work when the API is unavailable."
+    },
+    {
+      "id": "MP08",
+      "name": "Lists and reordering",
+      "duration": "160–260 ms; total stagger <=120 ms",
+      "easing": "cubic-bezier(.2,0,0,1)",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Apply positions/items immediately.",
+      "desktop": "Use FLIP/layout animation for few visible changes; tab order follows DOM.",
+      "pwa": "Keep touch scrolling free; update large lists immediately.",
+      "code": "mp08.md",
+      "video_evidence": {
+        "desktop": "videos/mp08-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S29",
+        "S30"
+      ],
+      "purpose": "Changes clarify position without delaying each item's usability.",
+      "acceptance": "List state and focus are correct during rapid repeated changes."
+    },
+    {
+      "id": "MP09",
+      "name": "Accordion and details",
+      "duration": "160–240 ms",
+      "easing": "cubic-bezier(.2,0,0,1)",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Open/close immediately.",
+      "desktop": "Native details/summary or a button with aria-expanded.",
+      "pwa": "Equivalent heading/state and a wide summary touch target.",
+      "code": "mp09.md",
+      "video_evidence": {
+        "desktop": "videos/mp09-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S21",
+        "S29"
+      ],
+      "purpose": "Reveal structure without expensive animation on long sections.",
+      "acceptance": "Open/closed semantics and keyboard behavior remain correct."
+    },
+    {
+      "id": "MP10",
+      "name": "Drag and snap",
+      "duration": "Follows pointer; snap 180–300 ms",
+      "easing": "spring: stiffness 380, damping 38, mass 1",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "No residual oscillation; set final position immediately.",
+      "desktop": "Pointer capture, keyboard alternatives and feedback beyond dragging.",
+      "pwa": "Use container-appropriate touch-action; do not block scrolling globally.",
+      "code": "mp10.md",
+      "video_evidence": {
+        "desktop": "videos/mp10-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S25",
+        "S31"
+      ],
+      "purpose": "Direct manipulation stays direct; snap is interruptible.",
+      "acceptance": "Gesture can be cancelled; an equivalent non-drag action is available."
+    },
+    {
+      "id": "MP11",
+      "name": "Switch and selection",
+      "duration": "100–180 ms",
+      "easing": "cubic-bezier(.2,0,0,1)",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Change state position immediately.",
+      "desktop": "Native checkbox/switch or an existing reviewed control.",
+      "pwa": "Native system controls may have haptics; do not promise freely controlled haptics.",
+      "code": "mp11.md",
+      "video_evidence": {
+        "desktop": "videos/mp11-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S14",
+        "S21"
+      ],
+      "purpose": "Show selection immediately without claiming server-confirmed success.",
+      "acceptance": "Selected, pending and confirmed states remain distinguishable."
+    },
+    {
+      "id": "MP12",
+      "name": "Optimistic save and undo",
+      "duration": "120–180 ms local feedback",
+      "easing": "cubic-bezier(.2,0,0,1)",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Immediate status changes.",
+      "desktop": "Provide status and sufficient undo time; avoid disappearing-only feedback.",
+      "pwa": "Equivalent recovery and reachable undo; account for safe areas in bottom notices.",
+      "code": "mp12.md",
+      "video_evidence": {
+        "desktop": "videos/mp12-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S21",
+        "S27"
+      ],
+      "purpose": "Optimistic changes remain pending until confirmation; failure restores clear state.",
+      "acceptance": "Failure/undo preserves input and correctly restores the prior state."
+    },
+    {
+      "id": "MP13",
+      "name": "Offline and update notices",
+      "duration": "0–160 ms",
+      "easing": "cubic-bezier(.2,0,0,1)",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Immediate notice without movement.",
+      "desktop": "Status without layout shifts; update after preserving work.",
+      "pwa": "Standalone mode has no address bar; provide retry/update paths.",
+      "code": "mp13.md",
+      "video_evidence": {
+        "desktop": "videos/mp13-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S16",
+        "S28"
+      ],
+      "purpose": "Explain limitations; updates must not destroy unsaved work.",
+      "acceptance": "Retry and updates follow the offline contract and preserve drafts."
+    },
+    {
+      "id": "MP14",
+      "name": "Voice and analysis feedback",
+      "duration": "100–180 ms state change; continuous only while active",
+      "easing": "linear or bounded opacity easing",
+      "timing_evidence": "Pilot heuristic; technical sources establish the mechanism, not an optimal duration.",
+      "reduced_motion": "Static active indicator with equivalent status.",
+      "desktop": "Text status and visible stop; separate audio permission.",
+      "pwa": "Reachable touch stop; check background/resume and permissions.",
+      "code": "mp14.md",
+      "video_evidence": {
+        "desktop": "videos/mp14-desktop.mp4",
+        "pwa": null,
+        "status": "Synthetic desktop demo; installed-PWA recording remains pending."
+      },
+      "criteria": [
+        "MOT-01",
+        "MOT-02",
+        "MOT-03",
+        "MOT-04",
+        "ACC-03"
+      ],
+      "sources": [
+        "S21",
+        "S22"
+      ],
+      "purpose": "Feedback truthfully reflects recording/analysis and stops on completion/error.",
+      "acceptance": "Stop works and feedback ends on success, cancellation or failure."
+    }
+  ]
+}

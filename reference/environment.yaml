@@ -1,0 +1,58 @@
+{
+  "updated": "2026-10-06",
+  "status": "Template; confirm supported runtimes in the target product",
+  "desktop": [
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "dpr": 1,
+      "browser": "Record actual browser and exact version"
+    },
+    {
+      "viewport": [
+        1280,
+        800
+      ],
+      "dpr": 1,
+      "browser": "Additional supported browser"
+    }
+  ],
+  "mobile": [
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "runtime": null,
+      "device": "Actual supported device or suitable simulator; record provenance"
+    }
+  ],
+  "pwa": [
+    {
+      "device": "Supported installed-PWA device",
+      "runtime": null,
+      "role": "Only when the product profile requires installed mode"
+    }
+  ],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "motion": [
+    "no-preference",
+    "reduce"
+  ],
+  "locale": "en-US",
+  "timezone": "UTC",
+  "resources": {
+    "hardware": "Record the actual CPU, memory and OS",
+    "parallel_workers_initial": 1
+  },
+  "agents": {
+    "client": null,
+    "model_snapshot": null,
+    "record": "Record exact client/model/tool versions and system instructions; do not infer them from a product name."
+  }
+}

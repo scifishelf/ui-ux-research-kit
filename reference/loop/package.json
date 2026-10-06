@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "description": "Standalone dependency specification for integration example, not installed into the target app",
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@axe-core/playwright": "4.13.0"
+  }
+}

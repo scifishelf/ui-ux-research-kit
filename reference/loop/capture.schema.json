@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "surface",
+    "captureKind",
+    "buildId",
+    "runId",
+    "fixtureId",
+    "state",
+    "theme",
+    "reducedMotion",
+    "tokenVersion",
+    "capturedAt",
+    "screenshot",
+    "runtime",
+    "semantics",
+    "tokens"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1"
+    },
+    "surface": {
+      "enum": [
+        "desktop",
+        "pwa"
+      ]
+    },
+    "captureKind": {
+      "enum": [
+        "desktop-browser",
+        "ios-simulator",
+        "ios-real-device"
+      ]
+    },
+    "buildId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fixtureId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "state": {
+      "type": "string",
+      "minLength": 1
+    },
+    "theme": {
+      "enum": [
+        "light",
+        "dark"
+      ]
+    },
+    "reducedMotion": {
+      "type": "boolean"
+    },
+    "tokenVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "capturedAt": {
+      "type": "string",
+      "format": "date-time",
+      "minLength": 1
+    },
+    "displayMode": {
+      "type": "string"
+    },
+    "swBuildId": {
+      "type": "string"
+    },
+    "screenshot": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "osVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "device": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "semantics": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "tokens": {
+      "type": "object",
+      "minProperties": 1
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "surface": {
+            "const": "pwa"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "displayMode",
+          "swBuildId"
+        ],
+        "properties": {
+          "displayMode": {
+            "const": "standalone"
+          },
+          "captureKind": {
+            "enum": [
+              "ios-simulator",
+              "ios-real-device"
+            ]
+          },
+          "runtime": {
+            "required": [
+              "osVersion",
+              "device"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "surface": {
+            "const": "desktop"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "captureKind": {
+            "const": "desktop-browser"
+          }
+        }
+      }
+    }
+  ]
+}

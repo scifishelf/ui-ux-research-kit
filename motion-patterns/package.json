@@ -1,0 +1,12 @@
+{
+  "name": "ui-ux-motion-demo",
+  "private": true,
+  "version": "0.3.0",
+  "type": "module",
+  "scripts": {
+    "capture": "node capture-demo.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0"
+  }
+}

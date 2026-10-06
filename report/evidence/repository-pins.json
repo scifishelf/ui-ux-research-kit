@@ -1,0 +1,231 @@
+[
+  {
+    "repository": "anthropics/skills",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4",
+    "commit_date": "2026-09-29T02:20:03Z",
+    "url": "https://github.com/anthropics/skills/commit/8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4",
+    "resolved_repository": "anthropics/skills",
+    "license_metadata": null,
+    "license_files": [
+      {
+        "path": "skills/frontend-design/LICENSE.txt",
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+        "url": "https://github.com/anthropics/skills/blob/8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4/skills/frontend-design/LICENSE.txt",
+        "first_line": ""
+      }
+    ],
+    "skill_sha256": "d91970639e9f5c37682ac7ab60094d35f1c7c1f38d731bd56396563aee10c1d3",
+    "skill_url": "https://github.com/anthropics/skills/blob/8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4/skills/frontend-design/SKILL.md"
+  },
+  {
+    "repository": "microsoft/playwright-mcp",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "f183dad4a52965583e3cc1d59b88cdc279e2e57d",
+    "commit_date": "2026-09-28T23:12:55Z",
+    "url": "https://github.com/microsoft/playwright-mcp/commit/f183dad4a52965583e3cc1d59b88cdc279e2e57d",
+    "resolved_repository": "microsoft/playwright-mcp",
+    "license_metadata": "Apache-2.0",
+    "package_version": "0.0.83",
+    "license_files": [
+      {
+        "path": "LICENSE",
+        "sha256": "9a7110fc2d2f964038e5dc49128f908f29f47a574c961cba16085914e879cbda",
+        "url": "https://github.com/microsoft/playwright-mcp/blob/f183dad4a52965583e3cc1d59b88cdc279e2e57d/LICENSE",
+        "first_line": "                                 Apache License"
+      }
+    ]
+  },
+  {
+    "repository": "ChromeDevTools/chrome-devtools-mcp",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "b2f522c8ba0fd2e00a679159b4aa5243de5f1b78",
+    "commit_date": "2026-10-02T10:53:24Z",
+    "url": "https://github.com/ChromeDevTools/chrome-devtools-mcp/commit/b2f522c8ba0fd2e00a679159b4aa5243de5f1b78",
+    "resolved_repository": "ChromeDevTools/chrome-devtools-mcp",
+    "license_metadata": "Apache-2.0",
+    "package_version": "1.10.1",
+    "license_files": [
+      {
+        "path": "LICENSE",
+        "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+        "url": "https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/b2f522c8ba0fd2e00a679159b4aa5243de5f1b78/LICENSE",
+        "first_line": ""
+      }
+    ]
+  },
+  {
+    "repository": "joshuayoes/ios-simulator-mcp",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "a32f7f836393424d83b9476928da5518e178daa9",
+    "commit_date": "2026-08-13T16:37:38Z",
+    "url": "https://github.com/joshuayoes/ios-simulator-mcp/commit/a32f7f836393424d83b9476928da5518e178daa9",
+    "resolved_repository": "joshuayoes/ios-simulator-mcp",
+    "license_metadata": "MIT",
+    "package_version": "2.1.0",
+    "license_files": [
+      {
+        "path": "LICENSE",
+        "sha256": "15a8ec9a17bbd89adb64d38439de07dfbdc3b7d0d8e924dcde705a38b2bdbf47",
+        "url": "https://github.com/joshuayoes/ios-simulator-mcp/blob/a32f7f836393424d83b9476928da5518e178daa9/LICENSE",
+        "first_line": "MIT License"
+      }
+    ]
+  },
+  {
+    "repository": "getsentry/MobileBuildMCP",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "d13ff0c707b0681769cf31da0eb42c4f94ceafff",
+    "commit_date": "2026-09-23T20:14:49Z",
+    "url": "https://github.com/getsentry/MobileBuildMCP/commit/d13ff0c707b0681769cf31da0eb42c4f94ceafff",
+    "resolved_repository": "getsentry/MobileBuildMCP",
+    "license_metadata": "MIT",
+    "package_version": "2.7.1",
+    "license_files": [
+      {
+        "path": "LICENSE",
+        "sha256": "fef28fc4165c72b1f0e4ce94654ba44ad7ff7d5d2538b3d01e66e9cc5be3c4f6",
+        "url": "https://github.com/getsentry/MobileBuildMCP/blob/d13ff0c707b0681769cf31da0eb42c4f94ceafff/LICENSE",
+        "first_line": "MIT License"
+      }
+    ]
+  },
+  {
+    "repository": "pbakaus/impeccable",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "e103efe779e2dd01274dabae83531fef00bf2563",
+    "commit_date": "2026-10-03T00:25:32Z",
+    "url": "https://github.com/pbakaus/impeccable/commit/e103efe779e2dd01274dabae83531fef00bf2563",
+    "resolved_repository": "pbakaus/impeccable",
+    "license_metadata": "Apache-2.0",
+    "package_version": "4.1.0",
+    "license_files": [
+      {
+        "path": "LICENSE",
+        "sha256": "02bb8c3b4e70190e3986c0404ad2fd8d639b4f534252d82379cc1b502b6d1812",
+        "url": "https://github.com/pbakaus/impeccable/blob/e103efe779e2dd01274dabae83531fef00bf2563/LICENSE",
+        "first_line": "                                 Apache License"
+      }
+    ]
+  },
+  {
+    "repository": "nextlevelbuilder/ui-ux-pro-max-skill",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "477bcb28c9812b385cb51a4605ddf30d7b2266e2",
+    "commit_date": "2026-10-03T16:05:26Z",
+    "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/commit/477bcb28c9812b385cb51a4605ddf30d7b2266e2",
+    "resolved_repository": "nextlevelbuilder/ui-ux-pro-max-skill",
+    "license_metadata": "MIT",
+    "license_files": [
+      {
+        "path": "LICENSE",
+        "sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
+        "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/477bcb28c9812b385cb51a4605ddf30d7b2266e2/LICENSE",
+        "first_line": "MIT License"
+      }
+    ]
+  },
+  {
+    "repository": "vercel-labs/agent-skills",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "063bee94c3f4df8453406c830b0a7df0f2860278",
+    "commit_date": "2026-08-28T13:36:07Z",
+    "url": "https://github.com/vercel-labs/agent-skills/commit/063bee94c3f4df8453406c830b0a7df0f2860278",
+    "resolved_repository": "vercel-labs/agent-skills",
+    "license_metadata": null,
+    "package_version": null
+  },
+  {
+    "repository": "imehr/design-extractor",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "bde084699c53b5a66e45024d011dc5366257c780",
+    "commit_date": "2026-07-07T07:43:11Z",
+    "url": "https://github.com/imehr/design-extractor/commit/bde084699c53b5a66e45024d011dc5366257c780",
+    "resolved_repository": "imehr/design-extractor",
+    "license_metadata": "MIT",
+    "license_files": [
+      {
+        "path": "LICENSE",
+        "sha256": "19d9a33fe0acb66ae33865fb9829a958d4005a6bdd7c1c28a3a92225c97c1d6f",
+        "url": "https://github.com/imehr/design-extractor/blob/bde084699c53b5a66e45024d011dc5366257c780/LICENSE",
+        "first_line": "MIT License"
+      }
+    ]
+  },
+  {
+    "repository": "Blaizzy/mlx-vlm",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "6ecadd767ca1c7c54763289c750dd180d7945037",
+    "commit_date": "2026-10-02T16:39:27Z",
+    "url": "https://github.com/Blaizzy/mlx-vlm/commit/6ecadd767ca1c7c54763289c750dd180d7945037",
+    "resolved_repository": "Blaizzy/mlx-vlm",
+    "license_metadata": "MIT",
+    "license_files": [
+      {
+        "path": "LICENSE",
+        "sha256": "f74c448746be3376e27dee43e2be9ec9d55f4820cd7466c603a6c7d1fd2d25b8",
+        "url": "https://github.com/Blaizzy/mlx-vlm/blob/6ecadd767ca1c7c54763289c750dd180d7945037/LICENSE",
+        "first_line": "MIT License"
+      }
+    ]
+  },
+  {
+    "repository": "dequelabs/axe-core",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "f59642eddf14c93ae3c9c31d69bcd611229bedb4",
+    "commit_date": "2026-10-02T16:02:28Z",
+    "url": "https://github.com/dequelabs/axe-core/commit/f59642eddf14c93ae3c9c31d69bcd611229bedb4",
+    "resolved_repository": "dequelabs/axe-core",
+    "license_metadata": "MPL-2.0",
+    "package_version": "4.13.0",
+    "license_files": [
+      {
+        "path": "LICENSE",
+        "sha256": "af175b9d96ee93c21a036152e1b905b0b95304d4ae8c2c921c7609100ba8df7e",
+        "url": "https://github.com/dequelabs/axe-core/blob/f59642eddf14c93ae3c9c31d69bcd611229bedb4/LICENSE",
+        "first_line": "Mozilla Public License, version 2.0"
+      }
+    ]
+  },
+  {
+    "repository": "airbnb/lottie-web",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "bede03d25d232826e0c9dca1733d542d8a7754fb",
+    "commit_date": "2024-11-19T12:25:21Z",
+    "url": "https://github.com/airbnb/lottie-web/commit/bede03d25d232826e0c9dca1733d542d8a7754fb",
+    "resolved_repository": "airbnb/lottie-web",
+    "license_metadata": "MIT",
+    "package_version": "5.13.0"
+  },
+  {
+    "repository": "vercel-labs/agent-browser",
+    "requested_cutoff": "2026-10-04T23:59:59Z",
+    "retrieved_on": "2026-10-04",
+    "commit": "526157cfd4ec64f45939f9ba0f10d5936aa7ac33",
+    "commit_date": "2026-10-03T06:28:26Z",
+    "url": "https://github.com/vercel-labs/agent-browser/commit/526157cfd4ec64f45939f9ba0f10d5936aa7ac33",
+    "resolved_repository": "vercel-labs/agent-browser",
+    "license_metadata": "Apache-2.0",
+    "package_version": "0.38.2",
+    "license_files": [
+      {
+        "path": "LICENSE",
+        "sha256": "014bb31e83d5c2e76aea1cc6e82217346ab41362f32cb355ad0f5c10aa0aeaff",
+        "url": "https://github.com/vercel-labs/agent-browser/blob/526157cfd4ec64f45939f9ba0f10d5936aa7ac33/LICENSE",
+        "first_line": "                                 Apache License"
+      }
+    ]
+  }
+]

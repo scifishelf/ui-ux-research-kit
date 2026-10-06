@@ -1,0 +1,135 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "policy": "Capability before product name; reuse before installation. Commands are unpinned proposals, not installation authorization.",
+  "tools": [
+    {
+      "id": "TOOL-BROWSER",
+      "name": "Existing browser access or Playwright MCP",
+      "kind": "Browser/MCP",
+      "capability": "browser-control",
+      "source": "https://github.com/microsoft/playwright-mcp",
+      "reason": "Capture rendered views, screenshots, DOM and completed user flows for linked actions.",
+      "verification": "Check existing browser access. For a new server, pin source/package versions and use an isolated profile; follow original setup documentation.",
+      "installation_example": null,
+      "sources": [
+        "S07",
+        "S08"
+      ]
+    },
+    {
+      "id": "TOOL-AXE",
+      "name": "axe-core",
+      "kind": "Accessibility test tool",
+      "capability": "accessibility-scan",
+      "source": "https://github.com/dequelabs/axe-core",
+      "reason": "Provide automated findings for rendered states, supplemented by manual keyboard/screen-reader tests.",
+      "verification": "Reuse existing integration; pin new versions in the dedicated audit/test project. A scan does not prove full WCAG conformance.",
+      "installation_example": "npm install --save-dev --save-exact axe-core",
+      "sources": [
+        "S26",
+        "S21"
+      ]
+    },
+    {
+      "id": "TOOL-UI",
+      "name": "Vercel web-design-guidelines",
+      "kind": "Agent skill",
+      "capability": "interface-code-review",
+      "source": "https://github.com/vercel-labs/agent-skills/tree/main/skills/web-design-guidelines",
+      "reason": "Review semantics, focus, forms and interaction details in code and connect them with runtime findings.",
+      "verification": "Review SKILL.md and externally loaded guidelines at the chosen commit; pin them separately. Select relevant rules and a reviewed CLI version.",
+      "installation_example": "npx skills add vercel-labs/agent-skills --skill web-design-guidelines",
+      "sources": [
+        "S37",
+        "S55"
+      ]
+    },
+    {
+      "id": "TOOL-DESIGN",
+      "name": "Anthropic frontend-design",
+      "kind": "Agent skill",
+      "capability": "visual-design",
+      "source": "https://github.com/anthropics/skills/tree/main/skills/frontend-design",
+      "reason": "Support product-specific art direction and deliberate typography/layout choices for observed visual gaps.",
+      "verification": "Respect the brand contract and existing design skills. Review commit, license and referenced resources; assess one key screen in a pilot.",
+      "installation_example": "npx skills add anthropics/skills --skill frontend-design",
+      "sources": [
+        "S06",
+        "S55"
+      ]
+    },
+    {
+      "id": "TOOL-USABILITY",
+      "name": "Journey review and usability testing",
+      "kind": "Evaluation method",
+      "capability": "usability-review",
+      "source": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+      "reason": "Review task success, language and recovery against real user jobs; include actual target users in final acceptance.",
+      "verification": "Label agent heuristic criticism accordingly; document participants, tasks and success conditions.",
+      "installation_example": null,
+      "sources": [
+        "S51"
+      ]
+    },
+    {
+      "id": "TOOL-PERF",
+      "name": "Browser performance traces and field measurement",
+      "kind": "Measurement tool",
+      "capability": "performance-trace",
+      "source": "https://web.dev/articles/vitals",
+      "reason": "Locate measured bottlenecks and record laboratory diagnostics separately from field metrics.",
+      "verification": "Reuse available tracing tools and record device/network/runtime conditions. Do not derive INP from a page-load-only Lighthouse run.",
+      "installation_example": null,
+      "sources": [
+        "S54",
+        "S10"
+      ]
+    },
+    {
+      "id": "TOOL-MOBILE",
+      "name": "Mobile browser on a device or suitable simulator",
+      "kind": "Runtime test",
+      "capability": "mobile-runtime",
+      "source": "https://developer.chrome.com/blog/viewport-resize-behavior/",
+      "reason": "Check the actual software keyboard, focus and viewport behavior.",
+      "verification": "Use a supported platform and evidence the real keyboard/runtime. A smaller desktop viewport is insufficient.",
+      "installation_example": null,
+      "sources": [
+        "S18"
+      ]
+    },
+    {
+      "id": "TOOL-PWA",
+      "name": "Installed PWA on a supported platform",
+      "kind": "Runtime test",
+      "capability": "pwa-runtime",
+      "source": "https://webkit.org/blog/13878/web-push-for-web-apps-on-ios-and-ipados/",
+      "reason": "Test installed mode, safe areas, resume, updates and applicable offline journeys.",
+      "verification": "Use only for the PWA profile on a supported platform. Reuse existing device/simulator adapters; do not generalize iOS details to every platform.",
+      "installation_example": null,
+      "sources": [
+        "S16",
+        "S17"
+      ]
+    },
+    {
+      "id": "TOOL-REACT",
+      "name": "Vercel React Best Practices",
+      "kind": "Agent skill",
+      "capability": "react-performance",
+      "stack": [
+        "react",
+        "next"
+      ],
+      "source": "https://github.com/vercel-labs/agent-skills",
+      "reason": "Review data flow, bundle size and rendering for measured React/Next.js bottlenecks.",
+      "verification": "Confirm React/Next in the selected frontend; review commit, license and rule files. Evaluate before/after measurements of the actual bottleneck.",
+      "installation_example": "npx skills add vercel-labs/agent-skills --skill vercel-react-best-practices",
+      "sources": [
+        "S37",
+        "S55"
+      ]
+    }
+  ]
+}

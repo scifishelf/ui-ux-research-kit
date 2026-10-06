@@ -1,0 +1,91 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-04",
+  "fixtures": "Synthetic task contracts; implement application fixtures before empirical runs. Never use production data.",
+  "tasks": [
+    {
+      "id": "B01",
+      "name": "Dashboard and data table",
+      "job": "Find overdue records and open the correct item.",
+      "data": "12 fixed rows A01–A12, three statuses, fixed date 2026-10-04; include locale-specific formats.",
+      "actions": "Filter, sort, open details and reset filters.",
+      "success": "Correct record ID; filter state survives back navigation.",
+      "required_states": "No records; pending request; server error; long labels and 100 rows; narrow screens and both themes.",
+      "surfaces": [
+        "desktop",
+        "pwa"
+      ],
+      "repetitions": 3
+    },
+    {
+      "id": "B02",
+      "name": "Multistep form",
+      "job": "Create a valid record with name, email and appointment.",
+      "data": "Three steps; invalid/valid email, required appointment and long help text.",
+      "actions": "Next/back, correct field errors, submit and retry.",
+      "success": "Exactly one confirmed creation; input survives errors and back navigation.",
+      "required_states": "Empty fields; pending submit; 422/network failure; long input; open software keyboard; narrow screens and both themes.",
+      "surfaces": [
+        "desktop",
+        "pwa"
+      ],
+      "repetitions": 3
+    },
+    {
+      "id": "B03",
+      "name": "Settings",
+      "job": "Change two settings and verify saved state.",
+      "data": "Profile text, notification switch, theme and fixed initial values.",
+      "actions": "Toggle, edit, save, error rollback and undo.",
+      "success": "Values correct after reopening; pending is not claimed as confirmed.",
+      "required_states": "Empty profile; initial/save loading; save error; long labels; narrow screens and both themes.",
+      "surfaces": [
+        "desktop",
+        "pwa"
+      ],
+      "repetitions": 3
+    },
+    {
+      "id": "B04",
+      "name": "Onboarding",
+      "job": "Set up a workspace and find the next useful step.",
+      "data": "Three stages, long username, three options and optional steps.",
+      "actions": "Next, back, skip optional, resume and finish.",
+      "success": "No required step silently skipped; completion and next task clear.",
+      "required_states": "New account; options loading; initial/submit errors; long text; narrow screens and both themes.",
+      "surfaces": [
+        "desktop",
+        "pwa"
+      ],
+      "repetitions": 3
+    },
+    {
+      "id": "B05",
+      "name": "Completion and success dialog",
+      "job": "Complete a record and find the receipt and next action.",
+      "data": "One fixed record ID with confirmed/pending/failed states.",
+      "actions": "Confirm, cancel, success, focus return and open receipt.",
+      "success": "Only confirmed success; keyboard/touch access to outcome actions.",
+      "required_states": "Nothing to complete; pending completion; error; long receipt name; narrow screens and both themes.",
+      "surfaces": [
+        "desktop",
+        "pwa"
+      ],
+      "repetitions": 3
+    },
+    {
+      "id": "B06",
+      "name": "PWA offline, update and resume",
+      "job": "Edit a draft, lose connection and resume safely.",
+      "data": "Production builds N/N+1, worker diagnostics, draft D01; permitted offline action is reading the draft.",
+      "actions": "Install/launch, keyboard, offline, retry, update and background/resume.",
+      "success": "No lost draft, mixed versions or unclear offline limits.",
+      "required_states": "No draft; cold/warm loading; offline/network failure; long drafts; rotation and both themes.",
+      "surfaces": [
+        "desktop",
+        "pwa"
+      ],
+      "repetitions": 3
+    }
+  ]
+}

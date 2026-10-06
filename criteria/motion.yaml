@@ -1,0 +1,96 @@
+{
+  "version": "0.3.0",
+  "updated": "2026-10-06",
+  "criteria": [
+    {
+      "id": "MOT-01",
+      "category": "motion",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Motion uses semantic tokens and a bounded budget.",
+      "research_evidence": {
+        "type": "API documentation; specific timing values are pilot heuristics",
+        "sources": [
+          "S29",
+          "S31"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Compare the motion inventory with the product budget and interaction traces.",
+      "passing": "Every animation has a purpose; no blocked completion or unnecessary continuous loops.",
+      "action": "Use motion-patterns/02-guideline.md.",
+      "effort": "S"
+    },
+    {
+      "id": "MOT-02",
+      "category": "motion",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "New animation APIs have functionally equivalent fallbacks.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S13",
+          "S14",
+          "S15",
+          "S48"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Disable the API/feature detection and complete the flow.",
+      "passing": "Navigation, information and focus work without animation.",
+      "action": "Apply progressive enhancement using the technology matrix.",
+      "effort": "S"
+    },
+    {
+      "id": "MOT-03",
+      "category": "motion",
+      "level": "MUST",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Motion is interruptible and never delays an action.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S27",
+          "S31"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Test rapid clicks, reverse, repeat and navigation during animation.",
+      "passing": "No lost click, duplicate completion or delayed focus.",
+      "action": "Update state first and cancel/reverse animation as needed.",
+      "effort": "M"
+    },
+    {
+      "id": "MOT-04",
+      "category": "motion",
+      "level": "SHOULD",
+      "platforms": [
+        "desktop",
+        "pwa"
+      ],
+      "requirement": "Motion is reviewed with video and runtime traces.",
+      "research_evidence": {
+        "type": "Documented capability and project requirement",
+        "sources": [
+          "S29",
+          "S27"
+        ],
+        "product_effect": "Not measured; controlled benchmark pending"
+      },
+      "test": "Inspect desktop/simulator recordings and timestamped traces.",
+      "passing": "Duration, jank and focus are evidenced per interaction; capture-rate limitations declared.",
+      "action": "Use reference/loop/simulator-capture.sh and frame analysis.",
+      "effort": "M"
+    }
+  ]
+}
