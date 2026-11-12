@@ -219,8 +219,9 @@ def validate_project(project):
             raise ValueError('Journey states must contain nonempty text')
         if not isinstance(journey.get('features', []), list) or any(f not in FEATURES for f in map(str, journey.get('features', []))):
             raise ValueError('Journey features must be a list of known features')
-    if not isinstance(project.get('viewports', []), list) or not isinstance(project.get('frontend', 'auto'), str):
-        raise ValueError('viewports must be a list and frontend a path')
+    if (not isinstance(project.get('viewports', []), list) or not isinstance(project.get('frontend', 'auto'), str)
+            or not isinstance(project.get('profile', 'auto'), str)):
+        raise ValueError('viewports must be a list, frontend a path and profile a name')
     for viewport in project.get('viewports', []):
         if not isinstance(viewport, dict) or set(viewport) - {'width', 'height'} or any(type(viewport.get(k)) is not int or viewport[k] <= 0 for k in ['width', 'height']):
             raise ValueError('Project viewport requires exactly positive width/height')
