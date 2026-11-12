@@ -425,6 +425,31 @@ class ProductAudit(unittest.TestCase):
         self.assertEqual(self.finding(self.run_audit(obs), 'WEB-01')['status'], 'pass')
         (self.root / 'index.html').write_text('<h1>Changed product</h1>')
         self.assertEqual(self.finding(self.run_audit(obs), 'WEB-01')['status'], 'unknown')
+        nested = self.root / 'web'
+        nested.mkdir()
+        (nested / 'page.html').write_text('<p>first</p>')
+        subprocess.run(['git', '-C', str(nested), 'init', '-q'], check=True, capture_output=True)
+        first = self.run_audit()
+        self.assertIn('web/page.html', first['inventory'])
+        (nested / 'page.html').write_text('<p>second</p>')
+        self.assertNotEqual(first['source_inventory_hash'], self.run_audit()['source_inventory_hash'])
+
+    def test_pwa_journey_narrowing_and_reviewable_outputs(self):
+        self.project = {**self.project, 'profile': 'pwa', 'features': {**self.project['features'], 'pwa': True},
+                        'journeys': [{**self.project['journeys'][0], 'features': []}]}
+        installed = self.observed()
+        installed['runtime'].update(capture_kind='installed-pwa-simulator', display_mode='standalone')
+        report = self.run_audit(self.envelope({'PWA-X01': installed, 'WEB-01': self.observed(coverage=[])}))
+        self.assertEqual(self.finding(report, 'PWA-X01')['status'], 'pass')
+        self.assertIn('1 of 1 cells missing, first J1/390/844', self.finding(report, 'WEB-01')['reason'])
+        task = next(t for t in report['roadmap'] if t['id'] == 'ACT-WEB-01')
+        self.assertEqual((task['evidence_required'], task['pass_covers']), ('runtime', 'every journey at every viewport'))
+        elsewhere = self.observed()
+        elsewhere['runtime']['state'] = 'bogus'
+        with self.assertRaisesRegex(ValueError, 'configured journey state'):
+            self.run_audit(self.envelope({'WEB-01': elsewhere}))
+        with self.assertRaisesRegex(ValueError, 'list of known features'):
+            self.run_audit(project={**self.project, 'journeys': [{**self.project['journeys'][0], 'features': {'forms': True}}]})
 
     def test_matrix_shape_and_prerequisite_order(self):
         self.project = {**self.project, 'journeys': [{**self.project['journeys'][0], 'states': ['default', 'error']}]}

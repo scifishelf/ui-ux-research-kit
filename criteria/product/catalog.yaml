@@ -214,7 +214,7 @@
       "matrix": "states",
       "priority": "P1",
       "requirement": "Typography, spacing and hierarchy stay readable with real content.",
-      "test": "Inspect the longest real headings and densest real views at the configured viewports; inject longer content only where the product accepts input.",
+      "test": "Inspect every configured state at each viewport, especially the longest real headings and densest real views; inject longer content only where the product accepts input.",
       "passing": "No clipped or overlapping text; text and actions remain readable and distinguishable.",
       "action": "Fix observed overflow and organize typography/spacing by semantic role.",
       "effort": "M",
@@ -576,7 +576,7 @@
       "priority": "P0",
       "requirement": "Core tasks work by keyboard with understandable focus.",
       "test": "Manually exercise Tab, Shift-Tab, Enter, Escape and focus after navigation/dialogs.",
-      "passing": "No focus trap; focus is visible, meaningfully directed and not fully obscured.",
+      "passing": "Every journey completes by keyboard alone; no focus trap; focus is visible and not fully obscured.",
       "action": "Correct the observed focus order and dialog behavior.",
       "effort": "S",
       "capabilities": [
@@ -807,8 +807,8 @@
       "matrix": "journeys",
       "priority": "P1",
       "requirement": "Loading and interactions work without blocking runtime errors.",
-      "test": "Inspect console/network while repeating each journey; state device and network conditions in scope.",
-      "passing": "No uncaught error or failed request prevents a journey step.",
+      "test": "Inspect console/network and a local performance trace while repeating each journey; state device and network conditions in scope.",
+      "passing": "No uncaught error or failed request prevents a journey step; the local trace shows LCP <=2.5s under the stated conditions.",
       "action": "Fix measured errors, waterfalls or main-thread blocking at their source.",
       "effort": "S",
       "capabilities": [

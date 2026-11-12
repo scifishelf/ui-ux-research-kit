@@ -34,6 +34,8 @@ KEYS = {'observations': {'schema_version', 'target', 'source_inventory_hash', 's
         'coverage': {'journey_id', 'state', 'viewport'},
         'field_metrics': {'source', 'window', 'percentile', 'mobile', 'desktop'}}
 MEDIA = {'screenshot': {'.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif'}, 'video': {'.mp4', '.webm', '.mov'}}
+COVERS = {'states': 'every journey/state/viewport', 'journeys': 'every journey at every viewport',
+          'device': 'every journey once on the device', 'none': 'no coverage matrix'}
 DEFAULT_VIEWPORTS = [{'width': 1440, 'height': 900}, {'width': 390, 'height': 844}]
 CAPTURE_KINDS = {'desktop-browser', 'mobile-simulator', 'installed-pwa-simulator', 'real-device'}
 PROJECT_KEYS = {'schema_version', 'profile', 'frontend', 'audience', 'features', 'viewports',
@@ -80,22 +82,24 @@ def safe_file(root, rel):
     return path
 
 
-def inventory(root, excluded=None, limit=1200, allowed=None):
+def inventory(root, excluded=None, limit=1200, ignored=frozenset()):
     found, capped, omitted = {}, False, set()
     excluded = Path(excluded).resolve() if excluded else None
     for base, dirs, files in os.walk(root, followlinks=False):
         base = Path(base)
         omitted.update((base / d).relative_to(root).as_posix() for d in dirs
                        if d != '.git' and (d in SKIP or private_path(d) or (base / d).is_symlink()
+                                           or (base / d).relative_to(root).as_posix() + '/' in ignored
                                            or len((base / d).relative_to(root).parts) > 8))
         dirs[:] = sorted(d for d in dirs if d not in SKIP and not private_path(d)
+                         and (base / d).relative_to(root).as_posix() + '/' not in ignored
                          and not (base / d).is_symlink()
                          and not (excluded and (base / d).resolve().is_relative_to(excluded))
                          and len((base / d).relative_to(root).parts) <= 8)
         for name in sorted(files):
             path = base / name
             rel = path.relative_to(root).as_posix()
-            if ((allowed is not None and rel not in allowed) or private_path(rel) or path.is_symlink() or (path.suffix not in EXTENSIONS and name not in {'Gemfile', 'Dockerfile'})
+            if (rel in ignored or private_path(rel) or path.is_symlink() or (path.suffix not in EXTENSIONS and name not in {'Gemfile', 'Dockerfile'})
                     or (excluded and path.resolve().is_relative_to(excluded))):
                 continue
             if len(found) >= limit:
@@ -206,8 +210,8 @@ def validate_project(project):
         states = journey.get('states', ['default'])
         if not isinstance(states, list) or not states or any(not isinstance(s, str) or not s for s in states):
             raise ValueError('Journey states must contain nonempty text')
-        if not set(journey.get('features', [])) <= FEATURES:
-            raise ValueError('Unknown journey feature')
+        if not isinstance(journey.get('features', []), list) or any(f not in FEATURES for f in map(str, journey.get('features', []))):
+            raise ValueError('Journey features must be a list of known features')
     for viewport in project.get('viewports', []):
         if not isinstance(viewport, dict) or set(viewport) - {'width', 'height'} or any(type(viewport.get(k)) is not int or viewport[k] <= 0 for k in ['width', 'height']):
             raise ValueError('Project viewport requires exactly positive width/height')
@@ -322,11 +326,17 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                         states.add((journey['id'], state))
                         for viewport in project.get('viewports') or DEFAULT_VIEWPORTS:
                             known.add(cell(journey['id'], state, viewport['width'], viewport['height']))
-                            if not (c.get('feature') and 'features' in journey and c['feature'] not in journey['features']):
+                            # pwa follows from the profile; other features can be narrowed per journey.
+                            if not (c.get('feature') not in {None, 'pwa'} and 'features' in journey and c['feature'] not in journey['features']):
                                 expected.add(cell(journey['id'], state, viewport['width'], viewport['height']))
                 coverage = item.get('coverage', [])
-                if not isinstance(coverage, list) or any(not isinstance(e, dict) or not isinstance(e.get('viewport'), dict) for e in coverage):
-                    raise ValueError('coverage must list journey_id/state/viewport objects: ' + c['id'])
+                if not isinstance(coverage, list) or any(
+                        not isinstance(e, dict) or not isinstance(e.get('viewport'), dict)
+                        or any(type(e['viewport'].get(k)) is not int or e['viewport'][k] <= 0 for k in ['width', 'height'])
+                        for e in coverage):
+                    raise ValueError('coverage must list journey_id/state/viewport objects with positive width/height: ' + c['id'])
+                if runtime['state'] not in {state for _, state in states}:
+                    raise ValueError('runtime.state must be a configured journey state: ' + c['id'])
                 for entry in coverage:
                     only(entry, 'coverage', c['id'])
                 actual_coverage = {cell(e.get('journey_id'), e.get('state'), e['viewport'].get('width'), e['viewport'].get('height'))
@@ -334,11 +344,13 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                 if actual_coverage - known or {(e.get('journey_id'), e.get('state')) for e in coverage} - states:
                     raise ValueError('Coverage outside the configured journeys/states/viewports: ' + c['id'])
                 if not expected:
-                    stale_reason.append('No configured journey covers this criterion')
+                    stale_reason.append('No configured journey covers this criterion; check journey features')
                 if c['id'] == 'FLOW-02' and {key[1] for key in expected} <= {'default'}:
                     stale_reason.append('Configure the loading/empty/error/success states the journeys have')
-                if expected - actual_coverage:
-                    stale_reason.append('Required coverage matrix has not been fully checked')
+                missing = sorted(expected - actual_coverage)
+                if missing:
+                    stale_reason.append(f"Required coverage is incomplete: {len(missing)} of {len(expected)} cells missing, "
+                                        f"first {'/'.join(map(str, missing[0]))}")
         if status == 'fail':
             fix = item.get('remediation', {})
             if isinstance(fix, dict) and set(fix) - REMEDIATION_KEYS:
@@ -375,9 +387,8 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
             return subprocess.check_output(['git', '-C', str(root), *args], stderr=subprocess.DEVNULL)
         except (FileNotFoundError, subprocess.CalledProcessError):
             return None
-    listed = git('ls-files', '-co', '--exclude-standard', '-z', *paths)
-    files, limits = inventory(root, excluded, max_files,
-                              {os.fsdecode(name) for name in listed.split(b'\0')} if listed else None)
+    ignored = git('ls-files', '-oi', '--exclude-standard', '--directory', '-z', '--', '.') or b''
+    files, limits = inventory(root, excluded, max_files, {os.fsdecode(name) for name in ignored.split(b'\0') if name})
     discovery = discover(root, files, frontend if frontend != 'auto' else project.get('frontend', 'auto'))
     if discovery['frontend'] is None:
         raise ValueError('Multiple frontends; select --frontend: ' + ', '.join(discovery['frontend_candidates']))
@@ -515,7 +526,8 @@ def roadmap(report):
                       'effort': 'S (investigation; estimate implementation afterwards)' if investigation else fix.get('effort', f['effort']),
                       'owner_role': 'Audit / QA' if investigation else fix.get('owner_role', 'Design / Frontend'),
                       'dependencies': [] if investigation else [d for d in fix.get('dependencies', []) if d not in resolved],
-                      'capabilities': f['capabilities'], 'retest': f['test']})
+                      'capabilities': f['capabilities'], 'retest': f['test'],
+                      'evidence_required': f['evidence_required'], 'pass_covers': COVERS[f['matrix']]})
     ids = {t['id'] for t in tasks}
     for task in tasks:
         for d in task['dependencies']:
@@ -632,9 +644,10 @@ def write(report, out):
     summary += ['', 'Order prioritizes evidence and blockers, then core flows, structure, visual quality and regression.',
                 'Excellence also needs user/design review within the defined scope; an average score does not replace acceptance.']
     (out / 'summary.md').write_text('\n'.join(summary) + '\n')
-    gap = ['# Product audit — current state', '', '| ID | Level | Status | Observation / scope |', '| --- | --- | --- | --- |']
+    gap = ['# Product audit — current state', '', '| ID | Level | Status | Evidence files / cells claimed | Observation / scope |', '| --- | --- | --- | --- | --- |']
     for f in report['findings']:
-        gap.append(f"| {f['id']} | {f['level']} | {f['status']} | {md(f['reason'])} [{md(f['scope'])}] |")
+        gap.append(f"| {f['id']} | {f['level']} | {f['status']} | {len(f['evidence'])} / {len((f['observation'] or {}).get('coverage', []))} "
+                   f"| {md(f['reason'])} [{md(f['scope'])}] |")
     (out / 'gap-report.md').write_text('\n'.join(gap) + '\n')
     plan = ['# Action plan from current state to excellence', '',
             f"Target: `{report['target']}` · Profile: `{report['profile']}`", '',
@@ -650,13 +663,15 @@ def write(report, out):
     for index, task in enumerate(report['roadmap'], 1):
         plan += [f"## {index}. {task['id']} — {task['title']}", '',
                  f"**Kind:** {task['kind']} · **Priority:** {task['priority']} · **Effort:** {task['effort']} · **Role:** {task['owner_role']}", '',
+                 f"**Evidence required:** {task['evidence_required']} · **A pass covers:** {task['pass_covers']}", '',
                  '**Status quo:** ' + task['status_quo'], '', '**Scope:** ' + task['scope'], '', '**Evidence:**', '']
         plan.extend(f"- `{e.get('root', 'target')}:{e['path']}` · SHA-256 `{e['sha256']}` · {e.get('locator', 'Location within evidence')}" for e in task['evidence'])
         if not task['evidence']:
             plan.append('- To be collected.')
         plan += ['', '**Steps:**', '']
         plan.extend(f'{i}. {step}' for i, step in enumerate(task['steps'], 1))
-        plan += ['', '**Affected files:** ' + (', '.join(task['affected_files']) or 'Determine during investigation; no source location invented.'), '',
+        plan += ['', '**Affected files:** ' + (', '.join(task['affected_files']) or ('Determine during investigation; no source location invented.'
+                                                                               if task['kind'] == 'investigation' else 'Source cause not verified.')), '',
                  '**Dependencies:** ' + (', '.join(task['dependencies']) or 'none'), '', '**Acceptance:**', '']
         plan.extend('- ' + a for a in task['acceptance'])
         plan += ['', '**Quality target:** ' + task['product_target'], '', '**Re-Test:** ' + task['retest'], '']
@@ -698,6 +713,9 @@ def main():
         print(json.dumps({'profile': report['profile'], 'counts': report['counts'],
                           'release_gate': report['release_gate'], 'out': str(out)}, ensure_ascii=False))
     except (ValueError, KeyError, TypeError, AttributeError, OSError) as error:
+        stale = Path(args.out).resolve() / 'summary.md'
+        if stale.is_file() and not stale.is_symlink():  # do not leave an earlier clean result standing
+            stale.write_text(f'# Web excellence audit\n\nLast run failed: {error}\n\nOther files here come from an earlier run.\n')
         parser.error(str(error))
 
 
