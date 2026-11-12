@@ -34,6 +34,7 @@ KEYS = {'observations': {'schema_version', 'target', 'source_inventory_hash', 's
         'coverage': {'journey_id', 'state', 'viewport'},
         'field_metrics': {'source', 'window', 'percentile', 'mobile', 'desktop'}}
 MEDIA = {'screenshot': {'.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif'}, 'video': {'.mp4', '.webm', '.mov'}}
+DEFAULT_VIEWPORTS = [{'width': 1440, 'height': 900}, {'width': 390, 'height': 844}]
 CAPTURE_KINDS = {'desktop-browser', 'mobile-simulator', 'installed-pwa-simulator', 'real-device'}
 PROJECT_KEYS = {'schema_version', 'profile', 'frontend', 'audience', 'features', 'viewports',
                 'journeys', 'available_capabilities', 'report_language'}
@@ -79,7 +80,7 @@ def safe_file(root, rel):
     return path
 
 
-def inventory(root, excluded=None, limit=1200):
+def inventory(root, excluded=None, limit=1200, allowed=None):
     found, capped, omitted = {}, False, set()
     excluded = Path(excluded).resolve() if excluded else None
     for base, dirs, files in os.walk(root, followlinks=False):
@@ -94,7 +95,7 @@ def inventory(root, excluded=None, limit=1200):
         for name in sorted(files):
             path = base / name
             rel = path.relative_to(root).as_posix()
-            if (private_path(rel) or path.is_symlink() or (path.suffix not in EXTENSIONS and name not in {'Gemfile', 'Dockerfile'})
+            if ((allowed is not None and rel not in allowed) or private_path(rel) or path.is_symlink() or (path.suffix not in EXTENSIONS and name not in {'Gemfile', 'Dockerfile'})
                     or (excluded and path.resolve().is_relative_to(excluded))):
                 continue
             if len(found) >= limit:
@@ -208,8 +209,8 @@ def validate_project(project):
         if not set(journey.get('features', [])) <= FEATURES:
             raise ValueError('Unknown journey feature')
     for viewport in project.get('viewports', []):
-        if not isinstance(viewport, dict) or any(type(viewport.get(k)) is not int or viewport[k] <= 0 for k in ['width', 'height']):
-            raise ValueError('Project viewport requires positive width/height')
+        if not isinstance(viewport, dict) or set(viewport) - {'width', 'height'} or any(type(viewport.get(k)) is not int or viewport[k] <= 0 for k in ['width', 'height']):
+            raise ValueError('Project viewport requires exactly positive width/height')
     capabilities = project.get('available_capabilities', [])
     if not isinstance(capabilities, list) or any(not isinstance(c, str) for c in capabilities):
         raise ValueError('available_capabilities must be a list of capability IDs')
@@ -246,6 +247,8 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
         raise ValueError('Evidence required: ' + c['id'])
     for name in ['runtime', 'field_metrics']:
         only(item.get(name), name, c['id'])
+    if not isinstance(item.get('evidence', []), list):
+        raise ValueError('evidence must be a list: ' + c['id'])
     for entry in item.get('evidence', []):
         only(entry, 'evidence', c['id'])
         if not isinstance(entry, dict) or not re.fullmatch('[a-f0-9]{64}', str(entry.get('sha256', ''))):
@@ -267,6 +270,7 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
         age = now - checked
         if age.total_seconds() < -300 or age > dt.timedelta(days=max_age_days):
             stale_reason.append('Observation outside the allowed time window')
+        shape = c['matrix']
         if c['evidence_required'] == 'runtime':
             if not any(e.get('root') == 'evidence' and e['kind'] != 'source' for e in evidence):
                 raise ValueError('Runtime artifact under --evidence-root required (source code is insufficient): ' + c['id'])
@@ -284,8 +288,7 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
             elif status == 'pass' and c['category'] == 'pwa' and (runtime.get('display_mode') not in {'standalone', 'fullscreen'}
                     or runtime['capture_kind'] not in {'real-device', 'installed-pwa-simulator'}):
                 raise ValueError('Installed PWA evidence required: ' + c['id'])
-            elif status == 'pass' and c['id'] != 'RESP-03' and c['category'] != 'pwa' and runtime['viewport'] not in (
-                    project.get('viewports') or [{'width': 1440, 'height': 900}, {'width': 390, 'height': 844}]):
+            elif status == 'pass' and shape != 'device' and runtime['viewport'] not in (project.get('viewports') or DEFAULT_VIEWPORTS):
                 raise ValueError('runtime.viewport must be a configured viewport: ' + c['id'])
             elif status == 'pass' and c['id'] == 'RESP-03' and runtime['capture_kind'] not in {'real-device', 'mobile-simulator', 'installed-pwa-simulator'}:
                 raise ValueError('Actual mobile keyboard runtime required: ' + c['id'])
@@ -308,34 +311,34 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                     stale_reason.append('At least one field target is not met')
                 if status == 'fail' and field_complete and field_good:
                     raise ValueError('Field metrics contradict fail: ' + c['id'])
-            if status == 'pass' and c['id'] != 'SPEED-01':
-                # Device-bound checks cover each journey/state once; their viewport is the device's.
-                device = c['id'] == 'RESP-03' or c['category'] == 'pwa'
-                expected, known = set(), set()
-                viewports = project.get('viewports') or [{'width': 1440, 'height': 900}, {'width': 390, 'height': 844}]
+            if status == 'pass' and shape != 'none':
+                # The catalog sets what a pass covers: every state, every journey per viewport, or every journey on the device.
+                def cell(journey_id, state, width, height):
+                    return {'states': (journey_id, state, width, height), 'journeys': (journey_id, width, height),
+                            'device': (journey_id,)}[shape]
+                expected, known, states = set(), set(), set()
                 for journey in project.get('journeys', []):
                     for state in journey.get('states', ['default']):
-                        for viewport in viewports:
-                            cell = (journey['id'], state) if device else (journey['id'], state, viewport['width'], viewport['height'])
-                            known.add(cell)
+                        states.add((journey['id'], state))
+                        for viewport in project.get('viewports') or DEFAULT_VIEWPORTS:
+                            known.add(cell(journey['id'], state, viewport['width'], viewport['height']))
                             if not (c.get('feature') and 'features' in journey and c['feature'] not in journey['features']):
-                                expected.add(cell)
+                                expected.add(cell(journey['id'], state, viewport['width'], viewport['height']))
                 coverage = item.get('coverage', [])
                 if not isinstance(coverage, list) or any(not isinstance(e, dict) or not isinstance(e.get('viewport'), dict) for e in coverage):
                     raise ValueError('coverage must list journey_id/state/viewport objects: ' + c['id'])
                 for entry in coverage:
                     only(entry, 'coverage', c['id'])
-                actual_coverage = {(e.get('journey_id'), e.get('state')) if device else
-                                   (e.get('journey_id'), e.get('state'), e['viewport'].get('width'), e['viewport'].get('height'))
+                actual_coverage = {cell(e.get('journey_id'), e.get('state'), e['viewport'].get('width'), e['viewport'].get('height'))
                                    for e in coverage}
-                if actual_coverage - known:
+                if actual_coverage - known or {(e.get('journey_id'), e.get('state')) for e in coverage} - states:
                     raise ValueError('Coverage outside the configured journeys/states/viewports: ' + c['id'])
                 if not expected:
                     stale_reason.append('No configured journey covers this criterion')
-                if c['id'] == 'FLOW-02' and {cell[1] for cell in expected} <= {'default'}:
+                if c['id'] == 'FLOW-02' and {key[1] for key in expected} <= {'default'}:
                     stale_reason.append('Configure the loading/empty/error/success states the journeys have')
                 if expected - actual_coverage:
-                    stale_reason.append('Required journey/state/viewport matrix has not been fully checked')
+                    stale_reason.append('Required coverage matrix has not been fully checked')
         if status == 'fail':
             fix = item.get('remediation', {})
             if isinstance(fix, dict) and set(fix) - REMEDIATION_KEYS:
@@ -362,7 +365,19 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
         raise ValueError('max_age_days must be positive')
     project = project or {}
     validate_project(project)
-    files, limits = inventory(root, excluded, max_files)
+    # One file set for both halves of the binding: skipped directories and Git-ignored files are outside it.
+    paths = ['--', '.', *(f':(exclude,glob)**/{name}/**' for name in sorted(SKIP))]
+    if excluded and Path(excluded).resolve().is_relative_to(root):
+        paths.append(':(exclude)' + Path(excluded).resolve().relative_to(root).as_posix())
+
+    def git(*args):
+        try:
+            return subprocess.check_output(['git', '-C', str(root), *args], stderr=subprocess.DEVNULL)
+        except (FileNotFoundError, subprocess.CalledProcessError):
+            return None
+    listed = git('ls-files', '-co', '--exclude-standard', '-z', *paths)
+    files, limits = inventory(root, excluded, max_files,
+                              {os.fsdecode(name) for name in listed.split(b'\0')} if listed else None)
     discovery = discover(root, files, frontend if frontend != 'auto' else project.get('frontend', 'auto'))
     if discovery['frontend'] is None:
         raise ValueError('Multiple frontends; select --frontend: ' + ', '.join(discovery['frontend_candidates']))
@@ -379,15 +394,6 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
     features['pwa'] = selected == 'pwa'
     now = now or dt.datetime.now(dt.timezone.utc)
     identity = {'commit': None, 'git_status_hash': None}
-    paths = ['--', '.']
-    if excluded and Path(excluded).resolve().is_relative_to(root):
-        paths.append(':(exclude)' + Path(excluded).resolve().relative_to(root).as_posix())
-
-    def git(*args):
-        try:
-            return subprocess.check_output(['git', '-C', str(root), *args], stderr=subprocess.DEVNULL)
-        except (FileNotFoundError, subprocess.CalledProcessError):
-            return None
     commit, status = git('rev-parse', 'HEAD'), git('status', '--porcelain=v1', '--untracked-files=all', *paths)
     if commit:
         identity['commit'] = commit.decode().strip()
@@ -466,9 +472,11 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
     for hint in discovery['feature_hints']:
         if features[hint['feature']] is False:
             limitations.append(f"Inventory hints at excluded feature {hint['feature']} ({hint['path']}); verify the exclusion.")
+    if features['async_states'] and all(j.get('states', ['default']) == ['default'] for j in project.get('journeys', [])):
+        limitations.append('async_states is set but no journey configures loading/empty/error/success states.')
     if selected != 'pwa' and (features['service_worker'] or features['offline']):
         limitations.append('service_worker/offline are checked only in the pwa profile.')
-    incomplete_scope = not explicit_profile or not project.get('journeys') or not project.get('audience') or limits['truncated']
+    incomplete_scope = not explicit_profile or not project.get('journeys') or not project.get('audience') or limits['truncated'] or max_age_days > 7
     report = {'version': (kit / 'VERSION').read_text().strip(), 'generated_utc': now.isoformat(),
               'target': str(root), 'frontend': discovery['frontend'], 'profile': selected,
               'profile_confirmed': explicit_profile, 'report_language': project.get('report_language', 'English'),
@@ -513,16 +521,24 @@ def roadmap(report):
         for d in task['dependencies']:
             if d not in ids or d == task['id']:
                 raise ValueError(f"Unknown/self dependency {d} in {task['id']}")
-    # Topological ordering preserves concrete prerequisites before cosmetic improvements.
+    # Priority order; a prerequisite is pulled directly ahead of the first task that needs it.
     catalog_priority = {f['id']: f['priority'] for f in report['findings']}
-    ordered, pending = [], sorted(tasks, key=lambda t: (t['priority'], t['kind'] == 'investigation',
-                                                        catalog_priority[t['criterion']], t['criterion']))
-    while pending:
-        ready = next((t for t in pending if set(t['dependencies']) <= {o['id'] for o in ordered}), None)
-        if ready is None:
+    by_id, ordered, seen = {t['id']: t for t in tasks}, [], {}
+
+    def rank(task):
+        return (task['priority'], task['kind'] == 'investigation', catalog_priority[task['criterion']], task['criterion'])
+
+    def place(task):
+        if seen.get(task['id']) == 'open':
             raise ValueError('Cyclic roadmap dependencies')
-        ordered.append(ready)
-        pending.remove(ready)
+        if task['id'] not in seen:
+            seen[task['id']] = 'open'
+            for dependency in sorted((by_id[d] for d in task['dependencies']), key=rank):
+                place(dependency)
+            seen[task['id']] = 'done'
+            ordered.append(task)
+    for task in sorted(tasks, key=rank):
+        place(task)
     return ordered
 
 

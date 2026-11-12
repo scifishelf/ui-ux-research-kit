@@ -408,6 +408,38 @@ class ProductAudit(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Multiple frontends'):
             self.run_audit()
 
+    def test_runtime_writes_outside_the_binding_keep_observations(self):
+        def git(*args):
+            subprocess.run(['git', '-C', str(self.root), '-c', 'user.name=t', '-c', 'user.email=t@example.invalid', *args],
+                           check=True, capture_output=True)
+        (self.root / 'data').mkdir()
+        (self.root / 'data' / 'db.json').write_text('[]')
+        (self.root / '.gitignore').write_text('test-results/\n')
+        git('init', '-q')
+        git('add', '-A')
+        git('commit', '-q', '-m', 'fixture')
+        obs = self.envelope({'WEB-01': self.observed()})
+        (self.root / 'data' / 'db.json').write_text('[{"id": 1}]')
+        (self.root / 'test-results').mkdir()
+        (self.root / 'test-results' / 'last-run.json').write_text('{}')
+        self.assertEqual(self.finding(self.run_audit(obs), 'WEB-01')['status'], 'pass')
+        (self.root / 'index.html').write_text('<h1>Changed product</h1>')
+        self.assertEqual(self.finding(self.run_audit(obs), 'WEB-01')['status'], 'unknown')
+
+    def test_matrix_shape_and_prerequisite_order(self):
+        self.project = {**self.project, 'journeys': [{**self.project['journeys'][0], 'states': ['default', 'error']}]}
+        once = self.observed()
+        self.assertEqual(self.finding(self.run_audit(self.envelope({'FLOW-01': once})), 'FLOW-01')['status'], 'pass')
+        self.assertEqual(self.finding(self.run_audit(self.envelope({'WEB-03': once})), 'WEB-03')['status'], 'unknown')
+        with self.assertRaisesRegex(ValueError, 'exactly'):
+            self.run_audit(project={**self.project, 'viewports': [{'width': 1440, 'height': 900, 'label': 'desktop'}]})
+        blocked = self.observed('fail')
+        blocked['remediation']['dependencies'] = ['ACT-SYS-02']
+        order = [t['id'] for t in self.run_audit(self.envelope({'FLOW-01': blocked}))['roadmap']]
+        self.assertEqual(order.index('ACT-SYS-02') + 1, order.index('ACT-FLOW-01'))
+        self.assertLess(order.index('ACT-FLOW-01'), order.index('ACT-VIS-01'))
+        self.assertEqual(self.run_audit(max_age_days=30)['release_gate'], 'blocked')
+
     def test_evidence_type_and_states_must_fit_the_claim(self):
         (self.evidence / 'notes.json').write_text('{}')
         mislabeled = self.observed(evidence=[{'root': 'evidence', 'path': 'notes.json', 'kind': 'screenshot',
