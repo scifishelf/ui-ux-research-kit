@@ -262,16 +262,33 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
         only(item.get(name), name, c['id'])
     if not isinstance(item.get('evidence', []), list):
         raise ValueError('evidence must be a list: ' + c['id'])
+    coverage = item.get('coverage', [])
+    if not isinstance(coverage, list) or any(
+            not isinstance(e, dict) or not isinstance(e.get('viewport'), dict)
+            or not isinstance(e.get('journey_id'), str) or not isinstance(e.get('state'), str)
+            or any(type(e['viewport'].get(k)) is not int or e['viewport'][k] <= 0 for k in ['width', 'height'])
+            for e in coverage):
+        raise ValueError('coverage must list journey_id/state/viewport objects with positive width/height: ' + c['id'])
+    for entry in coverage:
+        only(entry, 'coverage', c['id'])
     for entry in item.get('evidence', []):
         only(entry, 'evidence', c['id'])
         if not isinstance(entry, dict) or not re.fullmatch('[a-f0-9]{64}', str(entry.get('sha256', ''))):
             raise ValueError('Evidence requires SHA-256: ' + c['id'])
         base = entry.get('root', 'target')
-        if base not in {'target', 'evidence'} or (base == 'evidence' and evidence_root is None):
+        if not isinstance(base, str) or base not in {'target', 'evidence'} or (base == 'evidence' and evidence_root is None):
             raise ValueError('Invalid/missing evidence root: ' + c['id'])
         if not isinstance(entry.get('path'), str) or not entry['path'] or entry.get('kind') not in EVIDENCE_KINDS:
             raise ValueError('Evidence requires path and a known kind: ' + c['id'])
-        path = safe_file(root if base == 'target' else evidence_root, entry['path'])
+        try:
+            path = safe_file(root if base == 'target' else evidence_root, entry['path'])
+        except ValueError as error:
+            # After a source change a deleted cited file downgrades like any other change.
+            if not (stale_reason and base == 'target' and str(error).startswith('Missing')):
+                raise
+            stale_reason.append('Evidence file missing: ' + entry['path'])
+            evidence.append(dict(entry))
+            continue
         if not path.stat().st_size or path.suffix.lower() not in MEDIA.get(entry['kind'], {path.suffix.lower()}):
             raise ValueError('Empty evidence file or file type contradicts kind: ' + entry['path'])
         actual = digest(path)
@@ -304,7 +321,7 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
             elif status == 'pass' and c['category'] == 'pwa' and (runtime.get('display_mode') not in {'standalone', 'fullscreen'}
                     or runtime['capture_kind'] not in {'real-device', 'installed-pwa-simulator'}):
                 raise ValueError('Installed PWA evidence required: ' + c['id'])
-            elif status == 'pass' and shape != 'device' and runtime['viewport'] not in (project.get('viewports') or DEFAULT_VIEWPORTS):
+            elif status == 'pass' and runtime['capture_kind'] == 'desktop-browser' and runtime['viewport'] not in (project.get('viewports') or DEFAULT_VIEWPORTS):
                 raise ValueError('runtime.viewport must be a configured viewport: ' + c['id'])
             elif status == 'pass' and c['id'] == 'RESP-03' and runtime['capture_kind'] not in {'real-device', 'mobile-simulator', 'installed-pwa-simulator'}:
                 raise ValueError('Actual mobile keyboard runtime required: ' + c['id'])
@@ -341,16 +358,8 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                             # pwa follows from the profile; other features can be narrowed per journey.
                             if not (c.get('feature') not in {None, 'pwa'} and 'features' in journey and c['feature'] not in journey['features']):
                                 expected.add(cell(journey['id'], state, viewport['width'], viewport['height']))
-                coverage = item.get('coverage', [])
-                if not isinstance(coverage, list) or any(
-                        not isinstance(e, dict) or not isinstance(e.get('viewport'), dict)
-                        or any(type(e['viewport'].get(k)) is not int or e['viewport'][k] <= 0 for k in ['width', 'height'])
-                        for e in coverage):
-                    raise ValueError('coverage must list journey_id/state/viewport objects with positive width/height: ' + c['id'])
                 if states and runtime['state'] not in {state for _, state in states}:
                     raise ValueError('runtime.state must be a configured journey state: ' + c['id'])
-                for entry in coverage:
-                    only(entry, 'coverage', c['id'])
                 actual_coverage = {cell(e.get('journey_id'), e.get('state'), e['viewport'].get('width'), e['viewport'].get('height'))
                                    for e in coverage}
                 if actual_coverage - known or {(e.get('journey_id'), e.get('state')) for e in coverage} - states:
@@ -373,7 +382,7 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                 values = fix.get(key, [])
                 if not isinstance(values, list) or any(not isinstance(v, str) or not v.strip() for v in values):
                     raise ValueError('Remediation lists must contain text: ' + c['id'])
-            for rel in fix.get('affected_files', []):
+            for rel in [] if stale_reason else fix.get('affected_files', []):
                 safe_file(root, rel, 'affected file')  # invented source locations are rejected
             if fix.get('effort', c['effort']) not in {'S', 'M', 'L'}:
                 raise ValueError('Remediation effort must be S/M/L: ' + c['id'])
@@ -628,8 +637,10 @@ def write(report, out):
                  'summary.md', 'gap-report.md', 'action-plan.md']:
         if (out / name).is_symlink():
             raise ValueError('Output file must not be a symlink: ' + name)
+    outputs = {}  # written together at the end, so a failure leaves no half-updated directory
+
     def save(name, value):
-        (out / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n')
+        outputs[name] = json.dumps(value, ensure_ascii=False, indent=2) + '\n'
     save('audit.json', report)
     save('action-plan.json', {'version': report['version'], 'target': report['target'],
          'source_inventory_hash': report['source_inventory_hash'], 'scope_hash': report['scope_hash'],
@@ -663,19 +674,19 @@ def write(report, out):
         summary.append(f"- **{task['id']} ({task['priority']})**: {task['title']}")
     summary += ['', 'Order prioritizes evidence and blockers, then core flows, structure, visual quality and regression.',
                 'Excellence also needs user/design review within the defined scope.']
-    (out / 'summary.md').write_text('\n'.join(summary) + '\n')
+    outputs['summary.md'] = '\n'.join(summary) + '\n'
     gap = ['# Product audit — current state', '', '| ID | Level | Status | Evidence (claimed cells) | Observation / scope |', '| --- | --- | --- | --- | --- |']
     cited = {}
     for f in report['findings']:
         names = sorted({e['path'] for e in f['evidence']})
         for name in names:
             cited.setdefault(name, []).append(f['id'])
-        gap.append(f"| {f['id']} | {f['level']} | {f['status']} | {md(', '.join(names) or '-')} ({len(f['observation'].get('coverage', [])) if f['status'] == 'pass' else 0}) "
+        gap.append(f"| {f['id']} | {f['level']} | {f['status']} | {md(', '.join(names) or '-')} ({len(f['observation'].get('coverage', [])) if f['status'] == 'pass' and f['matrix'] != 'none' else '-'}) "
                    f"| {md(f['reason'])} [{md(f['scope'])}] |")
     shared = [f'`{name}` ({len(ids)} criteria)' for name, ids in sorted(cited.items()) if len(ids) > 1]
     if shared:
         gap += ['', 'Artifacts cited by several criteria: ' + ', '.join(shared)]
-    (out / 'gap-report.md').write_text('\n'.join(gap) + '\n')
+    outputs['gap-report.md'] = '\n'.join(gap) + '\n'
     plan = ['# Action plan from current state to excellence', '',
             f"Target: `{report['target']}` · Profile: `{report['profile']}`", '',
             'Effort is provisional: S up to one day, M two to five days, L more than five days.',
@@ -713,7 +724,9 @@ def write(report, out):
         if tool.get('installation_example') and tool['decision'] != 'reuse_existing':
             plan += ['```sh', tool['installation_example'], '```', '',
                      'Select a reviewed source commit and CLI/package version before execution; a main-branch example is not a reviewed pin.', '']
-    (out / 'action-plan.md').write_text('\n'.join(plan) + '\n')
+    outputs['action-plan.md'] = '\n'.join(plan) + '\n'
+    for name, text in outputs.items():
+        (out / name).write_text(text)
 
 
 def main():

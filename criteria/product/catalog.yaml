@@ -378,11 +378,12 @@
       "matrix": "journeys",
       "priority": "P1",
       "requirement": "Forms have clear labels, suitable inputs and helpful validation.",
-      "test": "Test empty, valid and invalid input including keyboard and autofill.",
-      "passing": "Errors are associated with fields; correction and completion work with keyboard and autofill.",
+      "test": "Test empty, valid and invalid input by keyboard; check the fields' autocomplete tokens (WCAG 1.3.5).",
+      "passing": "Errors are associated with fields; correction and completion work by keyboard; fields carry matching autocomplete tokens.",
       "action": "Label affected fields, fix input types and provide validation/recovery.",
       "effort": "M",
       "capabilities": [
+        "browser-control",
         "accessibility-scan",
         "interface-code-review"
       ],

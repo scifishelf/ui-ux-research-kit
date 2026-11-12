@@ -1,6 +1,6 @@
 # Auditing local websites and web applications
 
-Start with [web-excellence-audit](../skills/web-excellence-audit/SKILL.md). Static HTML, client frontends, server-rendered applications and CMS projects are supported. Stack discovery is heuristic; it neither requires React nor proposes a replacement stack. The agent performs the actual UI review; Python inventories files, reconciles evidence and builds the plan.
+Workflow: [web-excellence-audit](../skills/web-excellence-audit/SKILL.md). Static HTML, client frontends, server-rendered applications and CMS projects are supported. Stack discovery is heuristic; it neither requires React nor proposes a replacement stack. The agent performs the actual UI review; Python inventories files, reconciles evidence and builds the plan.
 
 ## Profiles and scope
 
@@ -11,8 +11,6 @@ Start with [web-excellence-audit](../skills/web-excellence-audit/SKILL.md). Stat
 | `pwa` | Tasks in installed mode | Installation, safe areas, worker/offline behavior |
 
 The [product criteria](../criteria/product/catalog.yaml) are distinct from the [pipeline/research criteria](../criteria/catalog.yaml).
-
-Sources: [WCAG 2.2](https://www.w3.org/TR/WCAG22/), [usability heuristics](https://www.nngroup.com/articles/ten-usability-heuristics/), [Web Vitals](https://web.dev/articles/vitals).
 
 ## Usage
 
@@ -50,7 +48,7 @@ For output inside the target, `--out` must be the whole run directory including 
 
 Copy `observations.template.json` to `observations.json`. A template containing findings is preserved; a new empty template receives a next-template filename. Keep its `target`, `source_inventory_hash` and `scope_hash` from the actually tested baseline.
 
-Evidence, inventory, Git working-tree (including uncommitted and untracked content) or tested-scope changes downgrade old observations to `unknown`. Fresh hashes alone do not renew a test: rerun the baseline and retest; findings are not carried over. In a Git target, ignored files and skipped directories are outside the binding; anything else the app or a test runner writes counts as a change, hence the baseline after startup. Restore such test data before the final run. `source_inventory_hash` covers selected text files and Git identity, not a complete build. Limits are 1200 files (`--max-files`) and depth 8, with dependencies, builds, data and secrets excluded. `inventory_limits.skipped_directories` in `audit.json` lists omitted directories; inspect relevant ones separately. Record the running build as `runtime.build_id`: the framework's build ID if it exposes one, otherwise commit plus server start time.
+Evidence, inventory, Git working-tree (including uncommitted and untracked content) or tested-scope changes downgrade old observations to `unknown`, including a cited source file that no longer exists. Fresh hashes alone do not renew a test: rerun the baseline and retest; findings are not carried over. In a Git target, ignored files and skipped directories are outside the binding; anything else the app or a test runner writes counts as a change, hence the baseline after startup. Restore such test data before the final run. `source_inventory_hash` covers selected text files and Git identity, not a complete build. Limits are 1200 files (`--max-files`) and depth 8, with dependencies, builds, data and secrets excluded. `inventory_limits.skipped_directories` in `audit.json` lists omitted directories; inspect relevant ones separately. Record the running build as `runtime.build_id`: the framework's build ID if it exposes one, otherwise commit plus server start time.
 
 For each criterion:
 
@@ -58,7 +56,7 @@ For each criterion:
 - `scope` and `reason`: actual routes, states, inputs, themes, conditions, finding and limits.
 - `observed_at`: timezone-aware actual test time; default maximum age seven days; a longer `--max-age-days` blocks acceptance.
 - `evidence`: relative path, SHA-256, kind and, to tie the artifact to its journey/state/viewport, `locator`. Use `root: target` for source; `root: evidence` for artifacts under explicit `--evidence-root`, which lies outside the target or in a subdirectory of `--out`. Traversal, symlinks, empty and secret files are rejected, as is a `screenshot` or `video` without an image or video file extension. Runtime criteria need a runtime artifact under `root: evidence`, not source alone.
-- `runtime`: provenance of the first runtime evidence entry; for a pass at a configured state and, except for `device` criteria, a configured viewport; further artifacts name their journey/state/viewport in `locator`. URL, route, state, browser/version, viewport, build ID and `capture_kind` (`desktop-browser`, `mobile-simulator`, `installed-pwa-simulator` or `real-device`). Browser device emulation counts as `desktop-browser`; a simulator runs the mobile OS with its own browser and software keyboard. A pass needs `real-device` or `installed-pwa-simulator` with standalone/fullscreen `display_mode` for installed-PWA criteria, and any non-desktop kind for `RESP-03`.
+- `runtime`: provenance of the first runtime evidence entry; for a pass at a configured state (criteria with a matrix) and, for `desktop-browser` captures, a configured viewport; further artifacts name their journey/state/viewport in `locator`. URL, route, state, browser/version, viewport, build ID and `capture_kind` (`desktop-browser`, `mobile-simulator`, `installed-pwa-simulator` or `real-device`). Browser device emulation counts as `desktop-browser`; a simulator runs the mobile OS with its own browser and software keyboard. A pass needs `real-device` or `installed-pwa-simulator` with standalone/fullscreen `display_mode` for installed-PWA criteria, and any non-desktop kind for `RESP-03`.
 - `coverage` for runtime `pass`: actually tested journey/state/viewport combinations. The criterion's `matrix` sets what a pass must cover: `states` every journey/state/viewport, `journeys` every journey at every viewport, `device` every journey once on the device (record the device's own viewport), `none` nothing. Journey `features` narrow it; combinations outside the configuration are rejected. Partial coverage is `unknown`; a reproduced failure can establish `fail` in a smaller scope. Never list untested combinations. Conditions a criterion's `test` names beyond the matrix (zoom, 320 px reflow, themes) belong in `scope`; while untested, the criterion stays `unknown`.
 - `remediation` for `fail`: concrete title, implementation steps and measurable acceptance; `scope` and `reason` carry route/state and reproduction. Optional: `affected_files` (must exist in the target), effort, owner role and dependencies. Dependencies reference action IDs such as `ACT-A11Y-01` and must be acyclic.
 
