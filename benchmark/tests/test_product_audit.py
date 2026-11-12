@@ -59,6 +59,9 @@ class ProductAudit(unittest.TestCase):
                                     'acceptance': ['J1 has one unambiguous heading.'], 'effort': 'S'}
         return {**value, **patch}
 
+    def field_evidence(self):
+        return [{'root': 'evidence', 'path': 'run.txt', 'kind': 'field-data', 'sha256': audit.digest(self.evidence / 'run.txt')}]
+
     def finding(self, report, id):
         return next(f for f in report['findings'] if f['id'] == id)
 
@@ -199,6 +202,8 @@ class ProductAudit(unittest.TestCase):
                    'mobile': {'lcp_ms': 2400, 'inp_ms': 180, 'cls': 0.09},
                    'desktop': {'lcp_ms': 1500, 'inp_ms': 90, 'cls': 0.01}}
         obs = self.envelope({'SPEED-01': self.observed(field_metrics=metrics)})
+        self.assertEqual(self.finding(self.run_audit(obs), 'SPEED-01')['status'], 'unknown')
+        obs = self.envelope({'SPEED-01': self.observed(field_metrics=metrics, evidence=self.field_evidence())})
         self.assertEqual(self.finding(self.run_audit(obs), 'SPEED-01')['status'], 'pass')
 
     def test_desktop_viewport_is_not_actual_mobile_keyboard(self):
@@ -356,7 +361,7 @@ class ProductAudit(unittest.TestCase):
         metrics = {'source': 'Synthetic RUM', 'window': 'fixture', 'percentile': 75,
                    'mobile': {'lcp_ms': 2400, 'inp_ms': 180, 'cls': 0.09},
                    'desktop': {'lcp_ms': 1500, 'inp_ms': 90, 'cls': 0.01}}
-        field = self.observed(field_metrics=metrics)
+        field = self.observed(field_metrics=metrics, evidence=self.field_evidence())
         del field['runtime'], field['coverage']
         self.assertEqual(self.finding(self.run_audit(self.envelope({'SPEED-01': field})), 'SPEED-01')['status'], 'pass')
 
@@ -383,6 +388,46 @@ class ProductAudit(unittest.TestCase):
         report = self.run_audit()
         self.assertIn('src/cookies/cookies.ts', report['inventory'])
         self.assertTrue(any('excluded feature pwa' in x for x in report['limitations']))
+
+    def test_uncommitted_content_and_nested_frontends_are_bound(self):
+        def git(*args):
+            subprocess.run(['git', '-C', str(self.root), '-c', 'user.name=t', '-c', 'user.email=t@example.invalid', *args],
+                           check=True, capture_output=True)
+        (self.root / 'logo.svg').write_text('<svg/>')
+        git('init', '-q')
+        git('add', '-A')
+        git('commit', '-q', '-m', 'fixture')
+        (self.root / 'logo.svg').write_text('<svg><!-- first edit --></svg>')
+        first = self.run_audit()['source_inventory_hash']
+        (self.root / 'logo.svg').write_text('<svg><!-- second edit --></svg>')
+        self.assertNotEqual(first, self.run_audit()['source_inventory_hash'])
+        (self.root / 'package.json').write_text(json.dumps({'devDependencies': {'vite': 'fixture'}}))
+        for name, framework in [('web', 'react'), ('admin', 'vue')]:
+            (self.root / 'apps' / name).mkdir(parents=True)
+            (self.root / 'apps' / name / 'package.json').write_text(json.dumps({'dependencies': {framework: 'fixture'}}))
+        with self.assertRaisesRegex(ValueError, 'Multiple frontends'):
+            self.run_audit()
+
+    def test_evidence_type_and_states_must_fit_the_claim(self):
+        (self.evidence / 'notes.json').write_text('{}')
+        mislabeled = self.observed(evidence=[{'root': 'evidence', 'path': 'notes.json', 'kind': 'screenshot',
+                                              'sha256': audit.digest(self.evidence / 'notes.json')}])
+        with self.assertRaisesRegex(ValueError, 'contradicts kind'):
+            self.run_audit(self.envelope({'WEB-01': mislabeled}))
+        elsewhere = self.observed()
+        elsewhere['runtime']['viewport'] = {'width': 9999, 'height': 1}
+        with self.assertRaisesRegex(ValueError, 'configured viewport'):
+            self.run_audit(self.envelope({'WEB-01': elsewhere}))
+        typo = self.observed()
+        typo['runtime']['displaymode'] = 'standalone'
+        with self.assertRaisesRegex(ValueError, 'Unknown runtime keys'):
+            self.run_audit(self.envelope({'WEB-01': typo}))
+        (self.root / 'src' / 'app' / 'credentials').mkdir(parents=True)
+        (self.root / 'src' / 'app' / 'credentials' / 'page.tsx').write_text('export {}')
+        self.assertIn('src/app/credentials/page.tsx', self.run_audit()['inventory'])
+        self.project = {**self.project, 'features': {**self.project['features'], 'async_states': True}}
+        report = self.run_audit(self.envelope({'FLOW-02': self.observed()}))
+        self.assertEqual(self.finding(report, 'FLOW-02')['status'], 'unknown')
 
 
 if __name__ == '__main__':

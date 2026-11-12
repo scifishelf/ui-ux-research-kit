@@ -22,7 +22,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 skills/web-excellence-audit/scripts/audit.py \
   --out /tmp/webapp-ui-ux-audit
 ```
 
-The first run supplies inventory hints and investigation tasks. Multiple frontends require explicit `--frontend <relative-path>`. The script neither installs tools nor starts/modifies the app.
+The first run supplies inventory hints and investigation tasks. `--target` is the repository root. Multiple frontends, including framework packages nested below another, require explicit `--frontend <relative-path>`. The script neither installs tools nor starts/modifies the app.
 
 Prepare a real configuration from [project.example.json](project.example.json) as `project.json` in the run directory; unknown keys are rejected. Do not adopt its synthetic routes or feature decisions without checking them.
 
@@ -31,7 +31,7 @@ Prepare a real configuration from [project.example.json](project.example.json) a
 - `audience`: actual audience and usage context; required for acceptance.
 - `journeys`: at least one priority job with ID, route, task, observable success and states (default `default`). Optional journey `features` narrow applicability; omission conservatively includes all project features.
 - `viewports`: required dimensions; defaults are 1440x900 and 390x844. Record supported browsers/OS, language and themes in `REPORT.md`. Theme variants can be explicit states.
-- `features`: `true` present, `false` verified exclusion, `null` unresolved. Give the reason for every `false` in `REPORT.md`. Do not introduce dark mode, offline promises or dragging simply to satisfy an audit.
+- `features`: `true` present, `false` verified exclusion, `null` unresolved. `service_worker` and `offline` are checked only in the `pwa` profile. Give the reason for every `false` in `REPORT.md`. Do not introduce dark mode, offline promises or dragging simply to satisfy an audit.
 - `available_capabilities`: capabilities actually available from [audit-tools.yaml](audit-tools.yaml). A file's existence does not prove working integration. Not part of the tested scope fingerprint.
 - `report_language`: agent-authored report language, default English. It is presentation metadata and excluded from the tested scope fingerprint. The checker emits English prose; the agent translates final Markdown while preserving machine contracts.
 
@@ -50,19 +50,19 @@ For output inside the target, `--out` must be the whole run directory including 
 
 Copy `observations.template.json` to `observations.json`. A template containing findings is preserved; a new empty template receives a next-template filename. Keep its `target`, `source_inventory_hash` and `scope_hash` from the actually tested baseline.
 
-Evidence, inventory, Git working-tree or tested-scope changes downgrade old observations to `unknown`. Fresh hashes alone do not renew a test: rerun the baseline, retest the affected criteria and record them in the new template. Files the running app writes into a Git target (logs, test results) count as changes; create the baseline after startup or keep such output outside the target. `source_inventory_hash` covers selected text files and Git identity, not a complete build. Limits are 1200 files (`--max-files`) and depth 8, with dependencies, builds, data and secrets excluded. `inventory_limits.skipped_directories` in `audit.json` lists the omissions; inspect relevant ones separately. Record the actual running build as `runtime.build_id`; a commit alone does not identify a running server.
+Evidence, inventory, Git working-tree (including uncommitted and untracked content) or tested-scope changes downgrade old observations to `unknown`. Fresh hashes alone do not renew a test: rerun the baseline, retest the affected criteria and record them in the new template. Files the running app writes into a Git target (logs, test results) count as changes, hence the baseline after startup. `source_inventory_hash` covers selected text files and Git identity, not a complete build. Limits are 1200 files (`--max-files`) and depth 8, with dependencies, builds, data and secrets excluded. `inventory_limits.skipped_directories` in `audit.json` lists omitted directories; inspect relevant ones separately. Record the actual running build as `runtime.build_id`; a commit alone does not identify a running server.
 
 For each criterion:
 
 - `status`: `pass`, `fail` or `unknown`. `not_applicable` follows only from profile and `features`; an observation cannot waive an applicable criterion.
 - `scope` and `reason`: actual routes, states, inputs, themes, conditions, finding and limits.
 - `observed_at`: timezone-aware actual test time; default maximum age seven days, configurable with `--max-age-days`.
-- `evidence`: relative path, SHA-256, kind and locator. Use `root: target` for source; `root: evidence` for artifacts under explicit `--evidence-root`, which lies outside the target or inside `--out`. Traversal, symlinks, empty and secret files are rejected. Runtime criteria need a runtime artifact under `root: evidence`, not source alone.
-- `runtime`: provenance of the cited capture: URL, route, state, browser/version, viewport, build ID and `capture_kind` (`desktop-browser`, `mobile-simulator`, `installed-pwa-simulator` or `real-device`). A pass needs `real-device` or `installed-pwa-simulator` with standalone/fullscreen `display_mode` for installed-PWA criteria, and any non-desktop kind for `RESP-03`.
+- `evidence`: relative path, SHA-256, kind and locator. Use `root: target` for source; `root: evidence` for artifacts under explicit `--evidence-root`, which lies outside the target or inside `--out`. Traversal, symlinks, empty and secret files are rejected, as is a `screenshot` or `video` without an image or video file extension. Runtime criteria need a runtime artifact under `root: evidence`, not source alone.
+- `runtime`: provenance of the first runtime evidence entry, at a configured viewport; further artifacts name their journey/state/viewport in `locator`. URL, route, state, browser/version, viewport, build ID and `capture_kind` (`desktop-browser`, `mobile-simulator`, `installed-pwa-simulator` or `real-device`). A pass needs `real-device` or `installed-pwa-simulator` with standalone/fullscreen `display_mode` for installed-PWA criteria, and any non-desktop kind for `RESP-03`.
 - `coverage` for runtime `pass`: actually tested journey/state/viewport combinations. The required matrix comes from configuration and applicability; combinations outside the configuration are rejected. `RESP-03` and installed-PWA criteria need every journey/state once, at the device's viewport. Partial coverage is `unknown`; a reproduced failure can establish `fail` in a smaller scope. Never list untested combinations. Conditions a criterion's `test` names beyond the matrix (zoom, 320 px reflow, themes) belong in `scope`; while untested, the criterion stays `unknown`.
 - `remediation` for `fail`: concrete title, implementation steps and measurable acceptance; `scope` and `reason` carry route/state and reproduction. Optional: `affected_files` (must exist in the target), effort, owner role and dependencies. Dependencies reference action IDs such as `ACT-A11Y-01` and must be acyclic.
 
-See the [synthetic example](../skills/web-excellence-audit/references/observations.example.json) and [schema](../skills/web-excellence-audit/references/observations.schema.json). They are not runtime evidence. The checker rejects unknown keys.
+See the [synthetic example](../skills/web-excellence-audit/references/observations.example.json) and [schema](../skills/web-excellence-audit/references/observations.schema.json). They are not runtime evidence. The checker rejects unknown keys at every level.
 
 `SPEED-01` needs evidence of kind `field-data` and, instead of `runtime` and `coverage`, `field_metrics`: source, measurement window, `percentile: 75`, mobile/desktop `lcp_ms`, `inp_ms` and `cls`. Missing field data remains unknown; record local trace findings under `SPEED-02`. A Lighthouse score is not field INP evidence.
 

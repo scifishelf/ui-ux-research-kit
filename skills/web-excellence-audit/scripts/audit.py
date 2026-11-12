@@ -27,6 +27,13 @@ EVIDENCE_KINDS = {'source', 'screenshot', 'video', 'trace', 'test-log', 'accessi
 FINDING_KEYS = {'status', 'scope', 'reason', 'observed_at', 'evidence', 'runtime', 'coverage', 'remediation', 'field_metrics'}
 REMEDIATION_KEYS = {'title', 'steps', 'acceptance', 'affected_files', 'dependencies', 'effort', 'owner_role'}
 JOURNEY_KEYS = {'id', 'route', 'task', 'success', 'states', 'features'}
+KEYS = {'observations': {'schema_version', 'target', 'source_inventory_hash', 'scope_hash', 'findings'},
+        'evidence': {'root', 'path', 'sha256', 'kind', 'locator'},
+        'runtime': {'url', 'route', 'state', 'browser', 'browser_version', 'build_id', 'capture_kind',
+                    'display_mode', 'os_version', 'device', 'theme', 'viewport'},
+        'coverage': {'journey_id', 'state', 'viewport'},
+        'field_metrics': {'source', 'window', 'percentile', 'mobile', 'desktop'}}
+MEDIA = {'screenshot': {'.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif'}, 'video': {'.mp4', '.webm', '.mov'}}
 CAPTURE_KINDS = {'desktop-browser', 'mobile-simulator', 'installed-pwa-simulator', 'real-device'}
 PROJECT_KEYS = {'schema_version', 'profile', 'frontend', 'audience', 'features', 'viewports',
                 'journeys', 'available_capabilities', 'report_language'}
@@ -53,7 +60,7 @@ def fingerprint(value):
 
 def private_path(path):
     # Secret stores, not source named after them: src/cookies.ts and cookie-banner.png stay citable.
-    return any(part.startswith('.env') or part.lower() in {'.aws', '.ssh', 'secrets', 'credentials'}
+    return any(part.startswith('.env') or part.lower() in {'.aws', '.ssh', 'secrets'}
                or re.fullmatch(r'(credentials|secrets?|cookies?)\.(json|txt|ya?ml|toml|xml|ini|sqlite|db)|.*\.(pem|key|p12)', part, re.I)
                for part in Path(path).parts)
 
@@ -78,7 +85,8 @@ def inventory(root, excluded=None, limit=1200):
     for base, dirs, files in os.walk(root, followlinks=False):
         base = Path(base)
         omitted.update((base / d).relative_to(root).as_posix() for d in dirs
-                       if d != '.git' and (d in SKIP or private_path(d)))
+                       if d != '.git' and (d in SKIP or private_path(d) or (base / d).is_symlink()
+                                           or len((base / d).relative_to(root).parts) > 8))
         dirs[:] = sorted(d for d in dirs if d not in SKIP and not private_path(d)
                          and not (base / d).is_symlink()
                          and not (excluded and (base / d).resolve().is_relative_to(excluded))
@@ -101,7 +109,7 @@ def inventory(root, excluded=None, limit=1200):
 
 
 def discover(root, files, frontend='auto'):
-    stacks, candidates, scripts, hints = set(), set(), {}, []
+    stacks, candidates, apps, scripts, hints = set(), set(), set(), {}, []
     for rel in files:
         path = root / rel
         name = path.name
@@ -121,6 +129,7 @@ def discover(root, files, frontend='auto'):
             stacks.update(matches)
             if matches:
                 candidates.add(parent)
+                apps.add(parent)
             # Names only: commands may contain credentials and must be reviewed before execution.
             if isinstance(package.get('scripts'), dict):
                 scripts[rel] = sorted(package['scripts'])
@@ -139,11 +148,11 @@ def discover(root, files, frontend='auto'):
             stacks.add('ruby')
         if path.suffix == '.webmanifest' or name in {'sw.js', 'service-worker.js', 'sw.ts'}:
             hints.append({'feature': 'pwa', 'path': rel, 'reason': 'Manifest/worker file'})
-    # index.html beneath an already identified app is a route, not another frontend.
+    # index.html beneath an already identified app is a route; a nested framework package is another frontend.
     ordered = sorted(candidates, key=lambda p: (len(Path(p).parts), p))
     roots = []
     for candidate in ordered:
-        if not any(Path(candidate).is_relative_to(Path(existing)) for existing in roots):
+        if candidate in apps or not any(Path(candidate).is_relative_to(Path(existing)) for existing in roots):
             roots.append(candidate)
     if frontend == 'auto':
         frontend = roots[0] if len(roots) == 1 else ('.' if not roots else None)
@@ -206,6 +215,11 @@ def validate_project(project):
         raise ValueError('available_capabilities must be a list of capability IDs')
 
 
+def only(value, name, where):
+    if isinstance(value, dict) and set(value) - KEYS[name]:
+        raise ValueError(f'Unknown {name} keys in {where}: ' + ', '.join(sorted(set(value) - KEYS[name])))
+
+
 def timestamp(value):
     try:
         result = dt.datetime.fromisoformat(value.replace('Z', '+00:00'))
@@ -230,7 +244,10 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
     evidence = []
     if status in {'pass', 'fail'} and not item.get('evidence'):
         raise ValueError('Evidence required: ' + c['id'])
+    for name in ['runtime', 'field_metrics']:
+        only(item.get(name), name, c['id'])
     for entry in item.get('evidence', []):
+        only(entry, 'evidence', c['id'])
         if not isinstance(entry, dict) or not re.fullmatch('[a-f0-9]{64}', str(entry.get('sha256', ''))):
             raise ValueError('Evidence requires SHA-256: ' + c['id'])
         base = entry.get('root', 'target')
@@ -239,8 +256,8 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
         if not isinstance(entry.get('path'), str) or not entry['path'] or entry.get('kind') not in EVIDENCE_KINDS:
             raise ValueError('Evidence requires path and a known kind: ' + c['id'])
         path = safe_file(root if base == 'target' else evidence_root, entry['path'])
-        if not path.stat().st_size:
-            raise ValueError('Empty evidence file: ' + entry['path'])
+        if not path.stat().st_size or path.suffix.lower() not in MEDIA.get(entry['kind'], {path.suffix.lower()}):
+            raise ValueError('Empty evidence file or file type contradicts kind: ' + entry['path'])
         actual = digest(path)
         if actual != entry.get('sha256'):
             stale_reason.append('Evidence file changed: ' + entry['path'])
@@ -267,12 +284,16 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
             elif status == 'pass' and c['category'] == 'pwa' and (runtime.get('display_mode') not in {'standalone', 'fullscreen'}
                     or runtime['capture_kind'] not in {'real-device', 'installed-pwa-simulator'}):
                 raise ValueError('Installed PWA evidence required: ' + c['id'])
+            elif status == 'pass' and c['id'] != 'RESP-03' and c['category'] != 'pwa' and runtime['viewport'] not in (
+                    project.get('viewports') or [{'width': 1440, 'height': 900}, {'width': 390, 'height': 844}]):
+                raise ValueError('runtime.viewport must be a configured viewport: ' + c['id'])
             elif status == 'pass' and c['id'] == 'RESP-03' and runtime['capture_kind'] not in {'real-device', 'mobile-simulator', 'installed-pwa-simulator'}:
                 raise ValueError('Actual mobile keyboard runtime required: ' + c['id'])
             if c['id'] == 'SPEED-01':
                 field = item.get('field_metrics') if isinstance(item.get('field_metrics'), dict) else {}
-                if field.get('percentile') != 75 or not field.get('source') or not field.get('window'):
-                    stale_reason.append('Field measurements with source, time window and p75 are missing')
+                if field.get('percentile') != 75 or not field.get('source') or not field.get('window') or not any(
+                        e['kind'] == 'field-data' for e in evidence):
+                    stale_reason.append('Field-data evidence with source, time window and p75 is missing')
                 field_complete, field_good = True, True
                 for segment in ['mobile', 'desktop']:
                     values = field.get(segment) if isinstance(field.get(segment), dict) else {}
@@ -302,6 +323,8 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                 coverage = item.get('coverage', [])
                 if not isinstance(coverage, list) or any(not isinstance(e, dict) or not isinstance(e.get('viewport'), dict) for e in coverage):
                     raise ValueError('coverage must list journey_id/state/viewport objects: ' + c['id'])
+                for entry in coverage:
+                    only(entry, 'coverage', c['id'])
                 actual_coverage = {(e.get('journey_id'), e.get('state')) if device else
                                    (e.get('journey_id'), e.get('state'), e['viewport'].get('width'), e['viewport'].get('height'))
                                    for e in coverage}
@@ -309,6 +332,8 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                     raise ValueError('Coverage outside the configured journeys/states/viewports: ' + c['id'])
                 if not expected:
                     stale_reason.append('No configured journey covers this criterion')
+                if c['id'] == 'FLOW-02' and {cell[1] for cell in expected} <= {'default'}:
+                    stale_reason.append('Configure the loading/empty/error/success states the journeys have')
                 if expected - actual_coverage:
                     stale_reason.append('Required journey/state/viewport matrix has not been fully checked')
         if status == 'fail':
@@ -354,22 +379,33 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
     features['pwa'] = selected == 'pwa'
     now = now or dt.datetime.now(dt.timezone.utc)
     identity = {'commit': None, 'git_status_hash': None}
-    for key, args in [('commit', ['rev-parse', 'HEAD']), ('git_status_hash', ['status', '--porcelain=v1', '--untracked-files=all'])]:
+    paths = ['--', '.']
+    if excluded and Path(excluded).resolve().is_relative_to(root):
+        paths.append(':(exclude)' + Path(excluded).resolve().relative_to(root).as_posix())
+
+    def git(*args):
         try:
-            if key == 'git_status_hash':
-                args = [*args, '--', '.']
-                if excluded and Path(excluded).resolve().is_relative_to(root):
-                    args.append(':(exclude)' + Path(excluded).resolve().relative_to(root).as_posix())
-            raw = subprocess.check_output(['git', '-C', str(root), *args], stderr=subprocess.DEVNULL)
-            identity[key] = raw.decode().strip() if key == 'commit' else hashlib.sha256(raw).hexdigest()
+            return subprocess.check_output(['git', '-C', str(root), *args], stderr=subprocess.DEVNULL)
         except (FileNotFoundError, subprocess.CalledProcessError):
-            pass
+            return None
+    commit, status = git('rev-parse', 'HEAD'), git('status', '--porcelain=v1', '--untracked-files=all', *paths)
+    if commit:
+        identity['commit'] = commit.decode().strip()
+    if status is not None:
+        # Content of uncommitted work, not only the list of dirty paths.
+        tree = hashlib.sha256(status + (git('diff', 'HEAD', '--binary', *paths) or b''))
+        for name in (git('ls-files', '-o', '--exclude-standard', '-z', *paths) or b'').split(b'\0'):
+            path = root / os.fsdecode(name)
+            if name and path.is_file() and not path.is_symlink():
+                tree.update(digest(path).encode())
+        identity['git_status_hash'] = tree.hexdigest()
     source_hash = fingerprint({'inventory': files, 'identity': identity})
     scope_hash = fingerprint({'frontend': discovery['frontend'], 'profile': selected, 'project': {k: v for k, v in project.items() if k not in {'report_language', 'available_capabilities', 'schema_version'}}})
     obs, binding_errors = {}, []
     if observations is not None:
         if not isinstance(observations, dict) or observations.get('schema_version') != 1:
             raise ValueError('Use observations.schema.json envelope with schema_version=1')
+        only(observations, 'observations', 'observations file')
         if observations.get('target') != str(root):
             raise ValueError('Observation target does not match project')
         if observations.get('source_inventory_hash') != source_hash:
@@ -388,6 +424,8 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
     if evidence_root and (root.is_relative_to(evidence_root) or (evidence_root.is_relative_to(root) and not (
             excluded and evidence_root.is_relative_to(Path(excluded).resolve())))):
         raise ValueError('Evidence root must lie outside the target or inside --out')
+    if evidence_root and excluded and evidence_root == Path(excluded).resolve():
+        raise ValueError('Evidence root must be a separate directory such as <out>/evidence, not --out itself')
     findings = []
     for c in catalog:
         f = {**c, 'status': 'unknown', 'scope': 'not_observed', 'evidence': [],
@@ -428,6 +466,8 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
     for hint in discovery['feature_hints']:
         if features[hint['feature']] is False:
             limitations.append(f"Inventory hints at excluded feature {hint['feature']} ({hint['path']}); verify the exclusion.")
+    if selected != 'pwa' and (features['service_worker'] or features['offline']):
+        limitations.append('service_worker/offline are checked only in the pwa profile.')
     incomplete_scope = not explicit_profile or not project.get('journeys') or not project.get('audience') or limits['truncated']
     report = {'version': (kit / 'VERSION').read_text().strip(), 'generated_utc': now.isoformat(),
               'target': str(root), 'frontend': discovery['frontend'], 'profile': selected,

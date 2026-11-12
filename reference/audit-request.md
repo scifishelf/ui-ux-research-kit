@@ -21,8 +21,8 @@ Missing evidence is an investigation task; invent neither defects nor tests.
 Recommend skills/tools for observed gaps and the actual stack, with existing
 alternatives, original sources, installation options and a measurable pilot.
 
-Deliver REPORT.md, summary.md, gap-report.md, audit.json, action-plan.md/json
-and tool-recommendations.json. Set --kit to the complete kit path.
+Deliver the files listed under "Action plan and acceptance" in
+<KIT-PATH>/reference/universal-audit.md. Set --kit to the complete kit path.
 Set report_language in project.json. Write final human-readable Markdown in
 the requested language; retain structured keys, IDs and status values.
 The Python checker emits English templates and does not translate them.
