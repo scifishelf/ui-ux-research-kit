@@ -316,7 +316,7 @@ class ProductAudit(unittest.TestCase):
             self.run_audit(self.envelope({'WEB-01': source_as_log}))
         invented = self.observed('fail')
         invented['remediation']['affected_files'] = ['src/does/not/Exist.tsx']
-        with self.assertRaisesRegex(ValueError, 'Missing evidence'):
+        with self.assertRaisesRegex(ValueError, 'Missing affected file'):
             self.run_audit(self.envelope({'WEB-01': invented}))
         with self.assertRaisesRegex(ValueError, 'Unknown project keys: viewport'):
             self.run_audit(project={**self.project, 'viewport': []})
@@ -503,6 +503,12 @@ class ProductAudit(unittest.TestCase):
             self.assertEqual((out / 'summary.md').read_text(), '# Web excellence audit\n\nOwn file')
             self.assertTrue((out / 'audit.json').is_file())
         self.assertEqual(self.run_audit(frontend='./')['scope_hash'], self.run_audit(frontend='.')['scope_hash'])
+        self.assertEqual(self.run_audit(project={**self.project, 'frontend': 'auto'})['scope_hash'], self.run_audit()['scope_hash'])
+        (self.root / 'locales').mkdir()
+        (self.root / 'locales' / 'cookies.json').write_text('{}')
+        self.assertIn('locales/cookies.json', self.run_audit()['inventory'])
+        with self.assertRaisesRegex(ValueError, 'viewports must be a list'):
+            self.run_audit(project={**self.project, 'viewports': None})
         (self.root / 'manage.py').write_text('')
         for folder in ['templates', 'static']:
             (self.root / folder).mkdir()

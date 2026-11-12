@@ -62,23 +62,24 @@ def fingerprint(value):
 
 
 def private_path(path):
-    # Secret stores, not source named after them: src/cookies.ts and cookie-banner.png stay citable.
+    # Secret stores, not source named after them: src/cookies.ts, locales/en/cookies.json and cookie-banner.png stay citable.
+    parts = Path(path).parts
     return any(part.startswith('.env') or part.lower() in {'.aws', '.ssh', 'secrets'}
-               or re.fullmatch(r'(credentials|secrets?|cookies?)\.(json|txt|ya?ml|toml|xml|ini|sqlite|db)|.*\.(pem|key|p12)', part, re.I)
-               for part in Path(path).parts)
+               or re.fullmatch(r'(credentials|secrets?)\.(json|txt|ya?ml|toml|xml|ini|sqlite|db)|.*\.(pem|key|p12)', part, re.I)
+               for part in parts) or (len(parts) == 1 and bool(re.fullmatch(r'cookies?\.(json|txt|sqlite|db)', parts[0], re.I)))
 
 
-def safe_file(root, rel):
+def safe_file(root, rel, label='evidence'):
     rel = Path(rel)
     if rel.is_absolute() or '..' in rel.parts or private_path(rel):
-        raise ValueError('Unsafe evidence path: ' + str(rel))
+        raise ValueError(f'Unsafe {label} path (absolute, .. or private file name): {rel}')
     path = root / rel
     if not path.resolve().is_relative_to(root.resolve()):
-        raise ValueError('Evidence outside root: ' + str(rel))
+        raise ValueError(f'{label} outside root: {rel}')
     if any((root / Path(*rel.parts[:i])).is_symlink() for i in range(1, len(rel.parts) + 1)):
-        raise ValueError('Symlink evidence: ' + str(rel))
+        raise ValueError(f'Symlink {label}: {rel}')
     if not path.is_file():
-        raise ValueError('Missing evidence: ' + str(rel))
+        raise ValueError(f'Missing {label}: {rel}')
     return path
 
 
@@ -215,6 +216,8 @@ def validate_project(project):
             raise ValueError('Journey states must contain nonempty text')
         if not isinstance(journey.get('features', []), list) or any(f not in FEATURES for f in map(str, journey.get('features', []))):
             raise ValueError('Journey features must be a list of known features')
+    if not isinstance(project.get('viewports', []), list) or not isinstance(project.get('frontend', 'auto'), str):
+        raise ValueError('viewports must be a list and frontend a path')
     for viewport in project.get('viewports', []):
         if not isinstance(viewport, dict) or set(viewport) - {'width', 'height'} or any(type(viewport.get(k)) is not int or viewport[k] <= 0 for k in ['width', 'height']):
             raise ValueError('Project viewport requires exactly positive width/height')
@@ -341,7 +344,7 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                         or any(type(e['viewport'].get(k)) is not int or e['viewport'][k] <= 0 for k in ['width', 'height'])
                         for e in coverage):
                     raise ValueError('coverage must list journey_id/state/viewport objects with positive width/height: ' + c['id'])
-                if runtime['state'] not in {state for _, state in states}:
+                if states and runtime['state'] not in {state for _, state in states}:
                     raise ValueError('runtime.state must be a configured journey state: ' + c['id'])
                 for entry in coverage:
                     only(entry, 'coverage', c['id'])
@@ -368,7 +371,7 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                 if not isinstance(values, list) or any(not isinstance(v, str) or not v.strip() for v in values):
                     raise ValueError('Remediation lists must contain text: ' + c['id'])
             for rel in fix.get('affected_files', []):
-                safe_file(root, rel)  # invented source locations are rejected
+                safe_file(root, rel, 'affected file')  # invented source locations are rejected
             if fix.get('effort', c['effort']) not in {'S', 'M', 'L'}:
                 raise ValueError('Remediation effort must be S/M/L: ' + c['id'])
     return ('unknown' if stale_reason else status), evidence, '; '.join(dict.fromkeys(stale_reason))
@@ -390,7 +393,8 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
 
     def git(*args):
         try:
-            return subprocess.check_output(['git', '-C', str(root), *args], stderr=subprocess.DEVNULL)
+            return subprocess.check_output(['git', '-C', str(root), *args], stderr=subprocess.DEVNULL,
+                                           env={**os.environ, 'GIT_OPTIONAL_LOCKS': '0'})  # read-only: no index refresh
         except (FileNotFoundError, subprocess.CalledProcessError):
             return None
     ignored = git('ls-files', '-oi', '--exclude-standard', '--directory', '-z', '--', '.') or b''
@@ -423,7 +427,7 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
                 tree.update(digest(path).encode())
         identity['git_status_hash'] = tree.hexdigest()
     source_hash = fingerprint({'inventory': files, 'identity': identity})
-    scope_hash = fingerprint({'frontend': discovery['frontend'], 'profile': selected, 'project': {k: v for k, v in project.items() if k not in {'report_language', 'available_capabilities', 'schema_version'}}})
+    scope_hash = fingerprint({'frontend': discovery['frontend'], 'profile': selected, 'project': {k: v for k, v in project.items() if k not in {'report_language', 'available_capabilities', 'schema_version', 'frontend', 'profile'}}})
     obs, binding_errors = {}, []
     if observations is not None:
         if not isinstance(observations, dict) or observations.get('schema_version') != 1:
@@ -500,7 +504,8 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
         limitations.append('Unresolved features: ' + ', '.join(unresolved_features))
     incomplete_scope = (not explicit_profile or not project.get('journeys') or not project.get('audience') or limits['truncated']
                         or max_age_days > 7 or bool(unresolved_features))
-    report = {'version': (kit / 'VERSION').read_text().strip(), 'generated_utc': now.isoformat(),
+    report = {'version': (kit / 'VERSION').read_text().strip(), 'catalog_sha256': digest(kit / 'criteria/product/catalog.yaml'),
+              'generated_utc': now.isoformat(),
               'target': str(root), 'frontend': discovery['frontend'], 'profile': selected,
               'profile_confirmed': explicit_profile, 'report_language': project.get('report_language', 'English'),
               'template_language': 'English', 'project': project, 'features': features,
@@ -647,7 +652,7 @@ def write(report, out):
     summary = ['# Web excellence audit', '',
                f"Requested report language: {report['report_language']}. English checker templates; the agent authors/translates final prose.", '',
                f"Target: `{report['target']}` · Frontend: `{report['frontend']}` · Profile: **{report['profile']}**", '',
-               f"Commit: `{report['commit']}` · Profile confirmed: `{report['profile_confirmed']}`", '',
+               f"Commit: `{report['commit']}` · Profile confirmed: `{report['profile_confirmed']}` · Catalog SHA-256: `{report['catalog_sha256']}`", '',
                f"Status: `{report['counts']}` · Acceptance: **{report['release_gate']}**", '',
                '## Limitations', '', *['- ' + x for x in report['limitations']], '',
                '## Address first', '']
