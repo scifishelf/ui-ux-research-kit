@@ -12,7 +12,7 @@ Version 0.3.0. Start with [web-excellence-audit](../skills/web-excellence-audit/
 
 The [31 product criteria](../criteria/product/catalog.yaml) are distinct from the [45 pipeline/research criteria](../criteria/catalog.yaml).
 
-A profile is not a style recipe. Audience, purpose, brand and real material guide art direction and density. Sources: [WCAG 2.2](https://www.w3.org/TR/WCAG22/), [usability heuristics](https://www.nngroup.com/articles/ten-usability-heuristics/), [Web Vitals](https://web.dev/articles/vitals).
+Sources: [WCAG 2.2](https://www.w3.org/TR/WCAG22/), [usability heuristics](https://www.nngroup.com/articles/ten-usability-heuristics/), [Web Vitals](https://web.dev/articles/vitals).
 
 ## Usage
 
@@ -31,9 +31,9 @@ Prepare a real configuration from [project.example.json](project.example.json) a
 - `audience`: actual audience and usage context; required for acceptance.
 - `journeys`: at least one priority job with ID, route, task, observable success and states (default `default`). Optional journey `features` narrow applicability; omission conservatively includes all project features.
 - `viewports`: required dimensions; defaults are 1440x900 and 390x844. Record supported browsers/OS, language and themes in `REPORT.md`.
-- `features`: `true` present, `false` verified exclusion, `null` unresolved, which blocks acceptance. `service_worker` and `offline` are checked only in the `pwa` profile. Give the reason for every `false` in `REPORT.md`. Do not introduce dark mode, offline promises or dragging simply to satisfy an audit.
-- `available_capabilities`: capabilities actually available from [audit-tools.yaml](audit-tools.yaml). A file's existence does not prove working integration. Not part of the tested scope fingerprint.
-- `report_language`: agent-authored report language, default English. It is presentation metadata and excluded from the tested scope fingerprint. The checker emits English prose; the agent translates final Markdown while preserving machine contracts.
+- `features`: `true` present, `false` verified exclusion, `null` unresolved, which blocks acceptance. A feature is `true` if any audited route shows what its criteria (`feature` in the catalog) test, `false` only if none does. `service_worker` and `offline` are checked only in the `pwa` profile. Give the reason for every `false` in `REPORT.md`. Do not introduce dark mode, offline promises or dragging simply to satisfy an audit.
+- `available_capabilities`: `capability` values from [audit-tools.yaml](audit-tools.yaml), such as `browser-control`, that are actually available. A file's existence does not prove working integration. Not part of the tested scope fingerprint.
+- `report_language`: requested report language, default English. Presentation metadata, excluded from the tested scope fingerprint.
 
 Explicit CLI frontend/profile options override configuration values. Review startup commands before execution. Missing backend, login, data or runtime tools leave that scope open; continue independent checks. Use isolated test data for writing flows.
 
@@ -77,7 +77,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 skills/web-excellence-audit/scripts/audit.py \
 
 ## Action plan and acceptance
 
-Deliver `REPORT.md`, `summary.md`, `gap-report.md`, `audit.json`, `action-plan.md/json`, `tool-recommendations.json`, `project.json`, `observations.json` and the evidence directory. The agent writes final human-readable reports in the requested language; JSON keys/IDs/status values stay English. `REPORT.md` is agent-authored: scope and tested matrix (browsers/OS, language, themes), reasons for excluded features, strengths and unmapped judgments per [product critique](../rubrics/product-critic.md) dimension, capability recommendations with their review status, and every open criterion with its blocker and what was attempted.
+Deliver `REPORT.md`, `summary.md`, `gap-report.md`, `audit.json`, `action-plan.md/json`, `tool-recommendations.json`, `project.json`, `observations.json` and the evidence directory. `REPORT.md` is agent-authored: scope and tested matrix (browsers/OS, language, themes), reasons for excluded features, strengths and unmapped judgments per [product critique](../rubrics/product-critic.md) dimension, capability recommendations with their review status, and every open criterion with its blocker and what was attempted.
 
 Priorities: P0 required evidence and critical blockers; P1 core tasks, accessibility and responsiveness; P2 content, structure and speed; P3 art direction and interaction quality; P4 regression and continued evaluation. These catalog priorities apply to evidenced gaps; an open MUST check is always P0, any other open check P4. Dependencies take precedence. S/M/L estimates are provisional.
 
@@ -91,4 +91,4 @@ Use [audit-tools.yaml](audit-tools.yaml) for capability mapping and [skill-radar
 
 Distinguish skills, browser/MCP tools, libraries and evaluation methods. Installation examples are unpinned project proposals. Before adoption review existing alternatives, original source, selected commit/version, license and dynamically loaded rules. Non-Node products may use a separate audit harness. Apply [tool review](tool-review.md) to actual adoption.
 
-A trial names a key screen or flow, baseline and retest. Compare product results and effort. Popularity, demonstrations and skill descriptions do not establish universal effectiveness.
+A trial names a key screen or flow, baseline and retest. Compare product results and effort.

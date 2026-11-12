@@ -15,7 +15,7 @@
           "path": "J01-error-mobile.png",
           "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
           "kind": "screenshot",
-          "locator": "Title field and error area"
+          "locator": "J01 / error / 390x844: title field and error area"
         },
         {
           "root": "target",

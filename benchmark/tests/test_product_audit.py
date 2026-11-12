@@ -491,6 +491,24 @@ class ProductAudit(unittest.TestCase):
         report = self.run_audit(self.envelope({'FLOW-02': self.observed()}))
         self.assertEqual(self.finding(report, 'FLOW-02')['status'], 'unknown')
 
+    def test_refused_output_directory_is_left_untouched(self):
+        (self.root / 'summary.md').write_text('# Book contents')
+        (self.root / 'audit.json').write_text('{}')
+        for out in [self.root, self.base]:
+            (out / 'summary.md').write_text('# Web excellence audit\n\nOwn file')
+            (out / 'audit.json').write_text('{}')
+            done = subprocess.run([sys.executable, str(KIT / 'skills/web-excellence-audit/scripts/audit.py'),
+                                   '--target', str(self.root), '--out', str(out)], capture_output=True, text=True)
+            self.assertNotEqual(done.returncode, 0)
+            self.assertEqual((out / 'summary.md').read_text(), '# Web excellence audit\n\nOwn file')
+            self.assertTrue((out / 'audit.json').is_file())
+        self.assertEqual(self.run_audit(frontend='./')['scope_hash'], self.run_audit(frontend='.')['scope_hash'])
+        (self.root / 'manage.py').write_text('')
+        for folder in ['templates', 'static']:
+            (self.root / folder).mkdir()
+            (self.root / folder / 'index.html').write_text('<p>fixture</p>')
+        self.assertEqual(self.run_audit()['frontend'], '.')
+
 
 if __name__ == '__main__':
     unittest.main()

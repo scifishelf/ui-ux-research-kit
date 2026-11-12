@@ -123,8 +123,6 @@ def discover(root, files, frontend='auto'):
             try:
                 package = json.loads(path.read_text())
                 deps = {**package.get('dependencies', {}), **package.get('devDependencies', {})}
-                if not isinstance(deps, dict):
-                    continue
             except (ValueError, TypeError, AttributeError):
                 continue
             frameworks = {'react': 'react', 'next': 'next', 'vue': 'vue', 'nuxt': 'nuxt',
@@ -150,6 +148,8 @@ def discover(root, files, frontend='auto'):
             candidates.add(parent)
         if name in {'manage.py', 'pyproject.toml', 'requirements.txt'}:
             stacks.add('python')
+        if name in {'manage.py', 'Gemfile'}:  # server-rendered app root; its template folders are not frontends
+            candidates.add(parent)
         if name == 'Gemfile':
             stacks.add('ruby')
         if path.suffix == '.webmanifest' or name in {'sw.js', 'service-worker.js', 'sw.ts'}:
@@ -166,6 +166,7 @@ def discover(root, files, frontend='auto'):
     if frontend is not None:
         if not (root / frontend).resolve().is_relative_to(root) or not (root / frontend).is_dir():
             raise ValueError('Frontend must be a directory inside target')
+        frontend = (root / frontend).resolve().relative_to(root.resolve()).as_posix()
         # Stack conditions refer to the selected app, not unrelated monorepo packages.
         if frontend != '.':
             selected = {k: v for k, v in files.items() if Path(k).is_relative_to(Path(frontend))}
@@ -219,7 +220,7 @@ def validate_project(project):
             raise ValueError('Project viewport requires exactly positive width/height')
     capabilities = project.get('available_capabilities', [])
     if not isinstance(capabilities, list) or any(not isinstance(c, str) for c in capabilities):
-        raise ValueError('available_capabilities must be a list of capability IDs')
+        raise ValueError('available_capabilities must be a list of capability names')
 
 
 def only(value, name, where):
@@ -396,7 +397,7 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
     files, limits = inventory(root, excluded, max_files, {os.fsdecode(name) for name in ignored.split(b'\0') if name})
     discovery = discover(root, files, frontend if frontend != 'auto' else project.get('frontend', 'auto'))
     if discovery['frontend'] is None:
-        raise ValueError('Multiple frontends; select --frontend: ' + ', '.join(discovery['frontend_candidates']))
+        raise ValueError('Multiple frontends; select --frontend (or . for the repository root): ' + ', '.join(discovery['frontend_candidates']))
     requested_profile = profile if profile != 'auto' else project.get('profile', 'auto')
     selected = requested_profile
     if selected == 'auto':
@@ -570,7 +571,7 @@ def recommendations(report, kit):
     available = set(report['project'].get('available_capabilities', []))
     supported = {tool['capability'] for tool in registry}
     if available - supported:
-        raise ValueError('Unknown available capability: ' + ', '.join(sorted(available - supported)))
+        raise ValueError('Unknown available capability: ' + ', '.join(sorted(available - supported)) + '; known: ' + ', '.join(sorted(supported)))
     needed = {}
     for task in report['roadmap']:
         for capability in task['capabilities']:
@@ -653,7 +654,7 @@ def write(report, out):
     for task in report['roadmap'][:5]:
         summary.append(f"- **{task['id']} ({task['priority']})**: {task['title']}")
     summary += ['', 'Order prioritizes evidence and blockers, then core flows, structure, visual quality and regression.',
-                'Excellence also needs user/design review within the defined scope; an average score does not replace acceptance.']
+                'Excellence also needs user/design review within the defined scope.']
     (out / 'summary.md').write_text('\n'.join(summary) + '\n')
     gap = ['# Product audit — current state', '', '| ID | Level | Status | Evidence (claimed cells) | Observation / scope |', '| --- | --- | --- | --- | --- |']
     cited = {}
@@ -685,7 +686,7 @@ def write(report, out):
                  f"**Kind:** {task['kind']} · **Priority:** {task['priority']} · **Effort:** {task['effort']} · **Role:** {task['owner_role']}", '',
                  f"**Evidence required:** {task['evidence_required']} · **A pass covers:** {task['pass_covers']}", '',
                  '**Status quo:** ' + task['status_quo'], '', '**Scope:** ' + task['scope'], '', '**Evidence:**', '']
-        plan.extend(f"- `{e.get('root', 'target')}:{e['path']}` · SHA-256 `{e['sha256']}` · {e.get('locator', 'Location within evidence')}" for e in task['evidence'])
+        plan.extend(f"- `{e.get('root', 'target')}:{e['path']}` · SHA-256 `{e['sha256']}` · {e.get('locator', 'journey/state/viewport not stated')}" for e in task['evidence'])
         if not task['evidence']:
             plan.append('- To be collected.')
         plan += ['', '**Steps:**', '']
@@ -734,7 +735,9 @@ def main():
                           'release_gate': report['release_gate'], 'out': str(out)}, ensure_ascii=False))
     except (ValueError, KeyError, TypeError, AttributeError, OSError) as error:
         stale = Path(args.out).resolve() / 'summary.md'
-        if stale.is_file() and not stale.is_symlink():  # do not leave an earlier result standing
+        # Do not leave an earlier result standing, but touch only this script's own output directory.
+        if (not Path(args.target).resolve().is_relative_to(stale.parent) and stale.is_file() and not stale.is_symlink()
+                and stale.read_text(errors='ignore').startswith('# Web excellence audit')):
             for name in ['audit.json', 'action-plan.json', 'action-plan.md', 'tool-recommendations.json', 'gap-report.md']:
                 if (stale.parent / name).is_file() and not (stale.parent / name).is_symlink():
                     (stale.parent / name).unlink()

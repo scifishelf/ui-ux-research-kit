@@ -544,7 +544,7 @@
       "priority": "P1",
       "requirement": "The software keyboard leaves fields, errors and the main action reachable.",
       "test": "Test forms with a visible software keyboard on a supported mobile runtime.",
-      "passing": "Focus, scrolling and actions stay reachable; viewport emulation alone is not a keyboard test.",
+      "passing": "Focus, scrolling and actions stay reachable with the software keyboard open.",
       "action": "Correct sticky elements, scrolling and viewport handling in the affected form.",
       "effort": "S",
       "capabilities": [
@@ -808,8 +808,8 @@
       "priority": "P1",
       "requirement": "Loading and interactions work without blocking runtime errors.",
       "test": "Inspect console/network while repeating each journey; state device and network conditions in scope.",
-      "passing": "No uncaught error or failed request prevents a journey step.",
-      "action": "Fix measured errors, waterfalls or main-thread blocking at their source.",
+      "passing": "No uncaught console error and no failed request occurs during the journeys.",
+      "action": "Fix console errors and failed requests at their source.",
       "effort": "S",
       "capabilities": [
         "performance-trace",
@@ -905,7 +905,7 @@
       "priority": "P1",
       "requirement": "The PWA works in its actual installed target mode.",
       "test": "Test installation, standalone launch, resume and deep links on a supported device.",
-      "passing": "Runtime provenance proves installed mode; core journeys work.",
+      "passing": "Installed launch, resume and deep links reach the expected screen; core journeys work.",
       "action": "Correct and document installation/standalone launch on the target platform.",
       "effort": "M",
       "capabilities": [
