@@ -62,11 +62,14 @@ def fingerprint(value):
 
 
 def private_path(path):
-    # Secret stores, not source named after them: src/cookies.ts, locales/en/cookies.json and cookie-banner.png stay citable.
+    # Secret stores, not source named after them: src/cookies.ts and cookie-banner.png stay citable,
+    # cookies.json only as a translation namespace below a locale directory.
     parts = Path(path).parts
+    locale = any(part.lower() in {'locales', 'locale', 'i18n', 'lang', 'translations', 'messages'} for part in parts[:-1])
     return any(part.startswith('.env') or part.lower() in {'.aws', '.ssh', 'secrets'}
-               or re.fullmatch(r'(credentials|secrets?)\.(json|txt|ya?ml|toml|xml|ini|sqlite|db)|.*\.(pem|key|p12)', part, re.I)
-               for part in parts) or (len(parts) == 1 and bool(re.fullmatch(r'cookies?\.(json|txt|sqlite|db)', parts[0], re.I)))
+               or re.fullmatch(r'(credentials|secrets?)\.(json|txt|ya?ml|toml|xml|ini|sqlite|db)|cookies?\.(txt|sqlite|db)|.*\.(pem|key|p12)', part, re.I)
+               or (not locale and re.fullmatch(r'cookies?\.json', part, re.I))
+               for part in parts)
 
 
 def safe_file(root, rel, label='evidence'):

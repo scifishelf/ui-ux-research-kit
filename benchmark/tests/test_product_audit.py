@@ -59,6 +59,11 @@ class ProductAudit(unittest.TestCase):
                                     'acceptance': ['J1 has one unambiguous heading.'], 'effort': 'S'}
         return {**value, **patch}
 
+    def inventory_with_cookie_source(self):
+        (self.root / 'src' / 'cookies').mkdir(parents=True, exist_ok=True)
+        (self.root / 'src' / 'cookies' / 'cookies.ts').write_text('export {}')
+        return self.run_audit()['inventory']
+
     def field_evidence(self):
         return [{'root': 'evidence', 'path': 'run.txt', 'kind': 'field-data', 'sha256': audit.digest(self.evidence / 'run.txt')}]
 
@@ -506,7 +511,13 @@ class ProductAudit(unittest.TestCase):
         self.assertEqual(self.run_audit(project={**self.project, 'frontend': 'auto'})['scope_hash'], self.run_audit()['scope_hash'])
         (self.root / 'locales').mkdir()
         (self.root / 'locales' / 'cookies.json').write_text('{}')
-        self.assertIn('locales/cookies.json', self.run_audit()['inventory'])
+        (self.root / 'tmp').mkdir()
+        for name in ['cookies.json', 'cookies.txt']:
+            (self.root / 'tmp' / name).write_text('{}')
+        inventory = self.run_audit()['inventory']
+        self.assertIn('locales/cookies.json', inventory)
+        self.assertFalse({'tmp/cookies.json', 'tmp/cookies.txt'} & set(inventory))
+        self.assertIn('src/cookies/cookies.ts', self.inventory_with_cookie_source())
         with self.assertRaisesRegex(ValueError, 'viewports must be a list'):
             self.run_audit(project={**self.project, 'viewports': None})
         (self.root / 'manage.py').write_text('')
