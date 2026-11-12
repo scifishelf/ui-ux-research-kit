@@ -85,7 +85,7 @@
       "priority": "P1",
       "requirement": "Navigation, links and back behavior are clear and consistent.",
       "test": "Exercise navigation, direct URLs, active location and browser back per journey.",
-      "passing": "Destinations are reachable and navigation preserves expected context.",
+      "passing": "Every journey route loads by direct URL, navigation marks the current location, and browser back returns to the previous screen.",
       "action": "Unify navigation and URL state and restore lost context.",
       "effort": "S",
       "capabilities": [
@@ -181,8 +181,8 @@
       "matrix": "journeys",
       "priority": "P3",
       "requirement": "The visual direction is distinctive and appropriate for the audience.",
-      "test": "Compare rendered key pages with the project's brand guidelines or documented design decisions; without either, the criterion stays unknown; name the missing direction in the reason.",
-      "passing": "Rendered color, typography, layout and imagery on key pages follow the documented direction.",
+      "test": "Compare the rendered journey screens with the project's brand guidelines or documented design decisions; without either, the criterion stays unknown; name the missing direction in the reason.",
+      "passing": "Rendered color, typography, layout and imagery of every configured journey follow the documented direction.",
       "action": "Define art direction using real content and refine one key screen first.",
       "effort": "M",
       "capabilities": [
@@ -479,7 +479,7 @@
       "priority": "P1",
       "requirement": "Content and actions remain reachable on small screens and at zoom.",
       "test": "Test configured viewports, 200% browser zoom and reflow at 320 CSS px.",
-      "passing": "No horizontal scrolling of vertically scrolling content at 320 CSS px (WCAG 1.4.10 exceptions aside); core tasks complete at 200% zoom.",
+      "passing": "No horizontal scrolling of vertically scrolling content at 320 CSS px (WCAG 1.4.10 exceptions aside); every configured journey completes at 200% zoom.",
       "action": "Make affected layouts flexible and adapt order/navigation to small screens.",
       "effort": "S",
       "capabilities": [
@@ -876,7 +876,7 @@
       "priority": "P4",
       "requirement": "Key flows and visual states have reproducible regression tests.",
       "test": "Compare tests, fixtures and CI configuration with audited journeys.",
-      "passing": "Repeatable tests protect core flows and important visual states with fixed data.",
+      "passing": "Repeatable tests with fixed data cover every configured journey and its configured states.",
       "action": "Add regression tests for repaired flows and separate viewport baselines.",
       "effort": "M",
       "capabilities": [
@@ -906,7 +906,7 @@
       "priority": "P1",
       "requirement": "The PWA works in its actual installed target mode.",
       "test": "Test installation, standalone launch, resume and deep links on a supported device.",
-      "passing": "Installed launch, resume and deep links reach the expected screen; core journeys work.",
+      "passing": "Installed launch, resume and deep links reach the expected screen; every configured journey works.",
       "action": "Correct and document installation/standalone launch on the target platform.",
       "effort": "M",
       "capabilities": [
