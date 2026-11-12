@@ -278,7 +278,7 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
         base = entry.get('root', 'target')
         if not isinstance(base, str) or base not in {'target', 'evidence'} or (base == 'evidence' and evidence_root is None):
             raise ValueError('Invalid/missing evidence root: ' + c['id'])
-        if not isinstance(entry.get('path'), str) or not entry['path'] or entry.get('kind') not in EVIDENCE_KINDS:
+        if not isinstance(entry.get('path'), str) or not entry['path'] or not isinstance(entry.get('kind'), str) or entry['kind'] not in EVIDENCE_KINDS:
             raise ValueError('Evidence requires path and a known kind: ' + c['id'])
         try:
             path = safe_file(root if base == 'target' else evidence_root, entry['path'])
