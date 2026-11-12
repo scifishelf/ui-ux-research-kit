@@ -331,6 +331,13 @@ class ProductAudit(unittest.TestCase):
                         'journeys': [{**self.project['journeys'][0], 'features': []}]}
         report = self.run_audit(self.envelope({'FLOW-02': self.observed(coverage=[])}))
         self.assertEqual(self.finding(report, 'FLOW-02')['status'], 'unknown')
+        self.assertIn('No journey lists these features, so their criteria cannot pass: async_states', self.run_audit()['limitations'])
+        slow = self.observed('fail', evidence=self.field_evidence(), field_metrics={
+            'source': 'Synthetic RUM', 'window': 'fixture', 'percentile': 75, 'mobile': {'lcp_ms': 4000}})
+        self.assertEqual(self.finding(self.run_audit(self.envelope({'SPEED-01': slow})), 'SPEED-01')['status'], 'fail')
+        gone = self.observed('fail')
+        gone['evidence'].append({'root': 'target', 'path': 'src/data/gone.js', 'kind': 'source', 'sha256': '0' * 64})
+        self.assertEqual(self.finding(self.run_audit(self.envelope({'WEB-01': gone})), 'WEB-01')['status'], 'unknown')
 
     def test_truthful_failures_and_names_are_recordable(self):
         (self.evidence / 'cookie-banner-mobile.txt').write_text('Synthetic log')

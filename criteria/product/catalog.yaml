@@ -379,7 +379,7 @@
       "priority": "P1",
       "requirement": "Forms have clear labels, suitable inputs and helpful validation.",
       "test": "Test empty, valid and invalid input by keyboard; check the fields' autocomplete tokens (WCAG 1.3.5).",
-      "passing": "Errors are associated with fields; correction and completion work by keyboard; fields carry matching autocomplete tokens.",
+      "passing": "Errors are associated with fields; correction and completion work by keyboard; fields that collect the user's own data carry the matching autocomplete token.",
       "action": "Label affected fields, fix input types and provide validation/recovery.",
       "effort": "M",
       "capabilities": [
@@ -479,7 +479,7 @@
       "priority": "P1",
       "requirement": "Content and actions remain reachable on small screens and at zoom.",
       "test": "Test configured viewports, 200% browser zoom and reflow at 320 CSS px.",
-      "passing": "No blocking overflow; core tasks work at zoom and narrow widths.",
+      "passing": "No horizontal scrolling of vertically scrolling content at 320 CSS px (WCAG 1.4.10 exceptions aside); core tasks complete at 200% zoom.",
       "action": "Make affected layouts flexible and adapt order/navigation to small screens.",
       "effort": "S",
       "capabilities": [

@@ -283,8 +283,8 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
         try:
             path = safe_file(root if base == 'target' else evidence_root, entry['path'])
         except ValueError as error:
-            # After a source change a deleted cited file downgrades like any other change.
-            if not (stale_reason and base == 'target' and str(error).startswith('Missing')):
+            # A cited source file that no longer exists downgrades like any other source change.
+            if not (base == 'target' and str(error).startswith('Missing')):
                 raise
             stale_reason.append('Evidence file missing: ' + entry['path'])
             evidence.append(dict(entry))
@@ -330,20 +330,22 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                 if field.get('percentile') != 75 or not field.get('source') or not field.get('window') or not any(
                         e['kind'] == 'field-data' for e in evidence):
                     stale_reason.append('Field-data evidence with source, time window and p75 is missing')
-                field_complete, field_good = True, True
+                missing, exceeded = [], False
                 for segment in ['mobile', 'desktop']:
                     values = field.get(segment) if isinstance(field.get(segment), dict) else {}
                     for key, maximum in [('lcp_ms', 2500), ('inp_ms', 200), ('cls', 0.1)]:
                         value = values.get(key)
                         if type(value) not in {int, float} or not math.isfinite(value) or value < 0:
-                            field_complete = False
-                            stale_reason.append('Field value missing: ' + segment + '/' + key)
+                            missing.append('Field value missing: ' + segment + '/' + key)
                         elif value > maximum:
-                            field_good = False
-                if status == 'pass' and not field_good:
-                    stale_reason.append('At least one field target is not met')
-                if status == 'fail' and field_complete and field_good:
+                            exceeded = True
+                # A pass needs every value within target; one measured violation is enough for a fail.
+                if status == 'pass':
+                    stale_reason += missing + (['At least one field target is not met'] if exceeded else [])
+                elif not exceeded and not missing:
                     raise ValueError('Field metrics contradict fail: ' + c['id'])
+                elif not exceeded:
+                    stale_reason += missing
             if status == 'pass' and shape != 'none':
                 # The catalog sets what a pass covers: every state, every journey per viewport, or every journey on the device.
                 def cell(journey_id, state, width, height):
@@ -509,6 +511,11 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
             limitations.append(f"Inventory hints at excluded feature {hint['feature']} ({hint['path']}); verify the exclusion.")
     if features['async_states'] and all(j.get('states', ['default']) == ['default'] for j in project.get('journeys', [])):
         limitations.append('async_states is set but no journey configures loading/empty/error/success states.')
+    journeys = project.get('journeys', [])
+    uncovered = sorted({c['feature'] for c in catalog if c['matrix'] != 'none' and c.get('feature') not in {None, 'pwa'} and features[c['feature']]
+                        and journeys and all('features' in j and c['feature'] not in j['features'] for j in journeys)})
+    if uncovered:
+        limitations.append('No journey lists these features, so their criteria cannot pass: ' + ', '.join(uncovered))
     if selected != 'pwa' and (features['service_worker'] or features['offline']):
         limitations.append('service_worker/offline are checked only in the pwa profile.')
     unresolved_features = sorted({c['feature'] for c in catalog if selected in c['profiles'] and c.get('feature') and features[c['feature']] is None})

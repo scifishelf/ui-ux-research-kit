@@ -12,7 +12,6 @@
     "destructive_actions": true,
     "gestures": false,
     "motion": true,
-    "pwa": false,
     "service_worker": false,
     "offline": false
   },
