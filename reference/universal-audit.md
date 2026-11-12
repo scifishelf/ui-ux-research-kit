@@ -28,11 +28,11 @@ Prepare a real configuration from [project.example.json](project.example.json) a
 
 - `profile`: confirmed `website`, `webapp` or `pwa`.
 - `frontend`: relative folder, `.` for root or `auto` for discovery.
-- `audience`: actual audience and usage context.
+- `audience`: actual audience and usage context; required for acceptance.
 - `journeys`: at least one priority job with ID, route, task, observable success and states (default `default`). Optional journey `features` narrow applicability; omission conservatively includes all project features.
 - `viewports`: required dimensions; defaults are 1440x900 and 390x844. Record supported browsers/OS, language and themes in `REPORT.md`. Theme variants can be explicit states.
 - `features`: `true` present, `false` verified exclusion, `null` unresolved. Give the reason for every `false` in `REPORT.md`. Do not introduce dark mode, offline promises or dragging simply to satisfy an audit.
-- `available_capabilities`: capabilities actually available from [audit-tools.yaml](audit-tools.yaml). A file's existence does not prove working integration.
+- `available_capabilities`: capabilities actually available from [audit-tools.yaml](audit-tools.yaml). A file's existence does not prove working integration. Not part of the tested scope fingerprint.
 - `report_language`: agent-authored report language, default English. It is presentation metadata and excluded from the tested scope fingerprint. The checker emits English prose; the agent translates final Markdown while preserving machine contracts.
 
 Explicit CLI frontend/profile options override configuration values. Review startup commands before execution. Missing backend, login, data or runtime tools leave that scope open; continue independent checks. Use isolated test data for writing flows.
@@ -50,21 +50,21 @@ For output inside the target, `--out` must be the whole run directory including 
 
 Copy `observations.template.json` to `observations.json`. A template containing findings is preserved; a new empty template receives a next-template filename. Keep its `target`, `source_inventory_hash` and `scope_hash` from the actually tested baseline.
 
-Evidence, inventory, Git working-tree or tested-scope changes downgrade old observations to `unknown`. Fresh hashes alone do not renew a test: rerun the baseline, retest the affected criteria and record them in the new template. Files the running app writes into a Git target (logs, test results) count as changes; create the baseline after startup or keep such output outside the target. `source_inventory_hash` covers selected text files and Git identity, not a complete build. Limits are 1200 files (`--max-files`), depth 8 and 4 MB per file, with dependencies, builds, data and secrets excluded. `inventory_limits.skipped_directories` in `audit.json` lists the omissions; inspect relevant ones separately. Record the actual running build as `runtime.build_id`; a commit alone does not identify a running server.
+Evidence, inventory, Git working-tree or tested-scope changes downgrade old observations to `unknown`. Fresh hashes alone do not renew a test: rerun the baseline, retest the affected criteria and record them in the new template. Files the running app writes into a Git target (logs, test results) count as changes; create the baseline after startup or keep such output outside the target. `source_inventory_hash` covers selected text files and Git identity, not a complete build. Limits are 1200 files (`--max-files`) and depth 8, with dependencies, builds, data and secrets excluded. `inventory_limits.skipped_directories` in `audit.json` lists the omissions; inspect relevant ones separately. Record the actual running build as `runtime.build_id`; a commit alone does not identify a running server.
 
 For each criterion:
 
 - `status`: `pass`, `fail` or `unknown`. `not_applicable` follows only from profile and `features`; an observation cannot waive an applicable criterion.
 - `scope` and `reason`: actual routes, states, inputs, themes, conditions, finding and limits.
 - `observed_at`: timezone-aware actual test time; default maximum age seven days, configurable with `--max-age-days`.
-- `evidence`: relative path, SHA-256, kind and locator. Use `root: target` for source; `root: evidence` for artifacts under explicit `--evidence-root`. Traversal, symlinks and secret files are rejected. Runtime criteria need a runtime artifact under `root: evidence`, not source alone.
-- `runtime`: URL, route, state, browser/version, viewport, build ID and `capture_kind` (`desktop-browser`, `mobile-simulator`, `installed-pwa-simulator` or `real-device`). A pass needs `real-device` or `installed-pwa-simulator` with standalone/fullscreen `display_mode` for installed-PWA criteria, and any non-desktop kind for `RESP-03`.
-- `coverage` for runtime `pass`: actually tested journey/state/viewport combinations. The required matrix comes from configuration and applicability. Partial coverage is `unknown`; a reproduced failure can establish `fail` in a smaller scope. Never list untested combinations. Conditions a criterion's `test` names beyond the matrix (zoom, 320 px reflow, themes) belong in `scope`; while untested, the criterion stays `unknown`.
-- `remediation` for `fail`: concrete title, implementation steps and measurable acceptance. Optional: `affected_files` (must exist in the target), effort, owner role and dependencies. Dependencies reference action IDs such as `ACT-A11Y-01` and must be acyclic.
+- `evidence`: relative path, SHA-256, kind and locator. Use `root: target` for source; `root: evidence` for artifacts under explicit `--evidence-root`, which lies outside the target or inside `--out`. Traversal, symlinks, empty and secret files are rejected. Runtime criteria need a runtime artifact under `root: evidence`, not source alone.
+- `runtime`: provenance of the cited capture: URL, route, state, browser/version, viewport, build ID and `capture_kind` (`desktop-browser`, `mobile-simulator`, `installed-pwa-simulator` or `real-device`). A pass needs `real-device` or `installed-pwa-simulator` with standalone/fullscreen `display_mode` for installed-PWA criteria, and any non-desktop kind for `RESP-03`.
+- `coverage` for runtime `pass`: actually tested journey/state/viewport combinations. The required matrix comes from configuration and applicability; combinations outside the configuration are rejected. `RESP-03` and installed-PWA criteria need every journey/state once, at the device's viewport. Partial coverage is `unknown`; a reproduced failure can establish `fail` in a smaller scope. Never list untested combinations. Conditions a criterion's `test` names beyond the matrix (zoom, 320 px reflow, themes) belong in `scope`; while untested, the criterion stays `unknown`.
+- `remediation` for `fail`: concrete title, implementation steps and measurable acceptance; `scope` and `reason` carry route/state and reproduction. Optional: `affected_files` (must exist in the target), effort, owner role and dependencies. Dependencies reference action IDs such as `ACT-A11Y-01` and must be acyclic.
 
-See the [synthetic example](../skills/web-excellence-audit/references/observations.example.json) and [schema](../skills/web-excellence-audit/references/observations.schema.json). They are not runtime evidence.
+See the [synthetic example](../skills/web-excellence-audit/references/observations.example.json) and [schema](../skills/web-excellence-audit/references/observations.schema.json). They are not runtime evidence. The checker rejects unknown keys.
 
-`SPEED-01` additionally needs `field_metrics`: source, measurement window, `percentile: 75`, mobile/desktop `lcp_ms`, `inp_ms` and `cls`. Missing field data remains unknown; record local trace findings under `SPEED-02`. `SPEED-01` is exempt from the journey matrix. A Lighthouse score is not field INP evidence.
+`SPEED-01` needs evidence of kind `field-data` and, instead of `runtime` and `coverage`, `field_metrics`: source, measurement window, `percentile: 75`, mobile/desktop `lcp_ms`, `inp_ms` and `cls`. Missing field data remains unknown; record local trace findings under `SPEED-02`. A Lighthouse score is not field INP evidence.
 
 ```sh
 PYTHONDONTWRITEBYTECODE=1 python3 skills/web-excellence-audit/scripts/audit.py \
@@ -77,9 +77,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 skills/web-excellence-audit/scripts/audit.py \
 
 ## Action plan and acceptance
 
-Deliver `REPORT.md`, `summary.md`, `gap-report.md`, `audit.json`, `action-plan.md/json`, `tool-recommendations.json` and the bound observation template. The agent writes final human-readable reports in the requested language; JSON keys/IDs/status values stay English. `REPORT.md` is agent-authored: scope and tested matrix (browsers/OS, language, themes), reasons for excluded features, strengths and gaps per [product critique](../rubrics/product-critic.md) dimension, and every open criterion with its blocker and what was attempted.
+Deliver `REPORT.md`, `summary.md`, `gap-report.md`, `audit.json`, `action-plan.md/json`, `tool-recommendations.json`, `project.json`, `observations.json` and the evidence directory. The agent writes final human-readable reports in the requested language; JSON keys/IDs/status values stay English. `REPORT.md` is agent-authored: scope and tested matrix (browsers/OS, language, themes), reasons for excluded features, strengths and gaps per [product critique](../rubrics/product-critic.md) dimension, and every open criterion with its blocker and what was attempted.
 
-Priorities: P0 required evidence and critical blockers; P1 core tasks, accessibility and responsiveness; P2 content, structure and speed; P3 art direction and interaction quality; P4 regression and continued evaluation. Dependencies take precedence. S/M/L estimates are provisional.
+Priorities: P0 required evidence and critical blockers; P1 core tasks, accessibility and responsiveness; P2 content, structure and speed; P3 art direction and interaction quality; P4 regression and continued evaluation. These catalog priorities apply to evidenced gaps; an open MUST check is always P0, any other open check P4. Dependencies take precedence. S/M/L estimates are provisional.
 
 Every evidenced gap answers: what happens on which route, which artifact proves it, which component causes it, what changes, what prerequisite exists, how acceptance is measured and what flow is retested. Unknown criteria create investigations, not invented defects. A list such as “improve UX / install a design skill” is insufficient.
 

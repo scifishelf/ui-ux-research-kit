@@ -344,6 +344,46 @@ class ProductAudit(unittest.TestCase):
         (self.root / 'src' / 'data' / 'routes.js').write_text('export default []')
         self.assertIn('src/data', self.run_audit()['inventory_limits']['skipped_directories'])
 
+    def test_device_bound_and_field_criteria_need_no_invented_cells(self):
+        self.project = {**self.project, 'features': {**self.project['features'], 'forms': True},
+                        'viewports': [{'width': 1440, 'height': 900}, {'width': 390, 'height': 844}]}
+        keyboard = self.observed()
+        keyboard['runtime'].update(capture_kind='mobile-simulator')
+        self.assertEqual(self.finding(self.run_audit(self.envelope({'RESP-03': keyboard})), 'RESP-03')['status'], 'pass')
+        ghost = self.observed(coverage=[{'journey_id': 'GHOST', 'state': 'default', 'viewport': {'width': 390, 'height': 844}}])
+        with self.assertRaisesRegex(ValueError, 'Coverage outside'):
+            self.run_audit(self.envelope({'WEB-01': ghost}))
+        metrics = {'source': 'Synthetic RUM', 'window': 'fixture', 'percentile': 75,
+                   'mobile': {'lcp_ms': 2400, 'inp_ms': 180, 'cls': 0.09},
+                   'desktop': {'lcp_ms': 1500, 'inp_ms': 90, 'cls': 0.01}}
+        field = self.observed(field_metrics=metrics)
+        del field['runtime'], field['coverage']
+        self.assertEqual(self.finding(self.run_audit(self.envelope({'SPEED-01': field})), 'SPEED-01')['status'], 'pass')
+
+    def test_cheap_fabrications_and_typos_are_rejected(self):
+        (self.evidence / 'empty.png').write_bytes(b'')
+        empty = self.observed(evidence=[{'root': 'evidence', 'path': 'empty.png', 'kind': 'screenshot', 'sha256': audit.digest(self.evidence / 'empty.png')}])
+        with self.assertRaisesRegex(ValueError, 'Empty evidence'):
+            self.run_audit(self.envelope({'WEB-01': empty}))
+        with self.assertRaisesRegex(ValueError, 'Evidence root'):
+            audit.run(self.root, KIT, project=self.project, evidence_root=self.root, now=self.now)
+        with self.assertRaisesRegex(ValueError, 'Unknown observation keys'):
+            self.run_audit(self.envelope({'WEB-01': self.observed(bogus_key=1)}))
+        with self.assertRaisesRegex(ValueError, 'Unknown journey keys'):
+            self.run_audit(project={**self.project, 'journeys': [{**self.project['journeys'][0], 'feature': []}]})
+
+    def test_scope_binding_and_source_named_after_secrets(self):
+        obs = self.envelope({'WEB-01': self.observed()})
+        report = self.run_audit(obs, project={**self.project, 'available_capabilities': ['browser-control']})
+        self.assertEqual(self.finding(report, 'WEB-01')['status'], 'pass')
+        self.assertIn('No audience configured; judgments lack their reference.', report['limitations'])
+        (self.root / 'src' / 'cookies').mkdir(parents=True)
+        (self.root / 'src' / 'cookies' / 'cookies.ts').write_text('export {}')
+        (self.root / 'sw.js').write_text('// worker')
+        report = self.run_audit()
+        self.assertIn('src/cookies/cookies.ts', report['inventory'])
+        self.assertTrue(any('excluded feature pwa' in x for x in report['limitations']))
+
 
 if __name__ == '__main__':
     unittest.main()

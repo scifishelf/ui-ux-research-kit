@@ -19,7 +19,7 @@
       "priority": "P1",
       "requirement": "Name the audience, user job and measurable success in the audit scope.",
       "test": "Compare the product brief and priority journeys with actual routes.",
-      "passing": "The audience is named and at least one user job has an existing route, an observable success condition and states.",
+      "passing": "The audience is named and every configured journey route exists in the product.",
       "action": "Document the audience and key journeys from the product and project rules.",
       "effort": "S",
       "capabilities": [
@@ -176,7 +176,7 @@
       "priority": "P3",
       "requirement": "The visual direction is distinctive and appropriate for the audience.",
       "test": "Compare rendered key pages with the project's brand guidelines or documented design decisions; without either, record unknown.",
-      "passing": "Reasoned color, typography, layout and image choices create a recognizable direction.",
+      "passing": "Rendered color, typography, layout and imagery follow the documented direction; deviations are named.",
       "action": "Define art direction using real content and refine one key screen first.",
       "effort": "M",
       "capabilities": [
@@ -207,8 +207,8 @@
       "evidence_required": "runtime",
       "priority": "P1",
       "requirement": "Typography, spacing and hierarchy stay readable with real content.",
-      "test": "Test long headings, dense data, text zoom and multiple viewports.",
-      "passing": "No blocking overflow; text and actions remain readable and distinguishable.",
+      "test": "Test long headings and dense data at the configured viewports.",
+      "passing": "No clipped or overlapping text; text and actions remain readable and distinguishable.",
       "action": "Fix observed overflow and organize typography/spacing by semantic role.",
       "effort": "M",
       "capabilities": [
@@ -495,7 +495,7 @@
       "priority": "P1",
       "requirement": "Touch and pointer targets are large enough to operate.",
       "test": "Measure bounding boxes/spacing and test hover-dependent features with touch.",
-      "passing": "WCAG 2.2 AA targets meet 24x24 CSS px or a documented exception.",
+      "passing": "WCAG 2.2 AA targets meet 24x24 CSS px or a documented exception; no action is reachable only by hover.",
       "action": "Enlarge affected controls, correct spacing and expose hover actions to touch.",
       "effort": "S",
       "capabilities": [
@@ -621,7 +621,7 @@
       "evidence_required": "runtime",
       "priority": "P1",
       "requirement": "Semantics, accessible names and status announcements support assistive technology.",
-      "test": "Combine DOM/accessibility-tree checks, screen-reader walkthroughs and automated scans.",
+      "test": "Check the DOM/accessibility tree, run an automated scan and walk each journey with a screen reader; all three are required for a pass.",
       "passing": "Names, roles and values match their function; important status changes are perceivable.",
       "action": "Correct HTML semantics, labels and announcements at evidenced locations.",
       "effort": "S",
@@ -782,8 +782,8 @@
       "evidence_required": "runtime",
       "priority": "P1",
       "requirement": "Loading and interactions work without blocking runtime errors.",
-      "test": "Inspect console/network and repeat core actions under defined device/network conditions.",
-      "passing": "No task-blocking errors or long stalls; images reserve stable space.",
+      "test": "Inspect console/network while repeating each journey; state device and network conditions in scope.",
+      "passing": "No uncaught error or failed request prevents a journey step.",
       "action": "Fix measured errors, waterfalls or main-thread blocking at their source.",
       "effort": "S",
       "capabilities": [
@@ -963,8 +963,8 @@
       "evidence_required": "runtime",
       "priority": "P1",
       "requirement": "Offline scope, connection failures and resume are understandable.",
-      "test": "Exercise defined offline journeys and reconnection with cold/warm starts.",
-      "passing": "The offline contract is met; unavailable features and retry are clear.",
+      "test": "Exercise each journey that has an offline state, plus reconnection, with cold/warm starts.",
+      "passing": "Offline states behave as the product documents; unavailable features and retry are clear.",
       "action": "Add offline states and resume behavior for intended user jobs.",
       "effort": "M",
       "capabilities": [

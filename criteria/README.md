@@ -6,4 +6,4 @@ Data files are strict JSON with a `.yaml` extension (no comments; scripts parse 
 
 S/M/L are initial estimates (up to one day / two to five days / more than five days). Observe the actual product before estimating implementation. Each source reference resolves through [sources.yaml](../report/sources.yaml); documented capability is not measured product effect.
 
-Record pass/fail/unknown/not_applicable with actual scope and evidence. An unknown is a missing check, not an observed defect. The general product audit applies profiles and confirmed features; the pipeline catalog describes a specific optional research contract.
+Record pass/fail/unknown with actual scope and evidence; not_applicable is derived from profile and features. An unknown is a missing check, not an observed defect. The general product audit applies profiles and confirmed features; the pipeline catalog describes a specific optional research contract.

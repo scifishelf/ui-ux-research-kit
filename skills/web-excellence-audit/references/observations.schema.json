@@ -75,8 +75,7 @@
             "enum": [
               "pass",
               "fail",
-              "unknown",
-              "not_applicable"
+              "unknown"
             ]
           },
           "scope": {
@@ -123,7 +122,8 @@
                     "trace",
                     "test-log",
                     "accessibility-report",
-                    "user-test"
+                    "user-test",
+                    "field-data"
                   ]
                 },
                 "locator": {
