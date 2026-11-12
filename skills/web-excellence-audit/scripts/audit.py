@@ -22,7 +22,7 @@ EXTENSIONS = {'.html', '.htm', '.css', '.scss', '.sass', '.less', '.js', '.jsx',
               '.ts', '.tsx', '.vue', '.svelte', '.astro', '.php', '.py', '.rb',
               '.md', '.mdx', '.json', '.yaml', '.yml', '.toml', '.webmanifest',
               '.lock', '.txt', '.xml', '.cs', '.cshtml', '.csproj', '.go', '.java',
-              '.erb', '.twig', '.hbs', '.jinja', '.jinja2'}
+              '.erb', '.twig', '.hbs', '.jinja', '.jinja2', '.mjs', '.cjs', '.svg', '.ejs', '.pug', '.njk', '.liquid'}
 EVIDENCE_KINDS = {'source', 'screenshot', 'video', 'trace', 'test-log', 'accessibility-report', 'user-test', 'field-data'}
 FINDING_KEYS = {'status', 'scope', 'reason', 'observed_at', 'evidence', 'runtime', 'coverage', 'remediation', 'field_metrics'}
 REMEDIATION_KEYS = {'title', 'steps', 'acceptance', 'affected_files', 'dependencies', 'effort', 'owner_role'}
@@ -109,7 +109,7 @@ def inventory(root, excluded=None, limit=1200, ignored=frozenset()):
         if capped:
             break
     return found, {'max_files': limit, 'max_depth': 8, 'truncated': capped,
-                   'skipped_directories': sorted(omitted)[:200],
+                   'skipped_directories': sorted(omitted)[:200], 'skipped_directories_total': len(omitted),
                    'note': 'Selected text/configuration files; not a complete build or working-tree hash.'}
 
 
@@ -140,7 +140,8 @@ def discover(root, files, frontend='auto'):
                 scripts[rel] = sorted(package['scripts'])
             for dep in deps:
                 if 'pwa' in dep.lower() or 'workbox' in dep.lower():
-                    hints.append({'feature': 'pwa', 'path': rel, 'reason': 'PWA-related dependency'})
+                    hints.append({'feature': 'service_worker' if 'workbox' in dep.lower() else 'pwa', 'path': rel,
+                                  'reason': 'PWA-related dependency'})
         if name in {'index.html', 'index.htm'} and not any(p in {'tests', 'fixtures', 'examples'} for p in path.relative_to(root).parts):
             candidates.add(parent)
             stacks.add('html')
@@ -152,7 +153,8 @@ def discover(root, files, frontend='auto'):
         if name == 'Gemfile':
             stacks.add('ruby')
         if path.suffix == '.webmanifest' or name in {'sw.js', 'service-worker.js', 'sw.ts'}:
-            hints.append({'feature': 'pwa', 'path': rel, 'reason': 'Manifest/worker file'})
+            hints.append({'feature': 'pwa' if path.suffix == '.webmanifest' else 'service_worker', 'path': rel,
+                          'reason': 'Manifest/worker file'})
     # index.html beneath an already identified app is a route; a nested framework package is another frontend.
     ordered = sorted(candidates, key=lambda p: (len(Path(p).parts), p))
     roots = []
@@ -270,7 +272,10 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
             stale_reason.append('Evidence file changed: ' + entry['path'])
         evidence.append({**entry, 'sha256': actual})
     if status in {'pass', 'fail'}:
-        checked = timestamp(item.get('observed_at'))
+        try:
+            checked = timestamp(item.get('observed_at'))
+        except ValueError as error:
+            raise ValueError(f"{error}: {c['id']}") from None
         age = now - checked
         if age.total_seconds() < -300 or age > dt.timedelta(days=max_age_days):
             stale_reason.append('Observation outside the allowed time window')
@@ -286,9 +291,9 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                 raise ValueError('Runtime provenance required: ' + c['id'])
             elif runtime['capture_kind'] not in CAPTURE_KINDS:
                 raise ValueError('capture_kind must be one of ' + ', '.join(sorted(CAPTURE_KINDS)) + ': ' + c['id'])
-            elif not isinstance(runtime.get('viewport'), dict) or any(
+            elif not isinstance(runtime.get('viewport'), dict) or set(runtime['viewport']) - {'width', 'height'} or any(
                     type(runtime['viewport'].get(k)) is not int or runtime['viewport'][k] <= 0 for k in ['width', 'height']):
-                raise ValueError('Viewport width/height required: ' + c['id'])
+                raise ValueError('runtime.viewport requires exactly positive width/height: ' + c['id'])
             elif status == 'pass' and c['category'] == 'pwa' and (runtime.get('display_mode') not in {'standalone', 'fullscreen'}
                     or runtime['capture_kind'] not in {'real-device', 'installed-pwa-simulator'}):
                 raise ValueError('Installed PWA evidence required: ' + c['id'])
@@ -449,15 +454,17 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
              'reason': 'No criterion-specific check has been evidenced.', 'observation': None}
         feature = c.get('feature')
         if selected not in c['profiles'] or (feature and features[feature] is False):
-            f.update(status='not_applicable', scope='profile', reason=(
+            f.update(status='not_applicable', scope='profile' if selected not in c['profiles'] else 'feature', reason=(
                 'Criterion belongs to the PWA profile.' if selected not in c['profiles'] else
                 'Feature explicitly excluded from the verified project scope: ' + feature))
             if c['id'] in obs:
                 raise ValueError('Observation conflicts with applicability: ' + c['id'])
         elif feature and features[feature] is None:
             f['reason'] = 'Check applicability first; feature not confirmed: ' + feature
-            if c['id'] in obs:
-                raise ValueError('Confirm feature in project config before observing: ' + feature)
+            if c['id'] in obs:  # only a blocked check can be recorded before applicability is known
+                if not isinstance(obs[c['id']], dict) or obs[c['id']].get('status') != 'unknown':
+                    raise ValueError('Confirm feature in project config before observing: ' + feature)
+                f['reason'] += '. ' + str(obs[c['id']].get('reason', ''))
         elif c['id'] in obs:
             item = obs[c['id']]
             status, evidence, stale = observation(c, item, root, evidence_root, list(binding_errors), now, max_age_days, project)
@@ -487,7 +494,11 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
         limitations.append('async_states is set but no journey configures loading/empty/error/success states.')
     if selected != 'pwa' and (features['service_worker'] or features['offline']):
         limitations.append('service_worker/offline are checked only in the pwa profile.')
-    incomplete_scope = not explicit_profile or not project.get('journeys') or not project.get('audience') or limits['truncated'] or max_age_days > 7
+    unresolved_features = sorted({c['feature'] for c in catalog if selected in c['profiles'] and c.get('feature') and features[c['feature']] is None})
+    if unresolved_features:
+        limitations.append('Unresolved features: ' + ', '.join(unresolved_features))
+    incomplete_scope = (not explicit_profile or not project.get('journeys') or not project.get('audience') or limits['truncated']
+                        or max_age_days > 7 or bool(unresolved_features))
     report = {'version': (kit / 'VERSION').read_text().strip(), 'generated_utc': now.isoformat(),
               'target': str(root), 'frontend': discovery['frontend'], 'profile': selected,
               'profile_confirmed': explicit_profile, 'report_language': project.get('report_language', 'English'),
@@ -644,10 +655,17 @@ def write(report, out):
     summary += ['', 'Order prioritizes evidence and blockers, then core flows, structure, visual quality and regression.',
                 'Excellence also needs user/design review within the defined scope; an average score does not replace acceptance.']
     (out / 'summary.md').write_text('\n'.join(summary) + '\n')
-    gap = ['# Product audit — current state', '', '| ID | Level | Status | Evidence files / cells claimed | Observation / scope |', '| --- | --- | --- | --- | --- |']
+    gap = ['# Product audit — current state', '', '| ID | Level | Status | Evidence (claimed cells) | Observation / scope |', '| --- | --- | --- | --- | --- |']
+    cited = {}
     for f in report['findings']:
-        gap.append(f"| {f['id']} | {f['level']} | {f['status']} | {len(f['evidence'])} / {len((f['observation'] or {}).get('coverage', []))} "
+        names = sorted({e['path'] for e in f['evidence']})
+        for name in names:
+            cited.setdefault(name, []).append(f['id'])
+        gap.append(f"| {f['id']} | {f['level']} | {f['status']} | {md(', '.join(names) or '-')} ({len((f['observation'] or {}).get('coverage', []))}) "
                    f"| {md(f['reason'])} [{md(f['scope'])}] |")
+    shared = [f'`{name}` ({len(ids)} criteria)' for name, ids in sorted(cited.items()) if len(ids) > 1]
+    if shared:
+        gap += ['', 'Artifacts cited by several criteria: ' + ', '.join(shared)]
     (out / 'gap-report.md').write_text('\n'.join(gap) + '\n')
     plan = ['# Action plan from current state to excellence', '',
             f"Target: `{report['target']}` · Profile: `{report['profile']}`", '',
@@ -656,7 +674,9 @@ def write(report, out):
             '## Concrete audit scope', '', f"Audience: {report['project'].get('audience', 'to be determined')}", '']
     for j in report['project'].get('journeys', []):
         plan += [f"- **{j['id']}** `{j['route']}`: {j['task']} → {j['success']}"]
-    plan += ['', '## Milestones', '']
+    plan += ['', 'Viewports: ' + ', '.join(f"{v['width']}x{v['height']}" for v in report['project'].get('viewports') or DEFAULT_VIEWPORTS), '',
+             'Features: ' + ', '.join(f'{k}={v}' for k, v in sorted(report['features'].items())),
+             '', '## Milestones', '']
     for p, title in PHASES.items():
         plan.append(f'- **{p} — {title}**')
     plan += ['', 'Dependencies determine execution order. Retest the same flow after each implementation.', '']
@@ -714,8 +734,11 @@ def main():
                           'release_gate': report['release_gate'], 'out': str(out)}, ensure_ascii=False))
     except (ValueError, KeyError, TypeError, AttributeError, OSError) as error:
         stale = Path(args.out).resolve() / 'summary.md'
-        if stale.is_file() and not stale.is_symlink():  # do not leave an earlier clean result standing
-            stale.write_text(f'# Web excellence audit\n\nLast run failed: {error}\n\nOther files here come from an earlier run.\n')
+        if stale.is_file() and not stale.is_symlink():  # do not leave an earlier result standing
+            for name in ['audit.json', 'action-plan.json', 'action-plan.md', 'tool-recommendations.json', 'gap-report.md']:
+                if (stale.parent / name).is_file() and not (stale.parent / name).is_symlink():
+                    (stale.parent / name).unlink()
+            stale.write_text(f'# Web excellence audit\n\nLast run failed: {error}\n\nEarlier generated results were removed.\n')
         parser.error(str(error))
 
 

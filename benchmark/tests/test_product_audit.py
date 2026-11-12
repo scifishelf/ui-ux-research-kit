@@ -387,7 +387,12 @@ class ProductAudit(unittest.TestCase):
         (self.root / 'sw.js').write_text('// worker')
         report = self.run_audit()
         self.assertIn('src/cookies/cookies.ts', report['inventory'])
-        self.assertTrue(any('excluded feature pwa' in x for x in report['limitations']))
+        self.assertTrue(any('excluded feature service_worker' in x for x in report['limitations']))
+        open_scope = self.run_audit(self.envelope({'FLOW-03': {'status': 'unknown', 'scope': 'login', 'reason': 'Login blocked the check'}}),
+                                    project={**self.project, 'audience': 'Readers', 'profile': 'website',
+                                             'features': {**self.project['features'], 'forms': None}})
+        self.assertIn('Login blocked the check', self.finding(open_scope, 'FLOW-03')['reason'])
+        self.assertIn('Unresolved features: forms', open_scope['limitations'])
 
     def test_uncommitted_content_and_nested_frontends_are_bound(self):
         def git(*args):
