@@ -318,7 +318,7 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
             elif not isinstance(runtime.get('viewport'), dict) or set(runtime['viewport']) - {'width', 'height'} or any(
                     type(runtime['viewport'].get(k)) is not int or runtime['viewport'][k] <= 0 for k in ['width', 'height']):
                 raise ValueError('runtime.viewport requires exactly positive width/height: ' + c['id'])
-            elif status == 'pass' and c['category'] == 'pwa' and (runtime.get('display_mode') not in {'standalone', 'fullscreen'}
+            elif status == 'pass' and c['category'] == 'pwa' and (str(runtime.get('display_mode')) not in {'standalone', 'fullscreen'}
                     or runtime['capture_kind'] not in {'real-device', 'installed-pwa-simulator'}):
                 raise ValueError('Installed PWA evidence required: ' + c['id'])
             elif status == 'pass' and runtime['capture_kind'] == 'desktop-browser' and runtime['viewport'] not in (project.get('viewports') or DEFAULT_VIEWPORTS):
@@ -384,7 +384,7 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                     raise ValueError('Remediation lists must contain text: ' + c['id'])
             for rel in [] if stale_reason else fix.get('affected_files', []):
                 safe_file(root, rel, 'affected file')  # invented source locations are rejected
-            if fix.get('effort', c['effort']) not in {'S', 'M', 'L'}:
+            if str(fix.get('effort', c['effort'])) not in {'S', 'M', 'L'}:
                 raise ValueError('Remediation effort must be S/M/L: ' + c['id'])
     return ('unknown' if stale_reason else status), evidence, '; '.join(dict.fromkeys(stale_reason))
 
