@@ -507,6 +507,15 @@ class ProductAudit(unittest.TestCase):
             self.assertNotEqual(done.returncode, 0)
             self.assertEqual((out / 'summary.md').read_text(), '# Web excellence audit\n\nOwn file')
             self.assertTrue((out / 'audit.json').is_file())
+        shared = self.base / 'shared'
+        shared.mkdir()
+        (shared / 'summary.md').write_text('# Web excellence audit\n\nEarlier run')
+        (shared / 'gap-report.md').write_text('# Pipeline audit')
+        done = subprocess.run([sys.executable, str(KIT / 'skills/web-excellence-audit/scripts/audit.py'),
+                               '--target', str(self.root), '--frontend', 'missing', '--out', str(shared)], capture_output=True, text=True)
+        self.assertNotEqual(done.returncode, 0)
+        self.assertEqual((shared / 'gap-report.md').read_text(), '# Pipeline audit')
+        self.assertEqual((shared / 'summary.md').read_text(), '# Web excellence audit\n\nEarlier run')
         self.assertEqual(self.run_audit(frontend='./')['scope_hash'], self.run_audit(frontend='.')['scope_hash'])
         self.assertEqual(self.run_audit(project={**self.project, 'frontend': 'auto'})['scope_hash'], self.run_audit()['scope_hash'])
         (self.root / 'locales').mkdir()

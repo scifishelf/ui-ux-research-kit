@@ -670,7 +670,7 @@ def write(report, out):
         names = sorted({e['path'] for e in f['evidence']})
         for name in names:
             cited.setdefault(name, []).append(f['id'])
-        gap.append(f"| {f['id']} | {f['level']} | {f['status']} | {md(', '.join(names) or '-')} ({len((f['observation'] or {}).get('coverage', []))}) "
+        gap.append(f"| {f['id']} | {f['level']} | {f['status']} | {md(', '.join(names) or '-')} ({len(f['observation'].get('coverage', [])) if f['status'] == 'pass' else 0}) "
                    f"| {md(f['reason'])} [{md(f['scope'])}] |")
     shared = [f'`{name}` ({len(ids)} criteria)' for name, ids in sorted(cited.items()) if len(ids) > 1]
     if shared:
@@ -742,14 +742,7 @@ def main():
         print(json.dumps({'profile': report['profile'], 'counts': report['counts'],
                           'release_gate': report['release_gate'], 'out': str(out)}, ensure_ascii=False))
     except (ValueError, KeyError, TypeError, AttributeError, OSError) as error:
-        stale = Path(args.out).resolve() / 'summary.md'
-        # Do not leave an earlier result standing, but touch only this script's own output directory.
-        if (not Path(args.target).resolve().is_relative_to(stale.parent) and stale.is_file() and not stale.is_symlink()
-                and stale.read_text(errors='ignore').startswith('# Web excellence audit')):
-            for name in ['audit.json', 'action-plan.json', 'action-plan.md', 'tool-recommendations.json', 'gap-report.md']:
-                if (stale.parent / name).is_file() and not (stale.parent / name).is_symlink():
-                    (stale.parent / name).unlink()
-            stale.write_text(f'# Web excellence audit\n\nLast run failed: {error}\n\nEarlier generated results were removed.\n')
+        # A failed run writes and deletes nothing; files from an earlier run are stale.
         parser.error(str(error))
 
 
