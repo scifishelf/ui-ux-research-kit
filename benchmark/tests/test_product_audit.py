@@ -301,6 +301,49 @@ class ProductAudit(unittest.TestCase):
             audit.write(self.run_audit(), out)
         self.assertEqual(before, audit.digest(self.root / 'index.html'))
 
+    def test_observation_cannot_waive_or_fake_applicable_criteria(self):
+        waived = {'status': 'not_applicable', 'scope': 'n/a', 'reason': 'n/a'}
+        with self.assertRaisesRegex(ValueError, 'Applicability'):
+            self.run_audit(self.envelope({'WEB-01': waived}))
+        source_as_log = self.observed(evidence=[{'root': 'target', 'path': 'index.html', 'kind': 'test-log',
+                                                 'sha256': audit.digest(self.root / 'index.html')}])
+        with self.assertRaisesRegex(ValueError, 'Runtime artifact'):
+            self.run_audit(self.envelope({'WEB-01': source_as_log}))
+        invented = self.observed('fail')
+        invented['remediation']['affected_files'] = ['src/does/not/Exist.tsx']
+        with self.assertRaisesRegex(ValueError, 'Missing evidence'):
+            self.run_audit(self.envelope({'WEB-01': invented}))
+        with self.assertRaisesRegex(ValueError, 'Unknown project keys: viewport'):
+            self.run_audit(project={**self.project, 'viewport': []})
+
+    def test_feature_criterion_cannot_pass_with_empty_matrix(self):
+        self.project = {**self.project, 'features': {**self.project['features'], 'async_states': True},
+                        'journeys': [{**self.project['journeys'][0], 'features': []}]}
+        report = self.run_audit(self.envelope({'FLOW-02': self.observed(coverage=[])}))
+        self.assertEqual(self.finding(report, 'FLOW-02')['status'], 'unknown')
+
+    def test_truthful_failures_and_names_are_recordable(self):
+        (self.evidence / 'cookie-banner-mobile.txt').write_text('Synthetic log')
+        named = self.observed(evidence=[{'root': 'evidence', 'path': 'cookie-banner-mobile.txt', 'kind': 'test-log',
+                                         'sha256': audit.digest(self.evidence / 'cookie-banner-mobile.txt')}])
+        self.assertEqual(self.finding(self.run_audit(self.envelope({'WEB-01': named})), 'WEB-01')['status'], 'pass')
+        dependent = self.observed('fail')
+        dependent['remediation']['dependencies'] = ['ACT-VIS-01']
+        report = self.run_audit(self.envelope({'WEB-01': dependent, 'VIS-01': self.observed()}))
+        self.assertEqual(next(t for t in report['roadmap'] if t['id'] == 'ACT-WEB-01')['dependencies'], [])
+        dependent['remediation']['dependencies'] = ['ACT-TYPO-01']
+        with self.assertRaisesRegex(ValueError, 'ACT-TYPO-01'):
+            self.run_audit(self.envelope({'WEB-01': dependent}))
+        self.project = {**self.project, 'profile': 'pwa', 'features': {**self.project['features'], 'pwa': True}}
+        not_installable = self.observed('fail')
+        not_installable['runtime'].update(display_mode='browser')
+        self.assertEqual(self.finding(self.run_audit(self.envelope({'PWA-X01': not_installable})), 'PWA-X01')['status'], 'fail')
+
+    def test_skipped_directories_are_reported(self):
+        (self.root / 'src' / 'data').mkdir(parents=True)
+        (self.root / 'src' / 'data' / 'routes.js').write_text('export default []')
+        self.assertIn('src/data', self.run_audit()['inventory_limits']['skipped_directories'])
+
 
 if __name__ == '__main__':
     unittest.main()

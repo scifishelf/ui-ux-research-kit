@@ -15,6 +15,8 @@ def validate(kit=KIT,schemas=False):
  product_ids={c['id'] for c in product}
  if len(product_ids)!=len(product) or ids.intersection(product_ids):errors.append('Duplicate product criterion IDs')
  all_ids=ids|product_ids
+ schema_ids=parsed.get('skills/web-excellence-audit/references/observations.schema.json',{}).get('properties',{}).get('findings',{}).get('propertyNames',{}).get('enum')
+ if schema_ids is not None and set(schema_ids)!=product_ids:errors.append('Observation schema IDs differ from product catalog')
  sources={s['id'] for s in parsed['report/sources.yaml']['sources']}
  def walk(v,name):
   if isinstance(v,dict):

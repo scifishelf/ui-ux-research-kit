@@ -23,6 +23,9 @@ EXTENSIONS = {'.html', '.htm', '.css', '.scss', '.sass', '.less', '.js', '.jsx',
               '.md', '.mdx', '.json', '.yaml', '.yml', '.toml', '.webmanifest',
               '.lock', '.txt', '.xml', '.cs', '.cshtml', '.csproj', '.go', '.java',
               '.erb', '.twig', '.hbs', '.jinja', '.jinja2'}
+CAPTURE_KINDS = {'desktop-browser', 'mobile-simulator', 'installed-pwa-simulator', 'real-device'}
+PROJECT_KEYS = {'schema_version', 'profile', 'frontend', 'audience', 'features', 'viewports',
+                'journeys', 'available_capabilities', 'report_language'}
 PHASES = {
     'P0': 'Resolve required evidence; protect usability and data integrity',
     'P1': 'Enable core tasks, accessibility and responsive behavior',
@@ -41,8 +44,8 @@ def fingerprint(value):
 
 
 def private_path(path):
-    return any(part.startswith('.env') or part.lower() in {'.aws', '.ssh', 'secrets', 'cookies'}
-               or re.search(r'(credentials|secret|cookie|\.pem$|\.key$|\.p12$)', part, re.I)
+    return any(part.startswith('.env') or part.lower() in {'.aws', '.ssh'}
+               or re.fullmatch(r'(credentials|secrets?|cookies?)(\.[\w.-]+)?|.*\.(pem|key|p12)', part, re.I)
                for part in Path(path).parts)
 
 
@@ -61,10 +64,12 @@ def safe_file(root, rel):
 
 
 def inventory(root, excluded=None, limit=1200):
-    found, skipped, capped = {}, 0, False
+    found, skipped, capped, omitted = {}, 0, False, set()
     excluded = Path(excluded).resolve() if excluded else None
     for base, dirs, files in os.walk(root, followlinks=False):
         base = Path(base)
+        omitted.update((base / d).relative_to(root).as_posix() for d in dirs
+                       if d != '.git' and (d in SKIP or private_path(d)))
         dirs[:] = sorted(d for d in dirs if d not in SKIP and not private_path(d)
                          and not (base / d).is_symlink()
                          and not (excluded and (base / d).resolve().is_relative_to(excluded))
@@ -86,6 +91,7 @@ def inventory(root, excluded=None, limit=1200):
             break
     return found, {'max_files': limit, 'max_depth': 8, 'max_file_bytes': 4_000_000,
                    'truncated': capped, 'oversized_files_skipped': skipped,
+                   'skipped_directories': sorted(omitted)[:200],
                    'note': 'Selected text/configuration files; not a complete build or working-tree hash.'}
 
 
@@ -153,6 +159,9 @@ def discover(root, files, frontend='auto'):
 def validate_project(project):
     if not isinstance(project, dict):
         raise ValueError('Project config must be an object')
+    unknown = set(project) - PROJECT_KEYS
+    if unknown:
+        raise ValueError('Unknown project keys: ' + ', '.join(sorted(unknown)))
     language = project.get('report_language', 'English')
     if not isinstance(language, str) or not language.strip():
         raise ValueError('report_language must be nonempty text')
@@ -210,6 +219,8 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
         base = entry.get('root', 'target')
         if base not in {'target', 'evidence'} or (base == 'evidence' and evidence_root is None):
             raise ValueError('Invalid/missing evidence root: ' + c['id'])
+        if not isinstance(entry.get('path'), str) or not entry['path']:
+            raise ValueError('Evidence requires path: ' + c['id'])
         path = safe_file(root if base == 'target' else evidence_root, entry['path'])
         actual = digest(path)
         if actual != entry.get('sha256'):
@@ -221,19 +232,21 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
         if age.total_seconds() < -300 or age > dt.timedelta(days=max_age_days):
             stale_reason.append('Observation outside the allowed time window')
         if c['evidence_required'] == 'runtime':
-            if not any(e.get('kind') in {'screenshot', 'video', 'trace', 'test-log', 'accessibility-report', 'user-test'} for e in evidence):
-                raise ValueError('Runtime artifact required (source code is insufficient): ' + c['id'])
+            if not any(e.get('root') == 'evidence' and e.get('kind') in {'screenshot', 'video', 'trace', 'test-log', 'accessibility-report', 'user-test'} for e in evidence):
+                raise ValueError('Runtime artifact under --evidence-root required (source code is insufficient): ' + c['id'])
             runtime = item.get('runtime')
             if not isinstance(runtime, dict) or any(not isinstance(runtime.get(k), str) or not runtime[k].strip() for k in
                     ['url', 'route', 'state', 'browser', 'browser_version', 'build_id', 'capture_kind']):
                 raise ValueError('Runtime provenance required: ' + c['id'])
-            view = runtime['viewport']
+            if runtime['capture_kind'] not in CAPTURE_KINDS:
+                raise ValueError('capture_kind must be one of ' + ', '.join(sorted(CAPTURE_KINDS)) + ': ' + c['id'])
+            view = runtime.get('viewport')
             if not isinstance(view, dict) or any(type(view.get(k)) is not int or view[k] <= 0 for k in ['width', 'height']):
                 raise ValueError('Viewport width/height required: ' + c['id'])
-            if c['category'] == 'pwa' and (runtime.get('display_mode') not in {'standalone', 'fullscreen'}
+            if status == 'pass' and c['category'] == 'pwa' and (runtime.get('display_mode') not in {'standalone', 'fullscreen'}
                     or runtime['capture_kind'] not in {'real-device', 'installed-pwa-simulator'}):
                 raise ValueError('Installed PWA evidence required: ' + c['id'])
-            if c['id'] == 'RESP-03' and runtime['capture_kind'] not in {'real-device', 'mobile-simulator', 'installed-pwa-simulator'}:
+            if status == 'pass' and c['id'] == 'RESP-03' and runtime['capture_kind'] not in {'real-device', 'mobile-simulator', 'installed-pwa-simulator'}:
                 raise ValueError('Actual mobile keyboard runtime required: ' + c['id'])
             if c['id'] == 'SPEED-01':
                 field = item.get('field_metrics', {})
@@ -246,14 +259,14 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                         value = values.get(key)
                         if type(value) not in {int, float} or not math.isfinite(value) or value < 0:
                             field_complete = False
-                            stale_reason.append('Feldwert fehlt: ' + segment + '/' + key)
+                            stale_reason.append('Field value missing: ' + segment + '/' + key)
                         elif value > maximum:
                             field_good = False
                 if status == 'pass' and not field_good:
                     stale_reason.append('At least one field target is not met')
                 if status == 'fail' and field_complete and field_good:
                     raise ValueError('Field metrics contradict fail: ' + c['id'])
-            if status == 'pass':
+            if status == 'pass' and c['id'] != 'SPEED-01':  # field data is not bound to the journey matrix
                 expected = set()
                 viewports = project.get('viewports') or [{'width': 1440, 'height': 900}, {'width': 390, 'height': 844}]
                 for journey in project.get('journeys', []):
@@ -267,6 +280,8 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                 for entry in coverage:
                     view = entry.get('viewport', {})
                     actual_coverage.add((entry.get('journey_id'), entry.get('state'), view.get('width'), view.get('height')))
+                if not expected:
+                    stale_reason.append('No configured journey covers this criterion')
                 if expected - actual_coverage:
                     stale_reason.append('Required journey/state/viewport matrix has not been fully checked')
         if status == 'fail':
@@ -277,13 +292,15 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
                 values = fix.get(key, [])
                 if not isinstance(values, list) or any(not isinstance(v, str) or not v.strip() for v in values):
                     raise ValueError('Remediation lists must contain text: ' + c['id'])
+            for rel in fix.get('affected_files', []):
+                safe_file(root, rel)  # invented source locations are rejected
             if fix.get('effort', c['effort']) not in {'S', 'M', 'L'}:
                 raise ValueError('Remediation effort must be S/M/L: ' + c['id'])
     return ('unknown' if stale_reason else status), evidence, '; '.join(dict.fromkeys(stale_reason))
 
 
 def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observations=None,
-        evidence_root=None, excluded=None, now=None, max_age_days=7):
+        evidence_root=None, excluded=None, now=None, max_age_days=7, max_files=1200):
     root, kit = Path(target).resolve(), Path(kit).resolve()
     if not root.is_dir():
         raise ValueError('Target directory missing')
@@ -291,7 +308,7 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
         raise ValueError('max_age_days must be positive')
     project = project or {}
     validate_project(project)
-    files, limits = inventory(root, excluded)
+    files, limits = inventory(root, excluded, max_files)
     discovery = discover(root, files, frontend if frontend != 'auto' else project.get('frontend', 'auto'))
     if discovery['frontend'] is None:
         raise ValueError('Multiple frontends; select --frontend: ' + ', '.join(discovery['frontend_candidates']))
@@ -333,6 +350,8 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
         obs = observations.get('findings', {})
         if not isinstance(obs, dict):
             raise ValueError('findings must be an object keyed by criterion ID')
+    if not (kit / 'criteria/product/catalog.yaml').is_file():
+        raise ValueError(f'Kit not found at {kit}; pass --kit <kit-root>')
     catalog = json.loads((kit / 'criteria/product/catalog.yaml').read_text())['criteria']
     if set(obs) - {c['id'] for c in catalog}:
         raise ValueError('Unknown criterion: ' + ', '.join(sorted(set(obs) - {c['id'] for c in catalog})))
@@ -354,6 +373,8 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
                 raise ValueError('Confirm feature in project config before observing: ' + feature)
         elif c['id'] in obs:
             item = obs[c['id']]
+            if isinstance(item, dict) and item.get('status') == 'not_applicable':
+                raise ValueError('Applicability comes from profile/features in the project config, not observations: ' + c['id'])
             status, evidence, stale = observation(c, item, root, evidence_root, list(binding_errors), now, max_age_days, project)
             f.update(status=status, scope=item['scope'], evidence=evidence,
                      reason=(stale + '. ' if stale else '') + item['reason'],
@@ -388,6 +409,8 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
 
 def roadmap(report):
     tasks = []
+    # A prerequisite whose criterion is no longer open needs no action.
+    resolved = {'ACT-' + f['id'] for f in report['findings'] if f['status'] not in {'unknown', 'fail'}}
     for f in report['findings']:
         if f['status'] not in {'unknown', 'fail'}:
             continue
@@ -406,12 +429,13 @@ def roadmap(report):
                       'product_target': f['passing'],
                       'effort': 'S (investigation; estimate implementation afterwards)' if investigation else fix.get('effort', f['effort']),
                       'owner_role': 'Audit / QA' if investigation else fix.get('owner_role', 'Design / Frontend'),
-                      'dependencies': [] if investigation else fix.get('dependencies', []),
+                      'dependencies': [] if investigation else [d for d in fix.get('dependencies', []) if d not in resolved],
                       'capabilities': f['capabilities'], 'retest': f['test']})
     ids = {t['id'] for t in tasks}
     for task in tasks:
-        if any(d not in ids or d == task['id'] for d in task['dependencies']):
-            raise ValueError('Unknown/self dependency: ' + task['id'])
+        for d in task['dependencies']:
+            if d not in ids or d == task['id']:
+                raise ValueError(f"Unknown/self dependency {d} in {task['id']}")
     # Topological ordering preserves concrete prerequisites before cosmetic improvements.
     ordered, pending = [], sorted(tasks, key=lambda t: (t['priority'], t['kind'] == 'investigation', t['criterion']))
     while pending:
@@ -564,6 +588,7 @@ def main():
     parser.add_argument('--observations')
     parser.add_argument('--evidence-root')
     parser.add_argument('--max-age-days', type=int, default=7)
+    parser.add_argument('--max-files', type=int, default=1200, help='inventory cap; a truncated inventory blocks acceptance')
     args = parser.parse_args()
     try:
         project = json.loads(Path(args.project).read_text()) if args.project else None
@@ -573,7 +598,7 @@ def main():
         if target.is_relative_to(out):
             raise ValueError('Output must not equal or contain target')
         report = run(target, args.kit, args.frontend, args.profile, project, obs,
-                     args.evidence_root, out, max_age_days=args.max_age_days)
+                     args.evidence_root, out, max_age_days=args.max_age_days, max_files=args.max_files)
         write(report, out)
         print(json.dumps({'profile': report['profile'], 'counts': report['counts'],
                           'release_gate': report['release_gate'], 'out': str(out)}, ensure_ascii=False))
