@@ -23,13 +23,13 @@ EXTENSIONS = {'.html', '.htm', '.css', '.scss', '.sass', '.less', '.js', '.jsx',
               '.md', '.mdx', '.json', '.yaml', '.yml', '.toml', '.webmanifest',
               '.lock', '.txt', '.xml', '.cs', '.cshtml', '.csproj', '.go', '.java',
               '.erb', '.twig', '.hbs', '.jinja', '.jinja2', '.mjs', '.cjs', '.svg', '.ejs', '.pug', '.njk', '.liquid'}
-EVIDENCE_KINDS = {'source', 'screenshot', 'video', 'trace', 'test-log', 'accessibility-report', 'user-test', 'field-data'}
+EVIDENCE_KINDS = {'source', 'screenshot', 'video', 'trace', 'test-log', 'accessibility-report', 'user-test', 'field-data', 'measurement'}
 FINDING_KEYS = {'status', 'scope', 'reason', 'observed_at', 'evidence', 'runtime', 'coverage', 'remediation', 'field_metrics'}
 REMEDIATION_KEYS = {'title', 'steps', 'acceptance', 'affected_files', 'dependencies', 'effort', 'owner_role'}
 JOURNEY_KEYS = {'id', 'route', 'task', 'success', 'states', 'features'}
 KEYS = {'observations': {'schema_version', 'target', 'source_inventory_hash', 'scope_hash', 'findings'},
         'evidence': {'root', 'path', 'sha256', 'kind', 'locator'},
-        'runtime': {'url', 'route', 'state', 'browser', 'browser_version', 'build_id', 'capture_kind',
+        'runtime': {'url', 'route', 'state', 'browser', 'browser_version', 'build_id', 'served_commit', 'capture_kind',
                     'display_mode', 'os_version', 'device', 'theme', 'viewport'},
         'coverage': {'journey_id', 'state', 'viewport'},
         'field_metrics': {'source', 'window', 'percentile', 'mobile', 'desktop'}}
@@ -39,7 +39,7 @@ COVERS = {'states': 'every journey/state/viewport', 'journeys': 'every journey a
 DEFAULT_VIEWPORTS = [{'width': 1440, 'height': 900}, {'width': 390, 'height': 844}]
 CAPTURE_KINDS = {'desktop-browser', 'mobile-simulator', 'installed-pwa-simulator', 'real-device'}
 PROJECT_KEYS = {'schema_version', 'profile', 'frontend', 'audience', 'features', 'viewports',
-                'journeys', 'available_capabilities', 'report_language'}
+                'journeys', 'available_capabilities', 'report_language', 'max_files'}
 PHASES = {
     'P0': 'Resolve required evidence; protect usability and data integrity',
     'P1': 'Enable core tasks, accessibility and responsive behavior',
@@ -193,6 +193,8 @@ def validate_project(project):
         raise ValueError('report_language must be nonempty text')
     if project.get('schema_version', 1) != 1:
         raise ValueError('Project schema_version must be 1')
+    if 'max_files' in project and (type(project['max_files']) is not int or project['max_files'] <= 0):
+        raise ValueError('max_files must be a positive integer')
     if 'audience' in project and (not isinstance(project['audience'], str) or not project['audience'].strip()):
         raise ValueError('audience must be nonempty text')
     if not isinstance(project.get('features', {}), dict):
@@ -314,6 +316,8 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
             elif not isinstance(runtime, dict) or any(not isinstance(runtime.get(k), str) or not runtime[k].strip() for k in
                     ['url', 'route', 'state', 'browser', 'browser_version', 'build_id', 'capture_kind']):
                 raise ValueError('Runtime provenance required: ' + c['id'])
+            elif 'served_commit' in runtime and (not isinstance(runtime['served_commit'], str) or not re.fullmatch(r'[0-9a-f]{7,40}', runtime['served_commit'])):
+                raise ValueError('runtime.served_commit must be 7 to 40 lowercase hex characters: ' + c['id'])
             elif runtime['capture_kind'] not in CAPTURE_KINDS:
                 raise ValueError('capture_kind must be one of ' + ', '.join(sorted(CAPTURE_KINDS)) + ': ' + c['id'])
             elif not isinstance(runtime.get('viewport'), dict) or set(runtime['viewport']) - {'width', 'height'} or any(
@@ -393,7 +397,7 @@ def observation(c, item, root, evidence_root, stale_reason, now, max_age_days, p
 
 
 def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observations=None,
-        evidence_root=None, excluded=None, now=None, max_age_days=7, max_files=1200):
+        evidence_root=None, excluded=None, now=None, max_age_days=7, max_files=None):
     root, kit = Path(target).resolve(), Path(kit).resolve()
     if not root.is_dir():
         raise ValueError('Target directory missing')
@@ -401,6 +405,7 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
         raise ValueError('max_age_days must be positive')
     project = project or {}
     validate_project(project)
+    max_files = max_files or project.get('max_files') or 1200  # the CLI flag overrides the project value
     # One file set for both halves of the binding: skipped directories and Git-ignored files are outside it.
     paths = ['--', '.', *(f':(exclude,glob)**/{name}/**' for name in sorted(SKIP))]
     if excluded and Path(excluded).resolve().is_relative_to(root):
@@ -442,7 +447,7 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
                 tree.update(digest(path).encode())
         identity['git_status_hash'] = tree.hexdigest()
     source_hash = fingerprint({'inventory': files, 'identity': identity})
-    scope_hash = fingerprint({'frontend': discovery['frontend'], 'profile': selected, 'project': {k: v for k, v in project.items() if k not in {'report_language', 'available_capabilities', 'schema_version', 'frontend', 'profile'}}})
+    scope_hash = fingerprint({'frontend': discovery['frontend'], 'profile': selected, 'project': {k: v for k, v in project.items() if k not in {'report_language', 'available_capabilities', 'schema_version', 'frontend', 'profile', 'max_files'}}})
     obs, binding_errors = {}, []
     if observations is not None:
         if not isinstance(observations, dict) or observations.get('schema_version') != 1:
@@ -504,7 +509,7 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
     if not project.get('audience'):
         limitations.append('No audience configured; judgments lack their reference.')
     if limits['truncated']:
-        limitations.append('Inventory is truncated; raise --max-files.')
+        limitations.append('Inventory is truncated; raise max_files in project.json (or --max-files).')
     if max_age_days != 7:
         limitations.append(f'Observation age limit changed to {max_age_days} days.')
     for hint in discovery['feature_hints']:
@@ -522,7 +527,17 @@ def run(target, kit=KIT, frontend='auto', profile='auto', project=None, observat
     unresolved_features = sorted({c['feature'] for c in catalog if selected in c['profiles'] and c.get('feature') and features[c['feature']] is None})
     if unresolved_features:
         limitations.append('Unresolved features: ' + ', '.join(unresolved_features))
-    incomplete_scope = (not explicit_profile or not project.get('journeys') or not project.get('audience') or limits['truncated']
+    # The hashes bind the target checkout; only the agent can tell which build the server runs.
+    served = {(f['observation'].get('runtime') or {}).get('served_commit', '') for f in findings
+              if f['observation'] and f['evidence_required'] == 'runtime' and f['id'] != 'SPEED-01'}
+    other = sorted(s for s in served if s and not identity['commit'].startswith(s)) if identity['commit'] else []
+    unverified_build = bool(identity['commit'] and ('' in served or other))
+    if other:
+        limitations.append(f"The running build ({', '.join(other)}) is not the target commit {identity['commit'][:12]}; "
+                           'source evidence binds the target, runtime evidence the running build.')
+    elif unverified_build:
+        limitations.append('runtime.served_commit is missing; the running build is not verified against the target commit.')
+    incomplete_scope = (unverified_build or not explicit_profile or not project.get('journeys') or not project.get('audience') or limits['truncated']
                         or max_age_days > 7 or bool(unresolved_features))
     report = {'version': (kit / 'VERSION').read_text().strip(), 'catalog_sha256': digest(kit / 'criteria/product/catalog.yaml'),
               'generated_utc': now.isoformat(),
@@ -683,7 +698,7 @@ def write(report, out):
     summary += ['', 'Order prioritizes evidence and blockers, then core flows, structure, visual quality and regression.',
                 'Excellence also needs user/design review within the defined scope.']
     outputs['summary.md'] = '\n'.join(summary) + '\n'
-    gap = ['# Product audit — current state', '', '| ID | Level | Status | Evidence (claimed cells) | Observation / scope |', '| --- | --- | --- | --- | --- |']
+    gap = ['# Product audit: current state', '', '| ID | Level | Status | Evidence (claimed cells) | Observation / scope |', '| --- | --- | --- | --- | --- |']
     cited = {}
     for f in report['findings']:
         names = sorted({e['path'] for e in f['evidence']})
@@ -706,10 +721,10 @@ def write(report, out):
              'Features: ' + ', '.join(f'{k}={v}' for k, v in sorted(report['features'].items())),
              '', '## Milestones', '']
     for p, title in PHASES.items():
-        plan.append(f'- **{p} — {title}**')
+        plan.append(f'- **{p}: {title}**')
     plan += ['', 'Dependencies determine execution order. Retest the same flow after each implementation.', '']
     for index, task in enumerate(report['roadmap'], 1):
-        plan += [f"## {index}. {task['id']} — {task['title']}", '',
+        plan += [f"## {index}. {task['id']}: {task['title']}", '',
                  f"**Kind:** {task['kind']} · **Priority:** {task['priority']} · **Effort:** {task['effort']} · **Role:** {task['owner_role']}", '',
                  f"**Evidence required:** {task['evidence_required']} · **A pass covers:** {task['pass_covers']}", '',
                  '**Status quo:** ' + task['status_quo'], '', '**Scope:** ' + task['scope'], '', '**Evidence:**', '']
@@ -748,7 +763,7 @@ def main():
     parser.add_argument('--observations')
     parser.add_argument('--evidence-root')
     parser.add_argument('--max-age-days', type=int, default=7)
-    parser.add_argument('--max-files', type=int, default=1200, help='inventory cap; a truncated inventory blocks acceptance')
+    parser.add_argument('--max-files', type=int, help='inventory cap (default: max_files in project.json, else 1200); a truncated inventory blocks acceptance')
     args = parser.parse_args()
     try:
         project = json.loads(Path(args.project).read_text()) if args.project else None

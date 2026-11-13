@@ -67,6 +67,36 @@ class ProductAudit(unittest.TestCase):
     def field_evidence(self):
         return [{'root': 'evidence', 'path': 'run.txt', 'kind': 'field-data', 'sha256': audit.digest(self.evidence / 'run.txt')}]
 
+    def test_project_max_files_and_served_commit(self):
+        for index in range(5):
+            (self.root / f'page{index}.html').write_text('<p>x</p>')
+        self.assertTrue(self.run_audit(project={**self.project, 'max_files': 2})['inventory_limits']['truncated'])
+        self.assertFalse(self.run_audit(project={**self.project, 'max_files': 2}, max_files=50)['inventory_limits']['truncated'])
+        self.assertEqual(self.run_audit(project={**self.project, 'max_files': 50})['scope_hash'], self.run_audit()['scope_hash'])
+        with self.assertRaisesRegex(ValueError, 'max_files'):
+            self.run_audit(project={**self.project, 'max_files': True})
+
+        def git(*args):
+            return subprocess.run(['git', '-C', str(self.root), '-c', 'user.name=t', '-c', 'user.email=t@example.invalid', *args],
+                                  check=True, capture_output=True, text=True).stdout.strip()
+        git('init', '-q')
+        git('add', '-A')
+        git('commit', '-q', '-m', 'fixture')
+        head = git('rev-parse', 'HEAD')
+
+        def limits(commit):
+            value = self.observed(evidence=[{'root': 'evidence', 'path': 'run.txt', 'kind': 'measurement',
+                                             'sha256': audit.digest(self.evidence / 'run.txt')}])
+            if commit:
+                value['runtime']['served_commit'] = commit
+            return ' '.join(self.run_audit(self.envelope({'WEB-01': value}))['limitations'])
+        self.assertIn('served_commit is missing', limits(None))
+        self.assertIn('is not the target commit', limits('0' * 40))
+        self.assertNotIn('served_commit', limits(head[:10]) + limits(head))
+        self.assertNotIn('target commit', limits(head))
+        with self.assertRaisesRegex(ValueError, 'served_commit'):
+            limits('HEAD')
+
     def finding(self, report, id):
         return next(f for f in report['findings'] if f['id'] == id)
 

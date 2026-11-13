@@ -8,6 +8,7 @@ Adversarial review of `web-excellence-audit` (12 rounds, 158 findings). Recreate
 - Observations: `not_applicable` can no longer be set by an observation; unknown keys are rejected; evidence kind `field-data`; `capture_kind` is an enumeration; `SPEED-01` takes field data without `runtime`/`coverage`.
 - Checker: runtime evidence must come from a separate evidence directory; `affected_files` must exist; the source binding covers uncommitted and untracked content and ignores Git-ignored files; `--max-files`; prerequisites are ordered ahead of the task that needs them; the gap report names evidence files, claimed cells and shared artifacts; outputs are written together.
 - Project configuration: unknown keys are rejected; `audience` and resolved features are required for acceptance; `available_capabilities`, `report_language` and the spelling of `frontend`/`profile` no longer change the scope fingerprint.
+- From the first real audit run: `max_files` in `project.json`; optional `runtime.served_commit`, and in a Git target a missing or different one blocks acceptance; evidence kind `measurement`; generated Markdown no longer contains em dashes.
 - Open owner decision: `GOAL-01` grades the audit scope rather than the product.
 
 ## 0.3.0 — 2026-10-06
